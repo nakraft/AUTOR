@@ -1,3 +1,10 @@
+/* 
+Create databse tables with information UNIVERSAL to all stores
+- includes individual services 
+- service categories 
+- service bundles (schedules)
+- service duration
+*/
 CREATE TABLE Employees(
 eid INT AUTO_INCREMENT, 
 name VARCHAR(50) NOT NULL, 
@@ -6,4 +13,22 @@ role VARCHAR(30) NOT NULL,
 address VARCHAR(30) NOT NULL,
 phone VARCHAR(30) NOT NULL,
 PRIMARY KEY(eid)
+);
+
+CREATE TABLE MAINTENANCE(
+NAME VARCHAR(50) NOT NULL, 
+NUMBER INT NOT NULL, 
+REPAIR_CATVARCHAR(50) NOT NULL
+);
+
+CREATE TABLE SCHEDULE(
+NAME VARCHAR(50) NOT NULL, 
+NUMBER INT NOT NULL
+);
+
+CREATE TABLE DURATION_DETAILS(
+NAME VARCHAR(50) NOT NULL, 
+NUMBER INT NOT NULL,
+MANF VARCHAR(50) NOT NULL,
+DURATION INT NOT NULL
 );
