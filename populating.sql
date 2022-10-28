@@ -121,6 +121,8 @@ COPY MANAGER(
  "telephone", 
  "address", 
  "email", 
- "salary")
+ "salary", 
+ "username",
+ "password")
 FROM '/data/manager.csv'
 CSV HEADER
