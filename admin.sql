@@ -7,7 +7,7 @@ Admin functionality
 /*
 Input parameters 
 - Add New Store - SID, ADDRESS, MIN_RATE, MIN_RATE,
-FIRSTNAME, LASTNAME, USERNAME, PASSWORD,
+NAME, USERNAME, PASSWORD,
 SALARY
 */
 
@@ -24,15 +24,13 @@ insert into SERVICE_CENTRE (
 );
 
 insert into EMPLOYEE (
-"first_name",
-"last_name",
+"name",
 "username",
 "password",
 "eid",
 "role",
 "sid") VALUES (
-    FIRSTNAME,
-    LASTNAME,
+    NAME
     USERNAME,
     PASSWORD,
     EID,
