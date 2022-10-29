@@ -52,15 +52,11 @@ insert into MANAGER (
     EID,
     SALARY
 )
-END;
-
-CREATE TRIGGER UPDATE_SC
-AFTER INSERT ON MANAGER
-BEGIN
 update SERVICE_CENTER
 set manager_id = EID
 where sid = SID
 END;
+
 
 /* Triggers end here */
 
