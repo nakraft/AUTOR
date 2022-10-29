@@ -106,7 +106,7 @@ CREATE TABLE Work_Event (
 
 CREATE TABLE Services (
 	name VARCHAR(50),
-service_number NUMBER GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+service_number NUMBER(10),
 repair_category VARCHAR(50),
 	PRIMARY KEY (name, service_number),
 FOREIGN KEY (name, service_number) REFERENCES Work_Event
