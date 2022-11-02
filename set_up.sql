@@ -77,8 +77,8 @@ CREATE TABLE Customer (
 sid NUMBER(10) NOT NULL,
 first_name VARCHAR(50),
 last_name VARCHAR(50),
-status VARCHAR(5) DEFAULT 'false',
-standing VARCHAR(5) DEFAULT 'false',
+status VARCHAR(5) DEFAULT 'inactive',
+standing VARCHAR(5) DEFAULT 'good',
 	PRIMARY KEY (cid, sid),
 FOREIGN KEY (sid) REFERENCES Service_Center
 );

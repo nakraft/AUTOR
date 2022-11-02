@@ -134,6 +134,25 @@ INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Evaporator
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, 'Toyota', 2),
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Toyota', 5),
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('C', 115, 'Toyota', 8);
+
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111111,1, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111112,2, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111113,3, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111114,4, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111115,5, 90000);
+
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,1);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,2);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,3);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,4);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,5);
+
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Tom', 'Hank', 'inactive', 'good');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Denzel', 'Washington', 'inactive', 'bad');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Will', 'Smith', 'active', 'bad');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Brad', 'Pitt', 'active', 'good');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Angelina', 'Jolie', 'inactive', 'good');
+
 /*
 Load general information about existing stores from csv 
 - storeid, address, store manager information, stores minimum/maximum hourly wage 
