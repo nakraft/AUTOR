@@ -13,52 +13,36 @@ Initializing the system with information UNIVERSAL to all stores
 - service duration
 */
 
--- INSERT INTO SERVICES(name, service_number, repair_category)    
--- VALUES
--- ('Oil Changes', 113), 
--- ('Filter Replacements', 113), 
--- ('Oil Changes', 114),
--- ('Filter Replacements', 114),
--- ('Brake Repair', 114),
--- ('Check Engine Light Diagnostics', 114),
--- ('Oil Changes', 115),
--- ('Filter Replacements', 115),
--- ('Brake Repair', 115),
--- ('Check Engine Light Diagnostics', 115),
--- ('Suspension Repair', 115),
--- ('Evaporator Repair', 115);
+INSERT INTO SERVICE_CENTER(sid, telephone, address, mechanic_minimum_rate, mechanic_maximum_rate, saturday, manager_id, receptionist_id)
 
-INSERT ALL
-  INTO Maintenance(name, m_number) VALUES('Oil Changes', 113)
-  INTO Maintenance(name, m_number) VALUES('Filter Replacements', 113)
-  INTO Maintenance(name, m_number) VALUES('Oil Changes', 114)
-  INTO Maintenance(name, m_number) VALUES('Filter Replacements', 114)
-  INTO Maintenance(name, m_number) VALUES('Brake Repair', 114)
-  INTO Maintenance(name, m_number) VALUES('Check Engine Light Diagnostics', 114)
-  INTO Maintenance(name, m_number) VALUES('Oil Changes', 115)
-  INTO Maintenance(name, m_number) VALUES('Filter Replacements', 115)
-  INTO Maintenance(name, m_number) VALUES('Brake Repair', 115)
-  INTO Maintenance(name, m_number) VALUES('Check Engine Light Diagnostics', 115)
-  INTO Maintenance(name, m_number) VALUES('Suspension Repair', 115)
-  INTO Maintenance(name, m_number) VALUES('Evaporator Repair', 115)
-SELECT *
-  FROM dual;
+INSERT INTO EMPLOYEE(eid, phone, name, username, password, address, email, sid, role)
+
+INSERT INTO MECHANIC(eid, sid, salary)
+
+INSERT INTO CONTRACT_EMP(eid, sid, salary);
+
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,1);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,2);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,3);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,4);
+INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,5);
+
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111111,1, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111112,2, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111113,3, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111114,4, 90000);
+INSERT INTO MANAGER(eid, sid, salary) VALUES(111111115,5, 90000);
+
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Tom', 'Hank', 'inactive', 'good');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Denzel', 'Washington', 'inactive', 'good');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Will', 'Smith', 'active', 'bad');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Brad', 'Pitt', 'active', 'good');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Angelina', 'Jolie', 'inactive', 'good');
 
 
--- INSERT INTO SERVICES(name, service_number, repair_category)  
--- VALUES
--- ('Belt Replacement', 101, 'Engine Services'),
--- ('Engine Repair', 102, 'Engine Services'),
--- ('Exhaust Repair', 103, 'Exhaust Services'),
--- ('Muffler Repair', 104, 'Exhaust Services'),
--- ('Alternator Repair', 105, 'Electrical Services'),
--- ('Power Lock Repair', 106, 'Electrical Services'),
--- ('Axle Repair', 107, 'Transmission Services'),
--- ('Brake Repair', 108, 'Transmission Services'),
--- ('Tire Balancing', 109, 'Tire Services'),
--- ('Wheel Alignment', 110, 'Tire Services'),
--- ('Compressor Repair', 111, 'Heating and A/C Services'),
--- ('Evaporator Repair', 112, 'Heating and A/C Services');
+INSERT INTO VEHICLE(vin, manf, year, mileage, schedule, cid, sid)
+
+INSERT INTO WORK_EVENT(name, event_number)
 
 INSERT ALL
   INTO SERVICES(name, service_number, repair_category) VALUES('Belt Replacement', 101, 'Engine Services')
@@ -76,11 +60,21 @@ INSERT ALL
 SELECT *
   FROM dual;
 
--- INSERT INTO SCHEDULE(name, s_number)
--- VALUES
--- ('A', 113),
--- ('B', 114),
--- ('C', 115);
+INSERT ALL
+  INTO MAINTENANCE(name, m_number) VALUES('Oil Changes', 113)
+  INTO MAINTENANCE(name, m_number) VALUES('Filter Replacements', 113)
+  INTO MAINTENANCE(name, m_number) VALUES('Oil Changes', 114)
+  INTO MAINTENANCE(name, m_number) VALUES('Filter Replacements', 114)
+  INTO MAINTENANCE(name, m_number) VALUES('Brake Repair', 114)
+  INTO MAINTENANCE(name, m_number) VALUES('Check Engine Light Diagnostics', 114)
+  INTO MAINTENANCE(name, m_number) VALUES('Oil Changes', 115)
+  INTO MAINTENANCE(name, m_number) VALUES('Filter Replacements', 115)
+  INTO MAINTENANCE(name, m_number) VALUES('Brake Repair', 115)
+  INTO MAINTENANCE(name, m_number) VALUES('Check Engine Light Diagnostics', 115)
+  INTO MAINTENANCE(name, m_number) VALUES('Suspension Repair', 115)
+  INTO MAINTENANCE(name, m_number) VALUES('Evaporator Repair', 115)
+SELECT *
+  FROM dual;
 
 INSERT ALL
   INTO SCHEDULE(name, s_number) VALUES('A', 113)
@@ -89,9 +83,11 @@ INSERT ALL
 SELECT *
   FROM dual;
 
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Honda', 1);
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Honda', 5);
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Honda', 4);
+INSERT INTO COST_DETAILS(manf, price, sid, id_number, name)
+
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Honda', 1)
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Honda', 5)
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Honda', 4)
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Muffler Repair', 104, 'Honda', 2);
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Alternator Repair', 105, 'Honda', 4);
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Power Lock Repair', 106, 'Honda', 5);
@@ -135,23 +131,18 @@ INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, '
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Toyota', 5);
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('C', 115, 'Toyota', 8);
 
-INSERT INTO MANAGER(eid, sid, salary) VALUES(111111111,1, 90000);
-INSERT INTO MANAGER(eid, sid, salary) VALUES(111111112,2, 90000);
-INSERT INTO MANAGER(eid, sid, salary) VALUES(111111113,3, 90000);
-INSERT INTO MANAGER(eid, sid, salary) VALUES(111111114,4, 90000);
-INSERT INTO MANAGER(eid, sid, salary) VALUES(111111115,5, 90000);
+INSERT INTO INVOICE(id, total_amount, amount_paid, sid, start_date, timeslot, vin, eid)
 
-INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,1);
-INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,2);
-INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,3);
-INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,4);
-INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,5);
+INSERT INTO TIME_SLOT(date_time, time_slot, timeoff, id, sid, eid)
 
-INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Tom', 'Hank', 'inactive', 'good');
-INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Denzel', 'Washington', 'inactive', 'good');
-INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Will', 'Smith', 'active', 'bad');
-INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Brad', 'Pitt', 'active', 'good');
-INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Angelina', 'Jolie', 'inactive', 'good');
+INSERT INTO MAINTENANCE_SCHEDULE(mname, mnumber, sname, snumber)
+
+INSERT INTO MECHANIC_TIMESLOT(slot_date, timeslot, eid, sid)
+
+INSERT INTO INVOICE_HASSERVICE(id, i_number, name)
+
+INSERT INTO INVOICE_HASSCHEDULE(id)
+
 
 /*
 Load general information about existing stores from csv 
