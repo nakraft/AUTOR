@@ -89,50 +89,50 @@ INSERT ALL
 SELECT *
   FROM dual;
 
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Honda', 1),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Honda', 5),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Honda', 4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Muffler Repair', 104, 'Honda', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Alternator Repair', 105, 'Honda', 4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Power Lock Repair', 106, 'Honda', 5),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Axle Repair', 107, 'Honda', 7),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Brake Repair', 108, 'Honda', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Tire Balancing', 109, 'Honda', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Wheel Alignment', 110, 'Honda', 1),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Compressor Repair', 111, 'Honda', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Evaporator Repair', 112, 'Honda', 4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, 'Honda', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Honda', 6),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('C', 115, 'Honda', 9),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Nissan', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Nissan', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Nissan',5),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Muffler Repair', 104, 'Nissan', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Alternator Repair', 105, 'Nissan', 5),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Power Lock Repair', 106, 'Nissan', 6),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Axle Repair', 107, 'Nissan', 8),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Brake Repair', 108, 'Nissan', 4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Tire Balancing', 109, 'Nissan', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Wheel Alignment', 110, 'Nissan', 1),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Compressor Repair', 111, 'Nissan', 4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Evaporator Repair', 112, 'Nissan', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, 'Nissan', 4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Nissan', 7),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('C', 115, 'Nissan', 9),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Toyota', 1),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Toyota', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Toyota',4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Muffler Repair', 104, 'Toyota', 1),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Alternator Repair', 105, 'Toyota', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Power Lock Repair', 106, 'Toyota', 4),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Axle Repair', 107, 'Toyota', 5),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Brake Repair', 108, 'Toyota', 5),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Tire Balancing', 109, 'Toyota', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Wheel Alignment', 110, 'Toyota', 3),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Compressor Repair', 111, 'Toyota', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Evaporator Repair', 112, 'Toyota', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, 'Toyota', 2),
-INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Toyota', 5),
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Honda', 1);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Honda', 5);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Honda', 4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Muffler Repair', 104, 'Honda', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Alternator Repair', 105, 'Honda', 4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Power Lock Repair', 106, 'Honda', 5);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Axle Repair', 107, 'Honda', 7);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Brake Repair', 108, 'Honda', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Tire Balancing', 109, 'Honda', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Wheel Alignment', 110, 'Honda', 1);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Compressor Repair', 111, 'Honda', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Evaporator Repair', 112, 'Honda', 4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, 'Honda', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Honda', 6);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('C', 115, 'Honda', 9);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Nissan', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Nissan', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Nissan',5);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Muffler Repair', 104, 'Nissan', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Alternator Repair', 105, 'Nissan', 5);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Power Lock Repair', 106, 'Nissan', 6);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Axle Repair', 107, 'Nissan', 8);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Brake Repair', 108, 'Nissan', 4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Tire Balancing', 109, 'Nissan', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Wheel Alignment', 110, 'Nissan', 1);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Compressor Repair', 111, 'Nissan', 4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Evaporator Repair', 112, 'Nissan', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, 'Nissan', 4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Nissan', 7);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('C', 115, 'Nissan', 9);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Belt Replacement', 101, 'Toyota', 1);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Engine Repair', 102, 'Toyota', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Exhaust Repair', 103, 'Toyota',4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Muffler Repair', 104, 'Toyota', 1);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Alternator Repair', 105, 'Toyota', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Power Lock Repair', 106, 'Toyota', 4);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Axle Repair', 107, 'Toyota', 5);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Brake Repair', 108, 'Toyota', 5);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Tire Balancing', 109, 'Toyota', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Wheel Alignment', 110, 'Toyota', 3);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Compressor Repair', 111, 'Toyota', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('Evaporator Repair', 112, 'Toyota', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('A', 113, 'Toyota', 2);
+INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('B', 114, 'Toyota', 5);
 INSERT INTO DURATION_DETAILS(name, id_number, manf, duration) VALUES('C', 115, 'Toyota', 8);
 
 INSERT INTO MANAGER(eid, sid, salary) VALUES(111111111,1, 90000);
@@ -148,7 +148,7 @@ INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,4);
 INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,5);
 
 INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Tom', 'Hank', 'inactive', 'good');
-INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Denzel', 'Washington', 'inactive', 'bad');
+INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Denzel', 'Washington', 'inactive', 'good');
 INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Will', 'Smith', 'active', 'bad');
 INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Brad', 'Pitt', 'active', 'good');
 INSERT INTO CUSTOMER(cid, sid,first_name, last_name, status, standing) VALUES(1,1,'Angelina', 'Jolie', 'inactive', 'good');

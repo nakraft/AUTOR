@@ -77,7 +77,7 @@ CREATE TABLE Customer (
 sid NUMBER(10) NOT NULL,
 first_name VARCHAR(50),
 last_name VARCHAR(50),
-status VARCHAR(5) DEFAULT 'inactive',
+status VARCHAR(8) DEFAULT 'inactive',
 standing VARCHAR(5) DEFAULT 'good',
 	PRIMARY KEY (cid, sid),
 FOREIGN KEY (sid) REFERENCES Service_Center
@@ -137,7 +137,7 @@ CREATE TABLE Cost_Details (
 	price REAL,
 	sid NUMBER(10) NOT NULL,
 	id_number NUMBER(10),
-	name VARCHAR(1),
+	name VARCHAR(10),
 	PRIMARY KEY (manf,sid,name,id_number),
 FOREIGN KEY (sid) REFERENCES Service_Center(sid), 
 FOREIGN KEY (name, id_number) REFERENCES Work_Event
@@ -147,7 +147,7 @@ CREATE TABLE Duration_Details (
 	manf VARCHAR(50),
 	duration REAL,
 	id_number NUMBER(10),
-	name VARCHAR(1),
+	name VARCHAR(30),
 	PRIMARY KEY (manf,name,id_number),
 FOREIGN KEY (name, id_number) REFERENCES Work_Event
 );
