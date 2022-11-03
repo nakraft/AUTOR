@@ -1,4 +1,8 @@
 package db;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 // Import sql
 import java.sql.*;
 
@@ -6,6 +10,83 @@ import java.sql.*;
  * queries class
  */
 public class query {
+    
+    /**
+     * Run .SQL file on JDBC
+     * 
+     * @param filename name of .SQL file
+     */
+    public static void runSQL(String filename) {
+        // Load the .SQL file as a file
+        File file = new File(filename);
+        // Create a list of queries
+        List<String> queries = new ArrayList<String>();
+        // Create a scanner to read the file
+        try {
+            Scanner scanner = new Scanner(file);
+            String currentQuery = "";
+            // Read the file line by line
+            while (scanner.hasNextLine()) {
+                // Get the next line
+                String line = scanner.nextLine().trim();
+                // If the line starts with --, skip it
+                if (line.startsWith("--")) {
+                    // Skip the line
+                    continue;
+                }
+                // If the line starts with /*, skip lines until one contains */
+                if (line.startsWith("/*")) {
+                    // Skip lines until one contains */
+                    while (!line.contains("*/")) {
+                        // If there is no next line, continue
+                        if (!scanner.hasNextLine()) {
+                            continue;
+                        }
+                        // Get the next line
+                        line = scanner.nextLine().trim();
+                    }
+                    // Skip the line
+                    continue;
+                }
+                // If the line is not empty
+                if (!line.isEmpty() && !line.endsWith(";")) {
+                    // Add the line to the current query
+                    currentQuery += line;
+                    // If the line does not end with a comma
+                    if (!line.endsWith(",")) {
+                        // Add a space to currentQuery
+                        currentQuery += " ";
+                    }
+                }
+                // If the line ends with a semicolon
+                if (line.endsWith(";")) {
+                    // Add the line to the current query (without the semicolon)
+                    currentQuery += line.substring(0, line.length() - 1);
+                    // Add the query to the list of queries
+                    queries.add(currentQuery);
+                    // Reset the current query
+                    currentQuery = "";
+                }
+                
+            }
+            // Execute all the queries
+            for (String query : queries) {
+                // Print out query (debugging)
+                // System.out.println(query);
+                // Execute the query
+                JDBC.executeQuery(query);
+            }
+            // Close the scanner
+            scanner.close();
+        } catch (Exception e) {
+            // Print an error message
+            System.out.println("Error reading file");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+    }
+
     /**
      * Check credentials
      * 

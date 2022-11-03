@@ -10,10 +10,6 @@ public class JDBC {
     static final private String jdbcDriver = "oracle.jdbc.OracleDriver";
     // Database connection
     static private Connection connection = null;
-    // Database statement
-    static private Statement statement = null;
-    // Database result set
-    static private ResultSet resultSet = null;
 
     /**
      * Database setup method
@@ -33,7 +29,6 @@ public class JDBC {
         // Connect to the database
         try {
             connection = DriverManager.getConnection(url, user, password);
-            statement = connection.createStatement();
         // If the connection can't be made
         } catch (java.sql.SQLException e) {
             // Print an error message
@@ -60,6 +55,46 @@ public class JDBC {
             System.exit(1);
         }
     }
+    
+    /**
+     * Drop all tables
+     * Then load the tables from the SQL files (set_up.sql, populating.sql)
+     */
+    public static void resetDatabase() {
+        // Drop all tables
+        ResultSet tables = executeQuery("select 'drop table \"'||table_name||'\" cascade constraints' from user_tables");
+        try {
+            // Go through each table
+            while (tables.next()) {
+                // Print the drop table statement
+                // System.out.println(tables.getString(1));
+                // Drop the table
+                executeUpdate(tables.getString(1));
+            }
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        // Close the result set
+        try {
+            tables.close();
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error closing result set");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        
+        // Load the tables from the SQL files
+        // TODO: fix populating.sql so it doesn't crash
+        query.runSQL("set_up.sql");
+        //query.runSQL("populating.sql");
+    }        
+    
 
     /**
      * Execute a query
@@ -68,7 +103,20 @@ public class JDBC {
      * @return the result set of the query
      */
     public static ResultSet executeQuery(String query) {
+        // Create new statement
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error creating statement");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+
         // Execute the query
+        ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery(query);
         // If the query can't be executed
@@ -89,6 +137,18 @@ public class JDBC {
      * @param update the update to execute
      */
     public static void executeUpdate(String update) {
+        // Create new statement
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error creating statement");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+
         // Execute the update
         try {
             statement.executeUpdate(update);

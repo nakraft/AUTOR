@@ -28,8 +28,8 @@ public class UI {
     public static void welcomeMenu() {
         // Reset the screen
         header = "Welcome to the Auto Repair and Service Management System (AUTOR)";
-        feedback = null;
         resetScreen();
+        feedback = null;
         // Print welcome message
         String userInput;
         printMenuOptions(new String[] {"Login", "Sign up", "Exit", "Admin options"});
@@ -173,7 +173,7 @@ public class UI {
         feedback = null;
         resetScreen();
         // Print menu options with blank line after
-        printMenuOptions(new String[] {"Add new store", "Add new service", "Return to main menu"});
+        printMenuOptions(new String[] {"Add new store", "Add new service", "Reset Database", "Return to main menu"});
         // Handle user input
         while (true) {
             switch (input.next()) {
@@ -185,8 +185,14 @@ public class UI {
                 case "2":
                     //addNewService();
                     break;
-                // Return to main menu
+                // Reset database
                 case "3":
+                    JDBC.resetDatabase();
+                    feedback = "Database reset.";
+                    welcomeMenu();
+                    break;
+                // Return to main menu
+                case "4":
                     welcomeMenu();
                     return;
                 default:
@@ -265,12 +271,12 @@ public class UI {
      * Helper Functions
      *************************************************************************/
 
-      /**
-       * Prompt the user for multiple values
-       * 
-       * @param prompts array of prompts to print
-       */
-      public static String[] printPrompts(String[] prompts) {
+    /**
+     * Prompt the user for multiple values
+     * 
+     * @param prompts array of prompts to print
+     */
+    public static String[] printPrompts(String[] prompts) {
         String[] responses = new String[prompts.length];
         // Print the prompts
         for (int i = 0; i < prompts.length; i++) {
