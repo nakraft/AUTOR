@@ -4,6 +4,7 @@ CREATE TABLE Service_Center (
     address VARCHAR(100),
     mechanic_minimum_rate REAL,
     mechanic_maximum_rate REAL,
+    hourly_rate REAL,
     saturday VARCHAR(5) DEFAULT 'false',
     manager_id NUMBER,
     receptionist_id NUMBER(10),
