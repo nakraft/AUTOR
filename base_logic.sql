@@ -70,6 +70,7 @@ CREATE TRIGGER add_manager_as_employee
     END;
 /
 
+
 CREATE TRIGGER employee_isa
     AFTER INSERT ON Employee
     FOR EACH ROW
@@ -83,6 +84,18 @@ CREATE TRIGGER employee_isa
         ELSIF :new.role = 'mechanic' THEN 
             INSERT INTO Mechanic (eid, sid) 
             VALUES (:new.eid, :new.sid); 
+        END IF;
+    END;
+/
+
+CREATE TRIGGER receptionist_for_center
+    BEFORE INSERT ON Employee
+    FOR EACH ROW
+    BEGIN
+        IF :new.role = 'receptionist' THEN 
+            UPDATE Service_Center
+            SET Service_Center.receptionist_id = :new.eid
+            WHERE Service_Center.sid = :new.sid;
         END IF;
     END;
 /
@@ -193,3 +206,5 @@ CREATE TRIGGER maintence_isa_schedule
         
     END;
 /
+
+
