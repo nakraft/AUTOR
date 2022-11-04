@@ -179,7 +179,7 @@ public class UI {
             switch (input.next()) {
                 // Add new store
                 case "1":
-                    //addNewStore();
+                    addNewStore();
                     break;
                 // Add new service
                 case "2":
@@ -204,6 +204,25 @@ public class UI {
                     printMenuOptions(new String[] {"Add new store", "Add new service", "Return to main menu"});        
                     break;
             }
+        }
+    }
+
+    /**
+     * Get user input for adding a new store
+     */
+    public static void addNewStore() {
+        // Reset the screen
+        header = "Add a new store";
+        feedback = null;
+        resetScreen();
+        // Ask the user to input to add a new store
+        String[] responses = printPrompts(new String[] {"Store ID","Address","Manager's first name","Manager's last name","Manager's username","Manager's password","Manager's salary","Manager's employee ID","Mechanic minimum wage","Mechanic maximum wage"});
+        System.out.println();
+        if (query.addStore(responses)) {
+            System.out.println("Store added successfully");
+        }
+        else {
+            System.out.println("Adding a new store failed");
         }
     }
 

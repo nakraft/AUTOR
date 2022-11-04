@@ -217,6 +217,59 @@ public class query {
     }
 
     /**
+     * Find existing store id
+     * 
+     * @param storeID the store id to search for
+     */
+    public static boolean addStore(String[] responses) {
+        try {
+            // Insert into the store table
+            ResultSet result = JDBC.executeUpdate('INSERT INTO Service_Center (
+                "sid",
+                "address", 
+                "mechanic_minimum_rate", 
+                "mechanic_maximum_rate") VALUES (' +
+                    responses[0] + ',' + 
+                    responses[1] + ',' + 
+                    responses[8] + ',' + 
+                    responses[9] + ')'
+            );
+
+            // If the query inserts a row
+            if (result.next()) {
+                ResultSet result = JDBC.executeUpdate('INSERT INTO Employee (
+                "first_name",
+                "last_name",
+                "username", 
+                "password", 
+                "eid",
+                "role",
+                "sid") VALUES (' +
+                    responses[2] + ',' + 
+                    responses[3] + ',' + 
+                    responses[4] + ',' + 
+                    responses[5] + ',' + 
+                    responses[7] + ',' + 
+                    '"M",' +
+                    responses[0] + ')' 
+                );
+                // If the query inserts a row
+                if (result.next()) {
+                    return true;
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error executing query");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        // If something goes wrong
+        return false;
+    }
+
+    /**
      * Find existing service id
      * 
      * @param serviceID the service id to search for
