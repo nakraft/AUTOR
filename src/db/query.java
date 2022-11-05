@@ -313,7 +313,7 @@ public class query {
             // Quit the program
             System.exit(1);
         }
-        // If no matching service id is found
+        // If no matching service category is found
         return false;
     }
 
