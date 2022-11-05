@@ -266,6 +266,8 @@ CREATE TABLE Customer (
 	last_name VARCHAR(50),
     status NUMBER(1) DEFAULT 1,
     standing NUMBER(1) DEFAULT 0,
+    address VARCHAR(100),
+    email VARCHAR(50),
     username VARCHAR(50),
 	password VARCHAR(50),
 	PRIMARY KEY (cid, sid),

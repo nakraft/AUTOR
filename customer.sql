@@ -15,11 +15,13 @@ D. Email Address
 E. Phone Number
 F. List of All Cars
 Notes:
--- add address, email, phone_no in customer table
+-- add address, email, phone_no in customer table - added
 */
 
-SELECT cid, first_name, last_name, address, email, phone_no WHERE cid=$CID AND sid=$SID;
+SELECT cid, first_name, last_name, address, email, phone FROM Customer WHERE cid=$CID AND sid=$SID;
+-- SELECT cid, first_name, last_name, address, email, phone FROM Customer WHERE cid=10001 AND sid=30001;
 SELECT vin, manf, year, mileage FROM Vehicle WHERE cid=$CID AND sid=$SID;
+-- SELECT vin, manf, year, mileage FROM Vehicle WHERE cid=10001 AND sid=30001;
 
 */ b. add car
 USER INPUT: A. VIN number B. Car Manufacturer name C. Current mileage D. Year
@@ -30,7 +32,7 @@ INSERT INTO Vehicle(vin, manf, mileage, year, cid, sid) VALUES ($VIN, $MANF, $MI
 */ c. delete car
 USER INPUT:  VIN number
 */
-DELETE FROM Vechicle WHERE vin=$VIN;
+DELETE FROM Vehicle WHERE vin=$VIN;
 
 
 
