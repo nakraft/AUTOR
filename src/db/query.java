@@ -217,9 +217,7 @@ public class query {
     }
 
     /**
-     * Find existing store id
-     * 
-     * @param storeID the store id to search for
+     * Add a new store
      */
     public static boolean addStore(String[] responses) {
         try {
@@ -291,6 +289,74 @@ public class query {
             System.exit(1);
         }
         // If no matching service id is found
+        return false;
+    }
+
+    /**
+     * Find existing service category
+     * 
+     * @param serviceCat the service category to search for
+     */
+    public static boolean findServiceCategory(String serviceCat) {
+        try {
+            // Query the service table
+            ResultSet result = JDBC.executeQuery("SELECT * FROM Services WHERE repair_category = " + serviceCat);
+            // If the query returns a result
+            if (result.next()) {
+                // Return true
+                return true;
+            }
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error executing query");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        // If no matching service id is found
+        return false;
+    }
+
+    /**
+     * Add a new service
+     */
+    public static boolean addService(String[] responses) {
+        try {
+            // Insert into the store table
+            ResultSet result = JDBC.executeUpdate('INSERT INTO Services (
+                "serviceName",
+                "serviceNumber",
+                "repair_category") VALUES (' +
+                    responses[1] + ',' + 
+                    responses[4] + ',' + 
+                    responses[0] + ')'
+            );
+
+            // If the query inserts a row
+            if (result.next()) {
+                ResultSet result = JDBC.executeUpdate('INSERT INTO Duration_Details (
+                "manf",
+                "dur",
+                "serviceName",
+                "serviceNumber") VALUES (' +
+                    responses[3] + ',' + 
+                    responses[2] + ',' + 
+                    responses[1] + ',' + 
+                    responses[4] + ')' 
+                );
+                // If the query inserts a row
+                if (result.next()) {
+                    return true;
+                }
+            }
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error executing query");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        // If something goes wrong
         return false;
     }
 }

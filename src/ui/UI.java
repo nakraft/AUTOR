@@ -183,7 +183,7 @@ public class UI {
                     break;
                 // Add new service
                 case "2":
-                    //addNewService();
+                    addNewService();
                     break;
                 // Reset database
                 case "3":
@@ -223,6 +223,31 @@ public class UI {
         }
         else {
             System.out.println("Adding a new store failed");
+        }
+    }
+
+    /**
+     * Get user input for adding a new service
+     */
+    public static void addNewService() {
+        // Reset the screen
+        header = "Add a new service";
+        feedback = null;
+        resetScreen();
+        // Ask the user to input to add a new service
+        String[] responses = printPrompts(new String[] {"Service category","Service name","Duration","Manufacturer","Service number"});
+        
+        // raise error if category doesn't exist
+        while(!query.findServiceCategory(responses[0])) {
+            System.out.println("Service category doesn't exist. Please try again.");
+            responses = printPrompts(new String[] {"Service category","Service name","Duration","Manufacturer","Service number"});
+        }
+        System.out.println();
+        if (query.addService(responses)) {
+            System.out.println("Service added successfully");
+        }
+        else {
+            System.out.println("Adding a new service failed");
         }
     }
 
