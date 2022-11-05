@@ -93,19 +93,16 @@ AND manf=(SELECT manf from Vehicle where vin=$VIN)
 
 -- find available slot and mechanic
 SELECT timeslot_date, timeslot, eid WHERE sid=$SID AND id=NULL
---user picks one
+--user picks consecutive time slots as per the duration
 
 ------- Execute the below as a single transaction. Roll back if there is an error with any ----------
 -- insert into Invoice
-INSERT INTO Invoice (id, total_amount, amount_paid, sid, timeslot_date, timeslot, vin, eid) VALUES
-($ID, $COST, 0, $SID, $TIMESLOT_DATE, $TIMESLOT, $VIN, $EID)
+INSERT INTO Invoice (id, total_amount, amount_paid, duration, sid, vin, eid) VALUES
+($ID, $COST, 0, $duration, $SID, $VIN, $EID)
 
-CREATE TRIGGER UPDATE_TIMESLOT
-    AFTER INSERT ON Invoice
-    FOR EACH ROW
-    BEGIN
-        UPDATE Time_Slot SET id=$ID where timeslot_date=$TIMESLOT_DATE, timeslot=$TIMESLOT, sid=$SID, eid=$EID
-    END;
+-- perform this for each time slot selected
+UPDATE Time_Slot SET id=$ID where timeslot_date=$TIMESLOT_DATE, timeslot=$TIMESLOT, sid=$SID, eid=$EID
+
 
 -- insert into Invoice_HasService table
 INSERT ALL
@@ -116,6 +113,21 @@ SELECT 1 FROM dual;
 -- inserto into Invoice_HasSchedule table
 INSERT INTO Invoice_HasSchedule (id, name, number) VALUES ( $ID, 'A', '119' )
 ------- Execute the above as a single transaction. Roll back if there is an error with any ----------
+
+
+
+*/ 4. Invoices */
+
+*/ a. View Invoice */
+-- User inputs the ID
+-- determine paid and upaid by doing total_amount - amount_paid in the UI
+SELECT * FROM Invoice WHERE id=$ID
+-- Get all the time slot
+SELECT timeslot_date, timeslot FROM Time_Slot WHERE id=$ID
+
+*/ a. Pay Invoice */
+UPDATE Invoice SET amount_paid=total_amount WHERE id=$ID
+
 
 
 
