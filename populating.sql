@@ -101,6 +101,26 @@ INSERT ALL
 SELECT *
   FROM dual;
 
+/*
+Adding service centers with managers, customers and vehicles
+*/
+
+INSERT ALL
+  INTO Service_Center(sid,address,telephone,saturday,manager_id,mechanic_minimum_rate,mechanic_maximum_rate,mechanic_hourly_rate) VALUES(30001,'3921 Western Blvd, Raleigh, NC 27606',3392601234,'o',123456789,30,40,35)
+  INTO Service_Center(sid,address,telephone,saturday,manager_id,mechanic_minimum_rate,mechanic_maximum_rate,mechanic_hourly_rate) VALUES(30002,'4500 Preslyn Dr Suite 103, Raleigh, NC 27616',8576890280,'o',987654321,25,35,25)
+  INTO Service_Center(sid,address,telephone,saturday,manager_id,mechanic_minimum_rate,mechanic_maximum_rate,mechanic_hourly_rate) VALUES(30003,'9515 Chapel Hill Rd, Morrisville, NC 27560',7798182200,'c',987612345,20,25,22)
+SELECT *
+  FROM dual;
+
+UPDATE Employee SET first_name='John',last_name='Doe',username='jdoe',password='doe',phone=8636368778,address='1378 University Woods, Raleigh, NC 27612',email='jdoe@gmail.com' WHERE eid=123456789;
+UPDATE Manager SET salary=44 where eid=123456789;
+
+UPDATE Employee SET first_name='Rachel',last_name='Brooks',username='rbrooks',password='brooks',phone=8972468552,address='2201 Gorman Parkwood, Raleigh, NC 27618',email='rbrooks@ymail.com' WHERE eid=987654321;
+UPDATE Manager SET salary=35 where eid=987654321;
+
+UPDATE Employee SET first_name='Caleb',last_name='Smith',username='csmith',password='smith',phone=8547963210,address='1538 Red Bud Lane, Morrisville, NC 27560',email='csmith@yahoo.com' WHERE eid=987612345;
+UPDATE Manager SET salary=25 where eid=987612345;
+
 INSERT ALL
   INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10001,'Peter','Parker',30001,'pparker','parker')
   INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10002,'Diana','Prince',30001,'dprince','prince')
@@ -114,6 +134,22 @@ INSERT ALL
   INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10062,'Sam','Wilson',30003,'swilson','wilson')
   INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10501,'Wanda','Maximoff',30003,'wmaximoff','maximoff')
   INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10010,'Virginia','Potts',30003,'vpotts','potts')
+SELECT *
+  FROM dual;
+
+INSERT ALL
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1BL658','Toyota',53000,'B',2007,10001,30001)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('7A1ST264','Honda',117000,'A',1999,10002,30001)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('5TR3K914','Nissan',111000,'C',2015,10053,30002)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('15DC9A87','Toyota',21000,'A',2020,10010,30002)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('18S5R2D8','Nissan',195500,'C',2019,10001,30002)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('9R2UHP54','Honda',67900,'B',2013,10035,30002)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('88TSM888','Honda',10000,'A',2000,10002,30003)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('71HK2D89','Toyota',195550,'B',2004,10003,30003)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('34KLE19D','Toyota',123800,'C',2010,10011,30003)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('29T56WC3','Nissan',51300,'A',2011,10062,30003)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('P39VN198','Nissan',39500,'B',2013,10501,30003)
+  INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('39YVS415','Honda',49900,'A',2021,10010,30003)
 SELECT *
   FROM dual;
 

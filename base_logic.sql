@@ -7,6 +7,7 @@ CREATE TABLE Service_Center (
     address VARCHAR(100),
     mechanic_minimum_rate NUMBER,
     mechanic_maximum_rate NUMBER,
+    mechanic_hourly_rate NUMBER,
     saturday VARCHAR(5) DEFAULT 'close' CHECK (saturday IN ('open', 'o', 'close', 'c') ),
     manager_id NUMBER,
     receptionist_id NUMBER(10),
@@ -263,8 +264,8 @@ CREATE TABLE Customer (
 	phone NUMBER(10),
 	first_name VARCHAR(50),
 	last_name VARCHAR(50),
-    status NUMBER(1),
-    standing NUMBER(1),
+    status NUMBER(1) DEFAULT 1,
+    standing NUMBER(1) DEFAULT 0,
     username VARCHAR(50),
 	password VARCHAR(50),
 	PRIMARY KEY (cid, sid),
@@ -273,9 +274,9 @@ CREATE TABLE Customer (
 );
 
 CREATE TABLE Vehicle (
-    vin NUMBER(10),
+    vin VARCHAR(10),
     manf CHAR(50),
-    year TIMESTAMP,
+    year NUMBER,
     mileage REAL,
     schedule CHAR(1) DEFAULT 'A',
     cid NUMBER(9) NOT NULL,
@@ -292,7 +293,7 @@ CREATE TABLE Invoice (
     sid NUMBER(10) NOT NULL,
     timeslot_date TIMESTAMP NOT NULL,
 	timeslot NUMBER NOT NULL,
-	vin NUMBER(10) NOT NULL,
+	vin VARCHAR(10) NOT NULL,
 	eid NUMBER(9) NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (sid) REFERENCES Service_Center,
@@ -336,12 +337,12 @@ CREATE TABLE Invoice_HasSchedule (
 );
 
 CREATE TABLE Mechanic_Timeslot (
-    slot_date DATE,
+    slot_date TIMESTAMP,
     timeslot NUMBER,
     eid NUMBER(10),
     sid NUMBER(10),
     PRIMARY KEY (sid, eid, slot_date, timeslot),
-    FOREIGN KEY (sid, eid, slot_date, timeslot) REFERENCES Time_Slot(sid, eid, date_time, timeslot)
+    FOREIGN KEY (sid, eid, slot_date, timeslot) REFERENCES Time_Slot(sid, eid, timeslot_date, timeslot)
         ON DELETE CASCADE,
     FOREIGN KEY (sid, eid) REFERENCES Mechanic(sid, eid)
         ON DELETE CASCADE
