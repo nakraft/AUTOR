@@ -334,3 +334,15 @@ CREATE TABLE Invoice_HasSchedule (
 	FOREIGN KEY (id) REFERENCES Invoice,
     FOREIGN KEY (serviceName, serviceNumber) REFERENCES Schedule
 );
+
+CREATE TABLE Mechanic_Timeslot (
+    slot_date DATE,
+    timeslot NUMBER,
+    eid NUMBER(10),
+    sid NUMBER(10),
+    PRIMARY KEY (sid, eid, slot_date, timeslot),
+    FOREIGN KEY (sid, eid, slot_date, timeslot) REFERENCES Time_Slot(sid, eid, date_time, timeslot)
+        ON DELETE CASCADE,
+    FOREIGN KEY (sid, eid) REFERENCES Mechanic(sid, eid)
+        ON DELETE CASCADE
+);
