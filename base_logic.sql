@@ -207,4 +207,36 @@ CREATE TRIGGER maintence_isa_schedule
     END;
 /
 
+-- There is no assertions within Oracle SQL DBMS... boo
+-- CREATE assertion rates_a
+-- CHECK (NOT EXISTS (
+--         SELECT *
+--         FROM Service_Center s, Mechanic m 
+--         WHERE s.sid = m.sid AND
+--             (s.mechanic_minimum_rate > m.rate OR 
+--             s.mechanic_maximum_rate < m.rate);
+--     ))
+    
+CREATE TRIGGER rate_in_check
+    BEFORE UPDATE ON Mechanic 
+    FOR EACH ROW
+    DECLARE 
+        out_of_range EXCEPTION;
+        mechanic_min_rate NUMBER;
+        mechanic_max_rate NUMBER;
+    BEGIN 
+        SELECT DISTINCT s.mechanic_minimum_rate INTO mechanic_min_rate 
+        FROM Service_Center s 
+        WHERE s.sid = :new.sid;
+        
+        SELECT DISTINCT s.mechanic_maximum_rate INTO mechanic_max_rate 
+        FROM Service_Center s 
+        WHERE s.sid = :new.sid;
+ 
+        IF :new.rate < mechanic_min_rate OR :new.rate > mechanic_max_rate THEN
+            RAISE out_of_range;
+        END IF; 
+        
+    END; 
+/
 
