@@ -101,6 +101,22 @@ INSERT ALL
 SELECT *
   FROM dual;
 
+INSERT ALL
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10001,'Peter','Parker',30001,'pparker','parker')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10002,'Diana','Prince',30001,'dprince','prince')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10053,'Billy','Batson',30002,'bbatson','batson')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10010,'Bruce','Wayne',30002,'bwayne','wayne')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10001,'Steve','Rogers',30002,'srogers','rogers')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10035,'Happy','Hogan',30002,'hhogan','hogan')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10002,'Tony','Stark',30003,'tstark','stark')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10003,'Natasha','Romanoff',30003,'nromanoff','romanoff')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10011,'Harvey','Bullock',30003,'hbullock','bullock')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10062,'Sam','Wilson',30003,'swilson','wilson')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10501,'Wanda','Maximoff',30003,'wmaximoff','maximoff')
+  INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10010,'Virginia','Potts',30003,'vpotts','potts')
+SELECT *
+  FROM dual;
+
 -- INSERT INTO EMPLOYEE(eid, phone, name, username, password, address, email, sid, role)
 
 -- INSERT INTO MECHANIC(eid, sid, salary)
