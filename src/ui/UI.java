@@ -2,6 +2,7 @@ package ui;
 // Import Scanner
 import java.util.Scanner;
 
+import autor.ScanHelper;
 import db.JDBC;
 import db.query;
 
@@ -289,6 +290,33 @@ public class UI {
      * @param username The username of the mechanic
      */
     public static void mechanicMenu(String username) {
+        int selection = 1;
+        System.out.println("##################################");
+        System.out.println("##### Mechanic: Landing Page #####");
+        System.out.println("##################################");
+        System.out.println("# 1 View schedule                #");
+        System.out.println("# 2 Request time off             #");
+        System.out.println("# 3 Request swap                 #");
+        System.out.println("# 4 Accept / Reject swap         #");
+        System.out.println("##################################");
+        do {
+            System.out.print("Enter choice (1-5) from the given options displayed above: ");
+            selection = ScanHelper.nextInt();
+        } while (!(selection >= 1 && selection <= 4));
+        switch (selection) {
+            case 1:
+                new ViewSchedule().run();
+                break;
+            case 2:
+                new RequestTimeOff().run();
+                break;
+            case 3:
+                new RequestSwap().run();
+                break;
+            case 4:
+                new AcceptRejectSwap().run();
+                break;
+        }
     }
 
     /**
