@@ -124,11 +124,22 @@ CREATE TABLE Work_Event (
 	PRIMARY KEY (serviceName, serviceNumber)
 );
 
+CREATE TABLE Cost_Details (
+	manf VARCHAR(50),
+	price REAL,
+    sid NUMBER(10) NOT NULL,
+    serviceName VARCHAR(50),
+	serviceNumber NUMBER(10),
+	PRIMARY KEY (manf, sid, serviceName, serviceNumber),
+    FOREIGN KEY (sid) REFERENCES Service_Center(sid),
+    FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
+);
+
 CREATE TABLE Duration_Details (
 	manf VARCHAR(50),
 	dur INTEGER,
+    serviceName VARCHAR(50),
 	serviceNumber NUMBER(10),
-	serviceName VARCHAR(50),
 	PRIMARY KEY (manf, serviceName, serviceNumber),
     FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
 );
@@ -293,8 +304,9 @@ CREATE TABLE Invoice (
 	total_amount REAL,
 	amount_paid REAL,
     sid NUMBER(10) NOT NULL,
-    timeslot_date TIMESTAMP NOT NULL,
-	timeslot NUMBER NOT NULL,
+    -- timeslot_date TIMESTAMP NOT NULL,
+    timeslot_start NUMBER(1) NOT NULL,
+    timeslot_end NUMBER(1) NOT NULL,
 	vin VARCHAR(10) NOT NULL,
 	eid NUMBER(9) NOT NULL,
 	PRIMARY KEY (id),
@@ -304,13 +316,14 @@ CREATE TABLE Invoice (
 );
 
 CREATE TABLE Time_Slot (
-	timeslot_date TIMESTAMP,
+    timeslot_day NUMBER(1) CHECK (timeslot_day >= 1 AND timeslot_day <= 7),
+    timeslot_week NUMBER(1) CHECK (timeslot_week IN (1,2,3,4)),
 	timeslot NUMBER,
 	sid NUMBER(10),
     eid NUMBER(10) NOT NULL,
     timeoff NUMBER(1),
 	id NUMBER(10),
-	PRIMARY KEY (timeslot_date, timeslot, sid, eid),
+	PRIMARY KEY (timeslot_day, timeslot_week, timeslot, sid, eid),
     FOREIGN KEY (id) REFERENCES Invoice, 
     FOREIGN KEY (sid) REFERENCES Service_Center 
         ON DELETE CASCADE, 
@@ -318,7 +331,7 @@ CREATE TABLE Time_Slot (
         ON DELETE CASCADE
 );
 
-ALTER TABLE Invoice ADD FOREIGN KEY (timeslot_date, timeslot, sid, eid) REFERENCES Time_Slot;
+-- ALTER TABLE Invoice ADD FOREIGN KEY (timeslot_date, timeslot, sid, eid) REFERENCES Time_Slot;
 
 CREATE TABLE Invoice_HasService (
 	id NUMBER(10),
@@ -339,12 +352,13 @@ CREATE TABLE Invoice_HasSchedule (
 );
 
 CREATE TABLE Mechanic_Timeslot (
-    slot_date TIMESTAMP,
+    timeslot_day NUMBER(1),
+    timeslot_week NUMBER(1),
     timeslot NUMBER,
     eid NUMBER(10),
     sid NUMBER(10),
-    PRIMARY KEY (sid, eid, slot_date, timeslot),
-    FOREIGN KEY (sid, eid, slot_date, timeslot) REFERENCES Time_Slot(sid, eid, timeslot_date, timeslot)
+    PRIMARY KEY (sid, eid, timeslot_day, timeslot_week, timeslot),
+    FOREIGN KEY (sid, eid, timeslot_day, timeslot_week, timeslot) REFERENCES Time_Slot(sid, eid, timeslot_day, timeslot_week, timeslot)
         ON DELETE CASCADE,
     FOREIGN KEY (sid, eid) REFERENCES Mechanic(sid, eid)
         ON DELETE CASCADE
