@@ -153,11 +153,37 @@ INSERT ALL
 SELECT *
   FROM dual;
 
--- INSERT INTO EMPLOYEE(eid, phone, name, username, password, address, email, sid, role)
+  INSERT ALL 
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('James', 'Williams', 'jwilliams', 'williams', 4576312882, '1400 Gorman St, Raleigh, NC 27606-2972', 'jwilliams@gmail.com', 132457689, 30001, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('David', 'Johnson', 'djohnson', 'johnson', 9892321100, '686 Stratford Court, Raleigh, NC 27606', 'djohnson@ymail.com', 314275869, 30001, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Maria', 'Garcia', 'mgarcia', 'garcia', 4573459090, '1521 Graduate Lane, Raleigh, NC 27606', 'mgarcia@yahoo.com', 241368579, 30001, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Ellie', 'Clark', 'eclark', 'clark', 9892180921, '3125 Avent Ferry Road, Raleigh, NC 27605', 'eclark@gmail.com', 423186759, 30002, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Robert', 'Martinez', 'rmartinez', 'martinez', 7652304282, '1232 Tartan Circle, Raleigh, NC 27607', 'rmartinez@ymail.com', 123789456, 30002, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Charles', 'Rodriguez', 'crodriguez', 'rodriguez', 9092234281, '218 Patton Lane, Raleigh, NC 27603', 'crodriguez@yahoo.com', 789123456, 30002, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Jose', 'Hernandez', 'jhernandez', 'hernandez', 7653241714, '4747 Dola Mine Road, Raleigh, NC 27609', 'jhernandez@gmail.com', 125689347, 30002, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Charlie', 'Brown', 'cbrown', 'brown', 9091237568, '1 Rockford Mountain Lane, Morrisville, NC 27560', 'cbrown@ymail.com', 347812569, 30003, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Jeff', 'Gibson', 'jgibson', 'gibson', 3390108899, '900 Development Drive, Morrisville, NC 27560', 'jgibson@yahoo.com', 123456780, 30003, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Isabelle', 'Wilder', 'iwilder', 'wilder', 3394561231, '6601 Koppers Road, Morrisville, NC 27560', 'iwilder@gmail.com', 123456708, 30003, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Peter', 'Titus', 'ptitus', 'Titus', 3396723418, '2860 Slater Road, Morrisville, NC 27560', 'ptitus@ymail.com', 123456078, 30003, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Mark', 'Mendez', 'mmendez', 'mendez', 3395792080, '140 Southport Drive, Morrisville, NC 27560', 'mmendez@yahoo.com', 123450678, 30003, 'mechanic')
+  INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Lisa', 'Alberti', 'lalberti', 'alberti', 3391126787, '100 Valley Glen Drive, Morrisville, NC 27560', 'lalberti@yahoo.com', 123405678, 30003, 'mechanic')
+SELECT *
+  FROM dual;
+  
+UPDATE Mechanic SET rate=35 where eid=132457689 AND sid = 30001;
+UPDATE Mechanic SET rate=35 where eid=314275869 AND sid = 30001;
+UPDATE Mechanic SET rate=35 where eid=241368579 AND sid = 30001;
+UPDATE Mechanic SET rate=25 where eid=423186759 AND sid = 30002;
+UPDATE Mechanic SET rate=25 where eid=123789456 AND sid = 30002;
+UPDATE Mechanic SET rate=25 where eid=789123456 AND sid = 30002;
+UPDATE Mechanic SET rate=25 where eid=125689347 AND sid = 30002;
+UPDATE Mechanic SET rate=22 where eid=347812569 AND sid = 30003;
+UPDATE Mechanic SET rate=22 where eid=123456780 AND sid = 30003;
+UPDATE Mechanic SET rate=22 where eid=123456708 AND sid = 30003;
+UPDATE Mechanic SET rate=22 where eid=123456078 AND sid = 30003;
+UPDATE Mechanic SET rate=22 where eid=123450678 AND sid = 30003;
+UPDATE Mechanic SET rate=22 where eid=123405678 AND sid = 30003;
 
--- INSERT INTO MECHANIC(eid, sid, salary)
-
--- INSERT INTO CONTRACT_EMP(eid, sid, salary);
 
 -- INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,1);
 -- INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,2);
@@ -196,6 +222,9 @@ SELECT *
 Load general information about existing stores from csv 
 - storeid, address, store manager information, stores minimum/maximum hourly wage 
 */
+
+/*
+READING IN FROM SPREADSHEET - MANUALLY ENTERED ABOVE. CHOOSE 1
 
 COPY SERVICE_CENTER(
  "sid",
@@ -247,9 +276,4 @@ SET
         WHERE Employee.eid = temp.eid AND Employee.sid = temp.sid)
 WHERE Employee.first_name IS NULL AND Employee.last_name IS NULL;
 
-UPDATE MANAGER
-SET 
-    Manager.salary = (
-        SELECT temp.salary
-        FROM Employee_Temp temp
-        WHERE Manager.eid = temp.eid AND Manager.sid = temp.sid);
+*/
