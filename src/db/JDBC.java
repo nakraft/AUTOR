@@ -170,4 +170,32 @@ public class JDBC {
         // Return true if the update was successful
         return true;
     }
+
+    /**
+     * Print results
+     */
+    public static void printResults(ResultSet resultSet) {
+        // Print the results
+        try {
+            // Get the number of columns
+            int columns = resultSet.getMetaData().getColumnCount();
+            // Go through each row
+            while (resultSet.next()) {
+                // Go through each column
+                for (int i = 1; i <= columns; i++) {
+                    // Print the column
+                    System.out.print(resultSet.getString(i) + "\t");
+                }
+                // Print a new line
+                System.out.println();
+            }
+        // If the results can't be printed
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error printing results");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+    }
 }

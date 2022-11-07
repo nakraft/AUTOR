@@ -1,6 +1,7 @@
 package ui;
 
 // Import DB classes
+import java.sql.*; // Import SQL classes
 import db.JDBC; // JDBC
 import db.adminQuery; // Admin queries
 
@@ -28,7 +29,8 @@ public class adminUI {
             "Add New Store", // adminAddNewStore
             "Add New Service", // adminAddNewService
             "Logout", // homeMenu
-            "Reset Database" // JDBC.resetDatabase()
+            "Reset Database", // JDBC.resetDatabase()
+            "Run SQL Commands" // adminRunSQLCommands
         } // Options
     );
 
@@ -110,6 +112,9 @@ public class adminUI {
                 case 5: // Reset Database
                     JDBC.resetDatabase();
                     adminLanding.setFeedback("Database reset successfully");
+                    break;
+                case 6: // Run SQL Commands
+                    adminRunSQLCommands();
                     break;
             }
         } 
@@ -200,6 +205,46 @@ public class adminUI {
             }
         }
     }
+
+    /**
+     * Run SQL commands
+     */
+    public static void adminRunSQLCommands() {
+        UI.clearScreen();
+        System.out.println("Enter SQL commands, enter 'exit' to exit");
+        while (true) {
+            System.out.print("SQL> ");
+            String command = UI.input.nextLine().trim();
+            if (command.equals("exit")) {
+                // Return to the admin landing page
+                adminLanding();
+            }
+            else {
+                // If the command is an update
+                if (command.toLowerCase().startsWith("update")) {
+                    // If the update was successful
+                    if (JDBC.executeUpdate(command)) {
+                        System.out.println("Update successful");
+                    }
+                    else {
+                        System.out.println("Update failed");
+                    }
+                }
+                // Otherwise the command is a query
+                else {
+                    ResultSet results = JDBC.executeQuery(command);
+                    // Print the results
+                    if (results != null) {
+                        JDBC.printResults(results);
+                    }
+                    else {
+                        System.out.println("Query failed");
+                    }
+                }
+            }
+        }
+    }
+
 
     /**************************************************************************
      * Helper Methods
