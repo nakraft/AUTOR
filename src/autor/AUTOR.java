@@ -23,7 +23,7 @@ public class AUTOR {
         // Load the remote database
         JDBC.loadDatabase(jdbcURL, jdbcUser, jdbcPassword);
         // Start up the UI
-        UI.welcomeMenu();
+        UI.homeMenu();
         // Close the database connection
         JDBC.closeDatabase();
     }

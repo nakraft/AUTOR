@@ -113,12 +113,15 @@ SELECT *
   FROM dual;
 
 UPDATE Employee SET first_name='John',last_name='Doe',username='jdoe',password='doe',phone=8636368778,address='1378 University Woods, Raleigh, NC 27612',email='jdoe@gmail.com' WHERE eid=123456789;
+
 UPDATE Manager SET salary=44 where eid=123456789;
 
 UPDATE Employee SET first_name='Rachel',last_name='Brooks',username='rbrooks',password='brooks',phone=8972468552,address='2201 Gorman Parkwood, Raleigh, NC 27618',email='rbrooks@ymail.com' WHERE eid=987654321;
+
 UPDATE Manager SET salary=35 where eid=987654321;
 
 UPDATE Employee SET first_name='Caleb',last_name='Smith',username='csmith',password='smith',phone=8547963210,address='1538 Red Bud Lane, Morrisville, NC 27560',email='csmith@yahoo.com' WHERE eid=987612345;
+
 UPDATE Manager SET salary=25 where eid=987612345;
 
 INSERT ALL
@@ -153,7 +156,7 @@ INSERT ALL
 SELECT *
   FROM dual;
 
-  INSERT ALL 
+INSERT ALL 
   INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('James', 'Williams', 'jwilliams', 'williams', 4576312882, '1400 Gorman St, Raleigh, NC 27606-2972', 'jwilliams@gmail.com', 132457689, 30001, 'mechanic')
   INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('David', 'Johnson', 'djohnson', 'johnson', 9892321100, '686 Stratford Court, Raleigh, NC 27606', 'djohnson@ymail.com', 314275869, 30001, 'mechanic')
   INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Maria', 'Garcia', 'mgarcia', 'garcia', 4573459090, '1521 Graduate Lane, Raleigh, NC 27606', 'mgarcia@yahoo.com', 241368579, 30001, 'mechanic')
@@ -169,21 +172,32 @@ SELECT *
   INTO Employee(first_name, last_name, username, password, phone, address, email, eid, sid, role) VALUES ('Lisa', 'Alberti', 'lalberti', 'alberti', 3391126787, '100 Valley Glen Drive, Morrisville, NC 27560', 'lalberti@yahoo.com', 123405678, 30003, 'mechanic')
 SELECT *
   FROM dual;
-  
-UPDATE Mechanic SET rate=35 where eid=132457689 AND sid = 30001;
-UPDATE Mechanic SET rate=35 where eid=314275869 AND sid = 30001;
-UPDATE Mechanic SET rate=35 where eid=241368579 AND sid = 30001;
-UPDATE Mechanic SET rate=25 where eid=423186759 AND sid = 30002;
-UPDATE Mechanic SET rate=25 where eid=123789456 AND sid = 30002;
-UPDATE Mechanic SET rate=25 where eid=789123456 AND sid = 30002;
-UPDATE Mechanic SET rate=25 where eid=125689347 AND sid = 30002;
-UPDATE Mechanic SET rate=22 where eid=347812569 AND sid = 30003;
-UPDATE Mechanic SET rate=22 where eid=123456780 AND sid = 30003;
-UPDATE Mechanic SET rate=22 where eid=123456708 AND sid = 30003;
-UPDATE Mechanic SET rate=22 where eid=123456078 AND sid = 30003;
-UPDATE Mechanic SET rate=22 where eid=123450678 AND sid = 30003;
-UPDATE Mechanic SET rate=22 where eid=123405678 AND sid = 30003;
 
+UPDATE Mechanic SET rate=35 where eid=132457689 AND sid = 30001;
+
+UPDATE Mechanic SET rate=35 where eid=314275869 AND sid = 30001;
+
+UPDATE Mechanic SET rate=35 where eid=241368579 AND sid = 30001;
+
+UPDATE Mechanic SET rate=25 where eid=423186759 AND sid = 30002;
+
+UPDATE Mechanic SET rate=25 where eid=123789456 AND sid = 30002;
+
+UPDATE Mechanic SET rate=25 where eid=789123456 AND sid = 30002;
+
+UPDATE Mechanic SET rate=25 where eid=125689347 AND sid = 30002;
+
+UPDATE Mechanic SET rate=22 where eid=347812569 AND sid = 30003;
+
+UPDATE Mechanic SET rate=22 where eid=123456780 AND sid = 30003;
+
+UPDATE Mechanic SET rate=22 where eid=123456708 AND sid = 30003;
+
+UPDATE Mechanic SET rate=22 where eid=123456078 AND sid = 30003;
+
+UPDATE Mechanic SET rate=22 where eid=123450678 AND sid = 30003;
+
+UPDATE Mechanic SET rate=22 where eid=123405678 AND sid = 30003;
 
 -- INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,1);
 -- INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,2);

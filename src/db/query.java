@@ -48,33 +48,54 @@ public class query {
                     // Skip the line
                     continue;
                 }
-                // If the line is not empty
-                if (!line.isEmpty() && !line.endsWith(";")) {
-                    // Add the line to the current query
-                    currentQuery += line;
-                    // If the line does not end with a comma
-                    if (!line.endsWith(",")) {
-                        // Add a space to currentQuery
-                        currentQuery += " ";
+                // If line is "", ");", or "/", then add the query to the list
+                if ((line.isBlank() || line.equals(");") || line.equals("/"))) {
+                    // If current query is empty, continue
+                    if (currentQuery.isBlank()) {
+                        continue;
                     }
-                }
-                // If the line ends with a semicolon
-                if (line.endsWith(";")) {
-                    // Add the line to the current query (without the semicolon)
-                    currentQuery += line.substring(0, line.length() - 1);
-                    // Add the query to the list of queries
+                    // Trim the current query
+                    currentQuery = currentQuery.trim();
+                    // If line is );, add ) to the query
+                    if (line.equals(");")) {
+                        currentQuery += ")";
+                    }
+                    // If currentQuery ends with ;, remove the ;
+                    if (!line.equals("/") && currentQuery.endsWith(";")) {
+                        currentQuery = currentQuery.substring(0, currentQuery.length() - 1);
+                    }
+                    // Add the query to the list
                     queries.add(currentQuery);
                     // Reset the current query
                     currentQuery = "";
+                    // Skip the line
+                    continue;
                 }
-                
+                // Otherwise, add the line to the current query
+                else {
+                    currentQuery += line + " ";
+                }
+            }
+            // If the current query is not empty
+            if (!currentQuery.isEmpty()) {
+                // Add the current query to the list of queries
+                queries.add(currentQuery);
             }
             // Execute all the queries
             for (String query : queries) {
                 // Print out query (debugging)
                 // System.out.println(query);
                 // Execute the query
-                JDBC.executeQuery(query);
+                // Execute it as a query if it's not an update
+                if (!query.startsWith("UPDATE")) {
+                    JDBC.executeQuery(query);
+                }
+                // Execute it as an update if it is an update
+                else {
+                    // If the update fails, throw an exception
+                    if (!JDBC.executeUpdate(query))
+                        throw new Exception("Update failed");
+                }
             }
             // Close the scanner
             scanner.close();
@@ -95,63 +116,13 @@ public class query {
      * @return table name with matching username and password, otherwise NULL
      */
     public static String checkCredentials(String username, String password) {
-        // Possible tables: MANAGER, RECEPTIONIST, MECHANIC, CUSTOMER
-        // Query manager table
+        // Query the employee table
         try {
             // Query the manager table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM MANAGER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + password + "'");
+            ResultSet result = JDBC.executeQuery("SELECT * FROM Employee WHERE username = '" + username + "' AND password = '" + password + "'");
             // If the query returns a result
             if (result.next()) {
-                // Return the table name
-                return "MANAGER";
-            }
-        } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing query");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
-        }
-        // Query receptionist table
-        try {
-            // Query the receptionist table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM RECEPTIONIST WHERE USERNAME = '" + username + "' AND PASSWORD = '" + password + "'");
-            // If the query returns a result
-            if (result.next()) {
-                // Return the table name
-                return "RECEPTIONIST";
-            }
-        } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing query");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
-        }
-        // Query mechanic table
-        try {
-            // Query the mechanic table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM MECHANIC WHERE USERNAME = '" + username + "' AND PASSWORD = '" + password + "'");
-            // If the query returns a result
-            if (result.next()) {
-                // Return the table name
-                return "MECHANIC";
-            }
-        } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing query");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
-        }
-        // Query customer table
-        try {
-            // Query the customer table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM CUSTOMER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + password + "'");
-            // If the query returns a result
-            if (result.next()) {
-                // Return the table name
-                return "CUSTOMER";
+                return result.getString("role");
             }
         } catch (java.sql.SQLException e) {
             // Print an error message
@@ -161,7 +132,7 @@ public class query {
             System.exit(1);
         }
         // If no matching username and password is found
-        return null;
+        return "";
     }
 
     /**
@@ -174,7 +145,7 @@ public class query {
         // Possible tables: MANAGER, RECEPTIONIST, MECHANIC, CUSTOMER
         try {
             // Query all the tables at once
-            ResultSet result = JDBC.executeQuery("SELECT * FROM MANAGER, RECEPTIONIST, MECHANIC, CUSTOMER WHERE USERNAME = '" + username + "'");
+            ResultSet result = JDBC.executeQuery("SELECT * FROM Manager, Receptionist, Mechanic, Customer WHERE username = '" + username + "'"); 
             // If the query returns a result
             if (result.next()) {
                 // Return true
@@ -199,7 +170,7 @@ public class query {
     public static boolean findStoreID(String storeID) {
         try {
             // Query the store table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM SERVICE_CENTER WHERE SID = " + storeID);
+            ResultSet result = JDBC.executeQuery("SELECT * FROM Service_Center WHERE SID = " + storeID);
             // If the query returns a result
             if (result.next()) {
                 // Return true
@@ -222,60 +193,63 @@ public class query {
     public static boolean addStore(String[] responses) {
         try {
             // Insert into the store table
-            ResultSet result = JDBC.executeUpdate('INSERT INTO Service_Center (
-                "sid",
-                "address", 
-                "mechanic_minimum_rate", 
-                "mechanic_maximum_rate") VALUES (' +
-                    responses[0] + ',' + 
-                    responses[1] + ',' + 
-                    responses[8] + ',' + 
-                    responses[9] + ')'
-            );
-
+            if(!JDBC.executeUpdate(
+                "INSERT INTO Service_Center (" +
+                '"' + "sid" + '"' + ',' +
+                '"' + "address" + '"' + ',' +
+                '"' + "mechanic_minimum_rate" + '"' + ',' +
+                '"' + "mechanic_maximum_rate) VALUES (" +
+                responses[0] + ',' +
+                responses[1] + ',' +
+                responses[8] + ',' +
+                responses[9] + ')'
+            )) {
+                throw new java.sql.SQLException("Error updating service center");
+            }
             // If the query inserts a row
-            if (result.next()) {
-                ResultSet result = JDBC.executeUpdate('INSERT INTO Employee (
-                "first_name",
-                "last_name",
-                "username", 
-                "password", 
-                "eid",
-                "role",
-                "sid") VALUES (' +
-                    responses[2] + ',' + 
-                    responses[3] + ',' + 
-                    responses[4] + ',' + 
-                    responses[5] + ',' + 
-                    responses[7] + ',' + 
-                    '"M",' +
-                    responses[0] + ')' 
-                );
-                // If the query inserts a row
-                if (result.next()) {
-                    return true;
-                }
+            if (!JDBC.executeUpdate(
+                "INSERT INTO Employee (" +
+                '"' + "first_name" + '"' + ',' +
+                '"' + "last_name" + '"' + ',' +
+                '"' + "username" + '"' + ',' +
+                '"' + "password" + '"' + ',' +
+                '"' + "eid" + '"' + ',' +
+                '"' + "role" + '"' + ',' +
+                '"' + "sid) VALUES (" +
+                responses[2] + ',' + 
+                responses[3] + ',' + 
+                responses[4] + ',' + 
+                responses[5] + ',' + 
+                responses[7] + ',' + 
+                "M," +
+                responses[0] + ')' 
+            )) {
+                throw new java.sql.SQLException("Error updating duration details");
             }
         } catch (java.sql.SQLException e) {
+            /*
             // Print an error message
             System.out.println("Error executing query");
             e.printStackTrace();
             // Quit the program
             System.exit(1);
+            */
+            return false;
         }
-        // If something goes wrong
-        return false;
+        // If there aren't any errors
+        return true;
     }
 
     /**
-     * Find existing service id
+     * Find an existing service id
      * 
      * @param serviceID the service id to search for
+     * @returns True if the service ID already exists, otherwise false
      */
-    public static boolean findServiceNumber(String serviceID) {
+    public static boolean checkDuplicateServiceID(String serviceID) {
         try {
             // Query the service table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM SERVICEs WHERE NUMBER = " + serviceID);
+            ResultSet result = JDBC.executeQuery("SELECT * FROM Services WHERE serviceId = '" + serviceID + "'");
             // If the query returns a result
             if (result.next()) {
                 // Return true
@@ -293,14 +267,15 @@ public class query {
     }
 
     /**
-     * Find existing service category
+     * Validate the existence of a service category
      * 
-     * @param serviceCat the service category to search for
+     * @param repairCategory the repair category to search for
+     * @returns True if the service category exists, otherwise false
      */
-    public static boolean findServiceCategory(String serviceCat) {
+    public static boolean validateRepairCategory(String repairCategory) {
         try {
             // Query the service table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM Services WHERE repair_category = " + serviceCat);
+            ResultSet result = JDBC.executeQuery("SELECT * FROM Services WHERE repair_category = '" + repairCategory + "'");
             // If the query returns a result
             if (result.next()) {
                 // Return true
@@ -323,40 +298,41 @@ public class query {
     public static boolean addService(String[] responses) {
         try {
             // Insert into the store table
-            ResultSet result = JDBC.executeUpdate('INSERT INTO Services (
-                "serviceName",
-                "serviceNumber",
-                "repair_category") VALUES (' +
+            if(!JDBC.executeUpdate(
+                "INSERT INTO Services (" +
+                '"' + "serviceName" + '"' + ',' +
+                '"' + "serviceNumber" + '"' + ',' +
+                '"' + "repairCategory) VALUES (" +
                     responses[1] + ',' + 
                     responses[4] + ',' + 
                     responses[0] + ')'
-            );
-
-            // If the query inserts a row
-            if (result.next()) {
-                ResultSet result = JDBC.executeUpdate('INSERT INTO Duration_Details (
-                "manf",
-                "dur",
-                "serviceName",
-                "serviceNumber") VALUES (' +
+            )) {
+                throw new java.sql.SQLException("Error updating services");
+            }
+            if (!JDBC.executeUpdate(
+                    "INSERT INTO Duration_Details (" +
+                    '"' + "manf" + '"' + ',' +
+                    '"' + "dur" + '"' + ',' +
+                    '"' + "serviceName" + '"' + ',' +
+                    '"' + "serviceNumber) VALUES (" +
                     responses[3] + ',' + 
                     responses[2] + ',' + 
                     responses[1] + ',' + 
-                    responses[4] + ')' 
-                );
-                // If the query inserts a row
-                if (result.next()) {
-                    return true;
+                    responses[4] + ')'
+                )) {
+                    throw new java.sql.SQLException("Error updating duration details");
                 }
-            }
         } catch (java.sql.SQLException e) {
+            /*
             // Print an error message
             System.out.println("Error executing query");
             e.printStackTrace();
             // Quit the program
             System.exit(1);
+            */
+            return false;
         }
-        // If something goes wrong
-        return false;
+        // If there aren't any errors
+        return true;
     }
 }

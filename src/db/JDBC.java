@@ -90,9 +90,8 @@ public class JDBC {
         }
         
         // Load the tables from the SQL files
-        // TODO: fix populating.sql so it doesn't crash
-        query.runSQL("set_up.sql");
-        //query.runSQL("populating.sql");
+        query.runSQL("base_logic.sql");
+        query.runSQL("populating.sql");
     }        
     
 
@@ -118,6 +117,7 @@ public class JDBC {
         // Execute the query
         ResultSet resultSet = null;
         try {
+            System.out.println(query);
             resultSet = statement.executeQuery(query);
         // If the query can't be executed
         } catch (java.sql.SQLException e) {
@@ -136,29 +136,38 @@ public class JDBC {
      * 
      * @param update the update to execute
      */
-    public static void executeUpdate(String update) {
+    public static boolean executeUpdate(String update) {
         // Create new statement
         Statement statement = null;
         try {
             statement = connection.createStatement();
         } catch (java.sql.SQLException e) {
+            /*
             // Print an error message
             System.out.println("Error creating statement");
             e.printStackTrace();
             // Quit the program
             System.exit(1);
+            */
+            return false;
         }
 
         // Execute the update
         try {
+            System.out.println(update);
             statement.executeUpdate(update);
         // If the update can't be executed
         } catch (java.sql.SQLException e) {
+            /*
             // Print an error message
             System.out.println("Error executing update");
             e.printStackTrace();
             // Quit the program
             System.exit(1);
+            */
+            return false;
         }
+        // Return true if the update was successful
+        return true;
     }
 }
