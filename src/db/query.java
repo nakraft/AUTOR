@@ -73,11 +73,20 @@ public class query {
                 }
                 // Otherwise, add the line to the current query
                 else {
+                    // If line has --, remove it and everything after it
+                    if (line.contains("--")) {
+                        line = line.substring(0, line.indexOf("--")).trim();
+                    }
                     currentQuery += line + " ";
                 }
             }
-            // If the current query is not empty
+            // If we're done reading input, check to see if we have a query that needs added
             if (!currentQuery.isEmpty()) {
+                currentQuery = currentQuery.trim();
+                // If currentQuery ends with ;, remove the ;
+                if (currentQuery.endsWith(";")) {
+                    currentQuery = currentQuery.substring(0, currentQuery.length() - 1);
+                }
                 // Add the current query to the list of queries
                 queries.add(currentQuery);
             }
@@ -186,8 +195,6 @@ public class query {
         // If no matching store id is found
         return false;
     }
-
-    
 
     /**
      * Find an existing service id
