@@ -1,8 +1,9 @@
 package ui;
 
 // Import DB classes
-import db.query;
-import db.JDBC;
+import db.JDBC; // JDBC
+import db.adminQuery; // Admin queries
+
 // Import File IO
 import java.io.*;
 // Import arraylist
@@ -125,7 +126,7 @@ public class adminUI {
                     if (serviceInfo != null) {
                         for (int i = 0; i < serviceInfo.length; i++) {
                             // TODO: add service to database
-                            // query.addService(serviceInfo[i][0], serviceInfo[i][1], serviceInfo[i][2]);
+                            adminQuery.addService(serviceInfo[i]);
                         }
                     }
                     else {
@@ -136,8 +137,7 @@ public class adminUI {
                     String[][] storeInfo = parseCSV(adminSystemSetUp.getPromptResponse(1));
                     if (storeInfo != null) {
                         for (int i = 0; i < storeInfo.length; i++) {
-                            // TODO: add store to database
-                           //  query.addStore(storeInfo[i][0], storeInfo[i][1], storeInfo[i][2], storeInfo[i][3], storeInfo[i][4], storeInfo[i][5], storeInfo[i][6], storeInfo[i][7], storeInfo[i][8], storeInfo[i][9]);
+                            adminQuery.addStore(storeInfo[i]);
                         }
                     }
                     else {
@@ -159,7 +159,7 @@ public class adminUI {
         while (true) {
             switch (adminAddNewStore.display()) {
                 case 1: // Add Store
-                    if (query.addStore(adminAddNewStore.getPromptResponses())) {
+                    if (adminQuery.addStore(adminAddNewStore.getPromptResponses())) {
                         System.out.println("Store added successfully");
                     }
                     else {
@@ -182,11 +182,11 @@ public class adminUI {
             switch (adminAddNewService.display()) {
                 case 1: // Add Service
                     // raise error if category doesn't exist
-                    if(!query.validateRepairCategory(adminAddNewService.getPromptResponse(0))) {
+                    if(!adminQuery.validateRepairCategory(adminAddNewService.getPromptResponse(0))) {
                         adminAddNewService.setFeedback("Service category doesn't exist. Please try again.");
                         break;
                     }
-                    if (query.addService(adminAddNewService.getPromptResponses())) {
+                    if (adminQuery.addService(adminAddNewService.getPromptResponses())) {
                         adminAddNewService.setFeedback("Service added successfully");
                     }
                     else {
