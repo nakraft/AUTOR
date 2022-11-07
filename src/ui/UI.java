@@ -93,16 +93,16 @@ public class UI {
                 case "1":
                     switch( query.checkCredentials( responses[0], responses[1] ) ) {
                         case "manager":
-                            managerMenu( responses[0] );
+                            managerMenu();
                             break;
                         case "receptionist":
-                            receptionistMenu( responses[0] );
+                            receptionistMenu( );
                             break;
                         case "mechanic":
-                            mechanicMenu( responses[0] );
+                            mechanicMenu();
                             break;
                         case "customer":
-                            customerMenu( responses[0] );
+                            customerMenu();
                             break;
                         default:
                             System.out.println("Invalid credentials. Please try again.");
@@ -264,10 +264,8 @@ public class UI {
      * Select Operational Hours (Toggle Saturday Hours)
      * Set Up Service Prices
      * Add New Employee
-     *
-     * @param username The username of the manager
      */
-    public static void managerMenu(String username) {
+    public static void managerMenu() {
     }
 
     /**
@@ -276,7 +274,7 @@ public class UI {
      * Add new customer profile
      * Find customers with pending invoices
      */
-    public static void receptionistMenu(String username) {
+    public static void receptionistMenu() {
     }
 
     /**
@@ -286,10 +284,8 @@ public class UI {
      * Request Time Off
      * Request Swap Shift
      * Accept/Reject Swap Shift
-     * 
-     * @param username The username of the mechanic
      */
-    public static void mechanicMenu(String username) {
+    public static void mechanicMenu() {
         int selection = 1;
         System.out.println("##################################");
         System.out.println("##### Mechanic: Landing Page #####");
@@ -305,17 +301,170 @@ public class UI {
         } while (!(selection >= 1 && selection <= 4));
         switch (selection) {
             case 1:
-                new ViewSchedule().run();
+                 viewSchedule();
                 break;
             case 2:
-                new RequestTimeOff().run();
+                requestTimeOff();
                 break;
             case 3:
-                new RequestSwap().run();
+                requestSwap();
                 break;
             case 4:
-                new AcceptRejectSwap().run();
+                AcceptRejectSwap();
                 break;
+        }
+    }
+    public static void viewSchedule()
+    {
+        try (Scanner view_schedule = new Scanner(System.in)) {
+            System.out.print("\nList of Time Slot When Mechanic is Booked for Service: ");
+            String mechanic_booked_time = view_schedule.nextLine();
+            System.out.println();
+
+            System.out.println("1.  Go Back");
+
+            System.out.print("\nEnter your choice here: ");
+
+            String view_schedule_value = view_schedule.nextLine();
+            switch(view_schedule_value)
+            {
+                case "1":
+                    mechanicMenu();
+                    break;
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    viewSchedule();
+                    break;
+            }
+        }
+    }
+
+    public static void requestTimeOff()
+    {
+        try (Scanner request_time_off = new Scanner(System.in)) {
+            System.out.print("\nTime Slots when Mechanic wants off: ");
+            String mechanic_time_off = request_time_off.nextLine();
+            System.out.println();
+
+            System.out.println("1.  Send the Request");
+            String send_the_request = request_time_off.nextLine();
+            System.out.println("2.  Go Back");
+
+            System.out.print("\nEnter your choice here: ");
+
+            String request_time_off_value = request_time_off.nextLine();
+            switch(request_time_off_value)
+            {
+                case "1":
+                    break;
+                case "2":
+                    mechanicMenu();
+                    break;    
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    requestTimeOff();
+                    break;
+            }
+        }
+    }
+
+    public static void requestSwap()
+    {
+        try (Scanner request_swap = new Scanner(System.in)) {
+            System.out.print("\nTimeSlot range to swap: ");
+            String time_slot_swap = request_swap.nextLine();
+            System.out.print("\nEmployee ID of Mechanic that is requested for swap: ");
+            String mechanic_requested_swap = request_swap.nextLine();
+            System.out.print("\nTimeSlot range of the requested mechanic that is interested: ");
+            String interested_mechanic = request_swap.nextLine();
+            System.out.println();
+
+            System.out.println("1.  Send the Request");
+            String send_the_request = request_swap.nextLine();
+            System.out.println("2.  Go Back");
+
+            System.out.print("\nEnter your choice here: ");
+
+            String request_swap_value = request_swap.nextLine();
+            switch(request_swap_value)
+            {
+                case "1":
+                    break;
+                case "2":
+                    mechanicMenu();
+                    break;    
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    requestSwap();
+                    break;
+            }
+        }
+    }
+
+    public static void AcceptRejectSwap()
+    {
+        try (Scanner accept_reject_swap = new Scanner(System.in)) {
+            System.out.print("\nRequest ID: ");
+            String request_id = accept_reject_swap.nextLine();
+            System.out.print("\nRequestinf Mechanic's Name: ");
+            String requesting_mechanic_name = accept_reject_swap.nextLine();
+            System.out.print("\nTimeSlot range requested: ");
+            String timeslot_range_requested = accept_reject_swap.nextLine();
+            System.out.println();
+
+            System.out.println("1.  Manage Swap Request");
+            String manage_swap_request = accept_reject_swap.nextLine();
+            System.out.println("2.  Go Back");
+
+            System.out.print("\nEnter your choice here: ");
+
+            String accept_reject_swap_value = accept_reject_swap.nextLine();
+            switch(accept_reject_swap_value)
+            {
+                case "1":
+                    manageSwapRequest();
+                    break;
+                case "2":
+                    mechanicMenu();
+                    break;    
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    AcceptRejectSwap();
+                    break;
+            }
+        }
+    }
+
+    public static void manageSwapRequest()
+    {
+        try (Scanner manage_swap_request = new Scanner(System.in)) {
+            System.out.print("\nRequest ID: ");
+            String request_id = manage_swap_request.nextLine();
+            System.out.println();
+
+            System.out.println("1.  Accept Swap");
+            String accept_swap = manage_swap_request.nextLine();
+            System.out.println("2.  Reject Swap");
+            String reject_swap = manage_swap_request.nextLine();
+            System.out.println("3.  Go Back");
+
+            System.out.print("\nEnter your choice here: ");
+
+            String accept_reject_swap_value = manage_swap_request.nextLine();
+            switch(accept_reject_swap_value)
+            {
+                case "1":
+                    break;
+                case "2":
+                    break;
+                case "3":
+                    mechanicMenu();
+                    break;    
+                default:
+                    System.out.println("\n\nInvalid Input");
+                    manageSwapRequest();
+                    break;
+            }
         }
     }
 
@@ -332,10 +481,8 @@ public class UI {
      * Invoices
      *  View invoice details
      *  Pay invoices
-     * 
-     * @param username The username of the customer
      */
-    public static void customerMenu(String username) {
+    public static void customerMenu() {
     }
 
 
