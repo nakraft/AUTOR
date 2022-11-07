@@ -1,7 +1,10 @@
 package ui;
 
+import java.util.Scanner;
+
 // Import DB classes
 import db.JDBC;
+import db.mechanicQuery;
 import db.query;
 
 /**
@@ -134,6 +137,7 @@ public class mechanicUI {
         // TODO: Set lines
         while (true) {
             // Display menu
+            mechanicQuery.ViewSchedule();
             switch (mechanicViewSchedule.display()) {
                 case 1: // Go Back
                     mechanicLanding();
@@ -152,6 +156,7 @@ public class mechanicUI {
                 case 1: // Send Request
                     // TODO: Send request to database
                     // TODO: Display status of request
+                    mechanicQuery.RequestedTimeOff(mechanicRequestTimeOff.getPromptResponses());
                     break;
                 case 2: // Go Back
                     mechanicLanding();
@@ -168,8 +173,7 @@ public class mechanicUI {
             // Display menu
             switch (mechanicRequestSwap.display()) {
                 case 1: // Send Request
-                    // TODO: Send request to database
-                    // TODO: Display status of request
+                mechanicQuery.RequestedSwap(mechanicRequestSwap.getPromptResponses());
                     break;
                 case 2: // Go Back
                     mechanicLanding();
@@ -188,7 +192,7 @@ public class mechanicUI {
             // Display menu
             switch (mechanicAcceptRejectSwap.display()) {
                 case 1: // Manage Swap Requests
-                    mechanicManageSwapRequests();
+                    mechanicQuery.AcceptRejectSwap();
                     break;
                 case 2: // Go Back
                     mechanicLanding();
@@ -207,6 +211,7 @@ public class mechanicUI {
                 case 1: // Accept Swap Request
                     // TODO: Accept swap request
                     // TODO: Display status of request
+                    mechanicQuery.ManageSwapRequests(mechanicManageSwapRequests.getPromptResponses());
                     break;
                 case 2: // Reject Swap Request
                     // TODO: Reject swap request
