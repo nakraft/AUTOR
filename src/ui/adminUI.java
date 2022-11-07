@@ -37,7 +37,7 @@ public class adminUI {
         null, // Lines
         new String[] {
             "Enter the filename of the service file",
-            "Enter the filename of the store file",
+            "Enter the filename of the store file"
         }, // Prompts
         new String[] {
             "Upload Service Information", // remain, loadServiceInfoFromCSV
