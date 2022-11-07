@@ -16,10 +16,9 @@ public class UI {
     // Scanner for user input
     public static Scanner input = new Scanner(System.in);
 
-    // Current Store for the user
-    public static int currentStore = 0;
     // Current User
-    public static String currentUser = null;
+    public static String current_eid = null;
+    public static String current_sid = null;
     
     /**************************************************************************
      * Menus
@@ -97,28 +96,32 @@ public class UI {
             switch (loginMenu.display()) {
                 // Sign in
                 case 1:
-                    switch( query.checkCredentials(loginMenu.getPromptResponse(0), loginMenu.getPromptResponse(1)) ) {
-                        case "manager":
-                            currentUser = loginMenu.getPromptResponse(0);
-                            managerUI.managerLanding();
-                            break;
-                        case "receptionist":
-                            currentUser = loginMenu.getPromptResponse(0);
-                            receptionistUI.receptionistLanding();
-                            break;
-                        case "mechanic":
-                            currentUser = loginMenu.getPromptResponse(0);
-                            mechanicUI.mechanicLanding();
-                            break;
+                    String[] results = query.checkCredentials(loginMenu.getPromptResponse(0), loginMenu.getPromptResponse(1));
+                    // If null, the creentials are invalid
+                    if (results == null) {
+                        loginMenu.setFeedback("Invalid credentials");
+                        break;
+                    }
+                   // Set eid, sid, and user type
+                    setCurrentEID(results[0]);
+                    setCurrentSID(results[1]);
+                    String type = results[2];
+                    // Go to the appropriate landing page
+                    switch (type) {
                         case "customer":
-                            currentUser = loginMenu.getPromptResponse(0);
                             customerUI.customerLanding();
                             break;
+                        case "manager":
+                            managerUI.managerLanding();
+                            break;
+                        case "mechanic":
+                            mechanicUI.mechanicLanding();
+                            break;
+                        case "receptionist":
+                            receptionistUI.receptionistLanding();
+                            break;
                         default:
-                            // Invalid credentials
-                            System.out.println("Invalid credentials. Please try again.");
-                            // Wait for user to press enter
-                            input.nextLine();
+                            loginMenu.setFeedback("Invalid user type");
                             break;
                     }
                 // Return to main menu
@@ -194,4 +197,36 @@ public class UI {
             System.out.flush();
         }
     }
+
+    /**************************************************************************
+     * Getters & Setters
+     *************************************************************************/
+
+    /**
+     * Get the current employee ID
+    */
+    public static String getCurrentEID() {
+        return current_eid;
+    }
+
+    /**
+     * Set the current employee ID
+     */
+    private static void setCurrentEID(String eid) {
+        current_eid = eid;
+    }
+
+    /**
+     * Get the current store ID
+    */
+    public static String getCurrentSID() {
+        return current_sid;
+    }
+
+    /**
+     * Set the current store ID
+     */
+    private static void setCurrentSID(String sid) {
+        current_sid = sid;
+    }    
 }

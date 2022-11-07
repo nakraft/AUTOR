@@ -120,18 +120,24 @@ public class query {
     /**
      * Check credentials
      * 
-     * @param username
-     * @param password
-     * @return table name with matching username and password, otherwise NULL
+     * @param username Username to check
+     * @param password Password to check
+     * @return eid, sid, and role of user, or null if user does not exist
      */
-    public static String checkCredentials(String username, String password) {
+    public static String[] checkCredentials(String username, String password) {
         // Query the employee table
         try {
             // Query the manager table
-            ResultSet result = JDBC.executeQuery("SELECT * FROM Employee WHERE username = '" + username + "' AND password = '" + password + "'");
+            ResultSet result = JDBC.executeQuery("SELECT eid, sid, role FROM Employee WHERE username = '" + username + "' AND password = '" + password + "'");
             // If the query returns a result
             if (result.next()) {
-                return result.getString("role");
+                String[] credentials = new String[] { result.getString("eid"), result.getString("sid"), result.getString("role") };
+                result.close();
+                return credentials;
+            }
+            // If the query does not return a result
+            else {
+                return null;
             }
         } catch (java.sql.SQLException e) {
             // Print an error message
@@ -141,7 +147,7 @@ public class query {
             System.exit(1);
         }
         // If no matching username and password is found
-        return "";
+        return null;
     }
 
     /**

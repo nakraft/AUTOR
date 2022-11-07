@@ -1,8 +1,7 @@
 package ui;
 
 // Import DB classes
-import db.JDBC;
-import db.query;
+import db.customerQuery;
 
 /**
  * CustomerUI class, UI for customer
@@ -304,9 +303,35 @@ public class customerUI {
      * Customer: View Profile
      */
     public static void customerViewProfile() {
-        // TODO: Query database for profile via location and customer username
-        // TODO: Query database for cars via location and customer username
-        // Add profile information and cars to menu lines
+        // Query database for customer profile
+        String[] profile = customerQuery.getProfile();
+        // Query database for cars owned by customer
+        String[][] cars = customerQuery.getVehicles();
+
+        // Create a new String array with the profile, then all cars
+        String[] lines = new String[profile.length + cars.length * cars[0].length];
+        // Customer ID:
+        lines[0] = "Customer ID: " + profile[0];
+        // Full Name:
+        lines[1] = "Full Name: " + profile[1];
+        // Address:
+        lines[2] = "Address: " + profile[2];
+        // Email Address:
+        lines[3] = "Email Address: " + profile[3];
+        // Phone Number:
+        lines[4] = "Phone Number: " + profile[4];
+        for (int i = 0; i < cars.length; i++) {
+            // Vehicle i VIN:
+            lines[profile.length + i * cars[0].length] = "Vehicle " + (i + 1) + " VIN: " + cars[i][0];
+            // Vehicle i Manufacturer:
+            lines[profile.length + i * cars[0].length + 1] = "Vehicle " + (i + 1) + " Manufacturer: " + cars[i][1];
+            // Vehicle i Mileage:
+            lines[profile.length + i * cars[0].length + 2] = "Vehicle " + (i + 1) + " Mileage: " + cars[i][2];
+            // Vehicle i Year:
+            lines[profile.length + i * cars[0].length + 3] = "Vehicle " + (i + 1) + " Year: " + cars[i][3];
+        }
+        // Set menu lines to the new String array
+        customerViewProfile.setLines(lines);
         // Display profile
         customerViewProfile.display();
         // Return to previous menu
@@ -322,7 +347,7 @@ public class customerUI {
             // Display menu
             switch( customerAddCar.display() ) {
                 case 1: // Add Car
-                    // TODO: Add car to database
+                    customerQuery.addVehicle(customerAddCar.getPromptResponses());
                     break;
                 case 2: // Go Back
                     customerLanding();
@@ -339,7 +364,7 @@ public class customerUI {
             // Display menu
             switch( customerDeleteCar.display() ) {
                 case 1: // Delete Car
-                    // TODO: Delete car from database
+                    customerQuery.deleteVehicle(customerDeleteCar.getPromptResponses()[0]);
                     break;
                 case 2: // Go Back
                     customerLanding();
