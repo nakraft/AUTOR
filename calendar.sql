@@ -171,9 +171,11 @@ FROM duration_details dd
 WHERE dd.manf = 'Honda' AND ((dd.serviceNumber = 101 AND dd.serviceName = 'Belt Replacement') OR (dd.serviceNumber = 110 AND dd.serviceName = 'Wheel Alignment'));
 
 -- get all the timeslots where the service could fit.
-SELECT c.time_slot_week, c.time_slot_day, c.timeslot, c.eid 
+SELECT c.timeslot_week, c.timeslot_day, c.timeslot, c.eid 
 FROM Calendar c
-WHERE sid = 30001 AND  -- this is the customers service center id
-        EXISTS (SELECT * FROM Calendar c2 WHERE c2.sid = 30001 AND c2.eid = c.eid AND c2.id = c.id + 1); -- if more than 1 hour was scheduled, we would have to jump ahead and do 2 EXISTS statements with c3.id = c.id + 2, etc
+WHERE sid = 30001 AND c.invoice_id IS NULL AND 2 - 1 = (SELECT COUNT(c2.id) 
+                                                        FROM Calendar c2
+                                                        WHERE c2.id > c.id AND c2.id < c.id + 2 AND c.eid = c2.eid AND c2.invoice_id IS NULL;)-- 2 is duration and should be a variable
+GROUP BY c.eid, c.timeslot_week, c.timeslot_day, c.timeslot;
 
 -- TODO: the id here needs to be updated so that in each service center, id is growing to keep track of the calendar slot. Multiple ids can exist, so the full key is eid, sid, id
