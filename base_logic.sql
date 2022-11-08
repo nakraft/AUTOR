@@ -39,6 +39,25 @@ CREATE TABLE Mechanic (
     FOREIGN KEY (sid) REFERENCES Service_Center(sid)
         ON DELETE CASCADE
 );
+-- Sequence for auto incrementing SwapRequestID
+CREATE SEQUENCE auto_increment_swap_request_id START WITH 1 INCREMENT BY 1 CACHE 100;
+
+--SwapRequests
+create table SwapRequests(
+    requestId integer primary key,
+    sid NUMBER(10),
+    eid number(9),
+    eidForSwap number(9),
+    initialWeek number(1),
+    initialDay number(2),
+    initialStartTimeSlot number(2),
+    initialEndTimeSlot number(2),
+    desiredWeek number(1),
+    desiredDay number(2),
+    desiredStartTimeSlot number(2),
+    desiredEndTimeSlot number(2),
+    status number(1),
+);
 
 CREATE TABLE Receptionist (
 	eid NUMBER,
