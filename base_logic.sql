@@ -22,7 +22,6 @@ CREATE TABLE Employee (
 	password VARCHAR(50),
 	address VARCHAR(100),
 	email VARCHAR(50),
-    start_date VARCHAR(20),
 	sid NUMBER(10) NOT NULL,
 	role VARCHAR(20) NOT NULL, 
 	PRIMARY KEY (eid, sid),
@@ -158,14 +157,16 @@ CREATE TABLE Vehicle (
 
 CREATE TABLE Invoice (
 	id NUMBER(10),
+	serviceName VARCHAR(50),
+    serviceNumber NUMBER(10),
 	total_amount REAL,
-	amount_paid REAL,
+	amount_paid REAL DEFAULT 0,
     sid NUMBER(10) NOT NULL,
-    timeslot_start NUMBER(1) NOT NULL,
-    timeslot_end NUMBER(1) NOT NULL,
+    timeslot_id_start NUMBER(10) NOT NULL,
+    timeslot_id_end NUMBER(10) NOT NULL,
 	vin VARCHAR(10) NOT NULL,
 	eid NUMBER(9) NOT NULL,
-	PRIMARY KEY (id),
+	PRIMARY KEY (id, serviceName, serviceNumber),
 	FOREIGN KEY (sid) REFERENCES Service_Center,
 	FOREIGN KEY (vin) REFERENCES Vehicle,
     FOREIGN KEY (eid, sid) REFERENCES Mechanic
@@ -436,3 +437,13 @@ CREATE TRIGGER generate_mechanic_schedule
         END IF;
     END; 
 /
+
+CREATE TRIGGER invoice_propogate
+    AFTER INSERT ON INVOICE
+    FOR EACH ROW
+    BEGIN 
+        UPDATE Calendar 
+        SET invoice_id = :new.id
+        WHERE id >= :new.timeslot_id_start AND id <= :new.timeslot_id_end AND sid = :new.sid AND eid = :new.eid;
+    END; 
+/ 
