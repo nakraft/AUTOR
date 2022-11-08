@@ -3,12 +3,15 @@ package db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
-
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.*;
 import ui.UI;
 
 /**
@@ -17,7 +20,7 @@ import ui.UI;
 public class mechanicQuery {
     private static final int MIN_WORKING_MECHANICS = 3;
     private static final char[] INVALID_INPUT_ERROR_MESSAGE = null;
-    private static Integer[] timeSlotParameters;
+    public static  Integer[] timeSlotParameters;
     private static Integer[] initialTimeSlotParameters;
     private static Integer[] desiredTimeSlotParameters;
     private static Integer employeeIDForSwap;
@@ -26,10 +29,10 @@ public class mechanicQuery {
     /**
      * view schedule for mechanic
      */
-    public static String[][] ViewSchedule(){
+    public static String[] ViewSchedule(){
         ResultSet rs = null;
         HashMap<String, ArrayList<Integer>> schedule = new HashMap<String, ArrayList<Integer>>();
-        String[][] result = null;
+        String[] result = null;
         try {
             // Insert into the store table
             rs = JDBC.executeQuery(
@@ -58,17 +61,18 @@ public class mechanicQuery {
             }
 
             int scheduleCount = 1;
-            result = new String[schedule.size()][1];
-            for (Map.Entry<String, ArrayList<Integer>> scheduleEntry : schedule.entrySet()) {
-                String weekDay = scheduleEntry.getKey();
-                ArrayList<Integer> timeSlots = scheduleEntry.getValue();
+            result = new String[schedule.size()];
+            SortedSet<String> keys = new TreeSet<>(schedule.keySet());
+            for (String key : keys) {
+                String weekDay = key;
+                ArrayList<Integer> timeSlots = schedule.get(key);
                 Integer week = Integer.valueOf(weekDay.split("_")[0]);
                 Integer day = Integer.valueOf(weekDay.split("_")[1]);
                 Integer minTimeSlot = Collections.min(timeSlots);
                 Integer maxTimeSlot = Collections.max(timeSlots);
                 String startDate = convertToDate(week, day, minTimeSlot);
                 String endDate = convertToDate(week, day, maxTimeSlot);
-                result[scheduleCount - 1][0] = scheduleCount + ". " + startDate + " - " + endDate;
+                result[scheduleCount - 1] = scheduleCount + ". " + startDate + " - " + endDate;
                 scheduleCount++;
             }
             return result;
@@ -123,23 +127,22 @@ public class mechanicQuery {
      * Returns the query to view all work schedules for a given mechanic during
      * their requested time off
      */
-    public static boolean RequestedTimeOff(String[] responses) {
+    public static String[] RequestedTimeOff(String[] responses) {
         ResultSet rs = null;
+        ArrayList<String> list = new ArrayList<String>(); 
         try {
-
-            // check to see if the mechanic is scheduled to work during the requested time
-            // off
-            // file deepcode ignore NoStringConcat: <not needed>
-            rs = JDBC.executeQuery(viewTimeOffRequestsQuery(timeSlotParameters[0], timeSlotParameters[1],
-                    timeSlotParameters[2], timeSlotParameters[3]));
+           
+            // check to see if the mechanic is scheduled to work during the requested time off
+            rs = JDBC.executeQuery(viewTimeOffRequestsQuery(responses[0], responses[1],
+                    responses[2], responses[3]));
             if (rs.next()) {
-                System.out.println(
+                list.add(
                         "0\nUnable to allow time off since you are already scheduled for work within that time range.\nPlease request another time range instead.");
             }else {
                 // check to see if there are enough mechanics to cover the time off request
                 ResultSet rs2 = JDBC.executeQuery(
-                        viewWorkingMechanicsQuery(timeSlotParameters[0], timeSlotParameters[1],
-                        timeSlotParameters[2], timeSlotParameters[3]));
+                        viewWorkingMechanicsQuery(responses[0], responses[1],
+                        responses[2], responses[3]));
                 
                 while (rs2.next()) {
                     int count = 0;
@@ -149,7 +152,7 @@ public class mechanicQuery {
                         e.printStackTrace();
                     }
                     if (count < MIN_WORKING_MECHANICS) {
-                        System.out.println(
+                        list.add(
                                 "0\nUnable to allow time off since there are not enough mechanics to cover the time off request.\nPlease request another time range instead.");
                     }
                 }}
@@ -157,7 +160,7 @@ public class mechanicQuery {
             // file deepcode ignore DontUsePrintStackTrace: <not needed>
             e.printStackTrace();
         }
-        return true;
+        return list.toArray(new String[list.size()]);
     }
     /**
      * Handles functionality for request swap menu of mechanics
@@ -173,14 +176,14 @@ public class mechanicQuery {
             System.out.println("Successfully created swap request with employee ID: "
             + employeeIDForSwap);
             rs = JDBC.executeQuery(
-                viewTimeOffRequestsQuery(timeSlotParameters[0], timeSlotParameters[1], timeSlotParameters[2], timeSlotParameters[3])
+                viewTimeOffRequestsQuery(responses[0], responses[1], responses[2], responses[3])
             );
             if (!rs.next()) {
                 System.out.println(
                         "\nTime slot range is invalid. Try again with a valid time slot range.\n");
                 return false;
             }
-            rs = JDBC.executeQuery(viewWorkingMechanicsQuery(timeSlotParameters[0], timeSlotParameters[1], timeSlotParameters[2], timeSlotParameters[3]));
+            rs = JDBC.executeQuery(viewWorkingMechanicsQuery(responses[0], responses[1], responses[2], responses[3]));
 
             while (rs.next()) {
                 int count = rs.getInt("numMechanics");
@@ -198,28 +201,28 @@ public class mechanicQuery {
         } 
         return true;
     }
-    private static String viewTimeOffRequestsQuery(Integer week, Integer day, Integer timeSlotStart,
-            Integer timeSlotEnd) {
-        return "SELECT week, day, timeSlot"
+    private static String viewTimeOffRequestsQuery(String responses, String responses2, String responses3,
+            String responses4) {
+        return "SELECT timeslot_week, timeslot_day, timeSlot"
                 + " FROM Calendar"
-                + " WHERE id = " + UI.getCurrentEID()
-                + " WHERE sid = " + UI.getCurrentSID()
-                + " AND timeslot_week = " + week
-                + " AND timeslot_day = " + day
-                + " AND timeSlot >= " + timeSlotStart
-                + " AND timeSlot <= " + timeSlotEnd;
+                + " WHERE eid = " + UI.getCurrentEID()
+                + " AND sid = " + UI.getCurrentSID()
+                + " AND timeslot_week = " + responses
+                + " AND timeslot_day = " + responses2
+                + " AND timeSlot >= " + responses3
+                + " AND timeSlot <= " + responses4;
     }
 
-    private static String viewWorkingMechanicsQuery(Integer week, Integer day, Integer timeSlotStart,
-    Integer timeSlotEnd) {
+    private static String viewWorkingMechanicsQuery(String responses, String responses2, String responses3,
+    String responses4) {
     return "SELECT COUNT(*) AS numofMechanics"
             + " FROM Calendar"
-            + " WHERE id = " + UI.getCurrentEID()
-            + " WHERE sid = " + UI.getCurrentSID()
-            + " AND timeslot_week = " + week
-            + " AND timeslot_day = " + day
-            + " AND timeSlot >= " + timeSlotStart
-            + " AND timeSlot <= " + timeSlotEnd;
+            + " WHERE eid = " + UI.getCurrentEID()
+            + " AND sid = " + UI.getCurrentSID()
+            + " AND timeslot_week = " + responses
+            + " AND timeslot_day = " + responses2
+            + " AND timeSlot >= " + responses3
+            + " AND timeSlot <= " + responses4;
     }
      /**
      * Handles functionality for accept and reject swap of mechanics

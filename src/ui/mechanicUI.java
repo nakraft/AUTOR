@@ -134,16 +134,11 @@ public class mechanicUI {
         // TODO: Query database for schedule
         // TODO: Set lines
         while (true) {
-            System.out.println("Your schedule is as follows:");
-            String[][] output = mechanicQuery.ViewSchedule();
+            String[] output = mechanicQuery.ViewSchedule();
             if(output == null){
                 System.out.println("No schedule found");
             }
-            int count = 0;
-            while(count < output.length){
-                mechanicViewSchedule.setLines(output[count]);
-                count++;
-            }
+            mechanicViewSchedule.setLines(output);
             // Display menu
           
             switch (mechanicViewSchedule.display()) {
@@ -160,11 +155,20 @@ public class mechanicUI {
     public static void mechanicRequestTimeOff() {
         while (true) {
             // Display menu
+          
             switch (mechanicRequestTimeOff.display()) {
                 case 1: // Send Request
                     // TODO: Send request to database
                     // TODO: Display status of request
-                    mechanicQuery.RequestedTimeOff(mechanicRequestTimeOff.getPromptResponses());
+                    String[] output = mechanicQuery.RequestedTimeOff(mechanicRequestTimeOff.getPromptResponses());
+                    String[] lines = new String[1];        
+                    if(output == null){
+                        lines[0] = "Time Off Approved";
+                        mechanicRequestTimeOff.setLines(lines);
+                    }else{
+                        mechanicRequestTimeOff.setLines(output);
+                    }
+                   
                     break;
                 case 2: // Go Back
                     mechanicLanding();
