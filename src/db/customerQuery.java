@@ -85,6 +85,47 @@ public class customerQuery {
         }
     }
 
+    /* 
+     * Get eligible maintenance 
+    */
+    public static String[] getEligibleMaintenance(String Vin) {
+        // Get the next schedule name
+        String query = "SELECT SCHEDULE AS CURRENT_SCHEUDLE, CASE WHEN SCHEDULE= 'A' THEN 'B' WHEN SCHEDULE= 'B' THEN 'C' ELSE 'A' END AS NEXT_SCHEDULE FROM VEHICLE WHERE VIN='" + Vin + "'";
+        String nextSchedule = null;
+        String nextScheduleNumber = null;
+        try {
+            ResultSet result = JDBC.executeQuery(query);
+            while (result.next()) {
+                nextSchedule = result.getString("NEXT_SCHEDULE");}
+            if (nextSchedule == null) {nextSchedule = "A";}
+            // get schedlenmber for the schedule 
+            String scheduleNumberQuery = "SELECT * FROM Schedule WHERE serviceName = '" + nextSchedule + "'";
+            ResultSet res = JDBC.executeQuery(scheduleNumberQuery);
+            while (res.next()) {
+                nextScheduleNumber = res.getString("serviceNumber");}
+            String[] temp = {"",""};
+            temp[0] = nextSchedule;
+            temp[1] = nextScheduleNumber;
+            return temp;
+        } catch (SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        return null;
+    }
+    }
+
+    public static String getScheduleCost(String scheduleName, String scheduleNumber, String Vin) {
+        String query = "SELECT PRICE from Cost_details WHERE serviceName='" + scheduleName +"' AND serviceNumber='"+ scheduleNumber + "' AND sid='" + UI.getCurrentSID() + "' AND manf=(SELECT TRIM(manf) AS manf from Vehicle where vin='"+Vin+"')";
+        try {
+            String scheduleCost =null;
+            ResultSet res = JDBC.executeQuery(query);
+            while (res.next()) {
+                scheduleCost = res.getString("PRICE");
+                return scheduleCost;}
+            return scheduleCost;
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;}
+    }
     /**
      * Add Car to the database
      * 

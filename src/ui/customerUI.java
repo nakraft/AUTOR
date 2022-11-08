@@ -426,7 +426,7 @@ public class customerUI {
             // Display menu
             switch( customerScheduleService.display() ) {
                 case 1: // Add Scheduled Maintenance
-                    customerScheduledMaintenance();
+                    displayScheduledMaintenance(customerScheduleService.getPromptResponses()[0]);
                     break;
                 case 2: // Add Scheduled Repair
                     customerScheduledRepair();
@@ -444,11 +444,12 @@ public class customerUI {
     /**
      * Customer: Add Scheduled Maintenance
      */
-    public static void customerScheduledMaintenance() {
+    public static void customerScheduledMaintenance(String Vin) {
         while (true) {
             // Display menu
             switch( customerScheduledMaintenance.display() ) {
                 case 1: // Accept scheduled maintenance
+                    displayScheduledMaintenance(Vin);
                     // TODO: Add scheduled maintenance to cart
                     break;
                 case 2: // Go Back
@@ -456,6 +457,37 @@ public class customerUI {
                     break;
             }
         }
+    }
+
+    public static void displayScheduledMaintenance(String Vin) {
+        //4Y1BL658
+        // Query database for customer profile
+        String[] eligibleMaintenance = customerQuery.getEligibleMaintenance(Vin);
+        String scheduleCost = customerQuery.getScheduleCost(eligibleMaintenance[0], eligibleMaintenance[1], Vin);
+        customerScheduledMaintenance = new menu(
+        "Customer: Add Scheduled Maintenance", // Header
+        null, // Lines (Populated with eligible service in method)
+        null, // Prompts
+        new String[] {
+            "Eligible Schedule : " + eligibleMaintenance[0] + ", Cost : " + scheduleCost, // customerScheduleService
+        } // Options
+        
+    );
+    while (true) {
+        // Display menu
+        switch( customerScheduledMaintenance.display() ) {
+            case 1: // Accept scheduled maintenance
+                //add to cart 
+                // TODO: Add scheduled maintenance to cart
+                break;
+            case 2: // Go Back
+                customerScheduleService();
+                break;
+        }
+    }
+        // display the next eligible maintenance and cost, allow user to add it to cart
+        // Query database for cars owned by customer
+
     }
 
     /**
