@@ -54,16 +54,16 @@ public class adminUI {
         "Admin: Add New Store", // Header
         null, // Lines
         new String[] {
-            "Enter the store ID",
-            "Enter the store address",
-            "Enter the manager's first name",
-            "Enter the manager's last name",
-            "Enter the manager's username",
-            "Enter the manager's password",
-            "Enter the manager's salary",
-            "Enter the manager's employee ID",
-            "Enter the minimum mechanic wage",
-            "Enter the maximum mechanic wage"
+            "Enter the store ID", // 0
+            "Enter the store address", // 1
+            "Enter the manager's first name", // 2
+            "Enter the manager's last name", // 3
+            "Enter the manager's username", // 4
+            "Enter the manager's password", // 5
+            "Enter the manager's salary", // 6
+            "Enter the manager's employee ID", // 7
+            "Enter the minimum mechanic wage", // 8
+            "Enter the maximum mechanic wage" // 9
         }, // Prompts
         new String[] {
             "Add Store", // remain, addStore

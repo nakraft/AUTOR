@@ -14,48 +14,46 @@ public class adminQuery {
     public static boolean addStore(String[] responses) {
         try {
             // Insert into the store table
-            if(!JDBC.executeUpdate(
+            JDBC.executeQuery(
                 "INSERT INTO Service_Center (" +
-                '"' + "sid" + '"' + ',' +
-                '"' + "address" + '"' + ',' +
-                '"' + "mechanic_minimum_rate" + '"' + ',' +
-                '"' + "mechanic_maximum_rate) VALUES (" +
-                responses[0] + ',' +
-                responses[1] + ',' +
-                responses[8] + ',' +
-                responses[9] + ')'
+                    "sid, " +
+                    "address, " +
+                    "manager_id, " +
+                    "mechanic_minimum_rate, " +
+                    "mechanic_maximum_rate" +
+                ") VALUES (" +
+                    responses[0] + "," +
+                    "'" + responses[1] + "'," +
+                    responses[7] + "," +
+                    responses[8] + "," +
+                    responses[9] +
+                ")"
+            );
+            // If the query inserts a row
+            if (!JDBC.executeUpdate(
+                "UPDATE Employee SET " +
+                    "first_name = '" + responses[2] + "', " +
+                    "last_name = '" + responses[3] + "', " +
+                    "username = '" + responses[4] + "', " +
+                    "password = '" + responses[5] + "' " +
+                    "WHERE eid = " + responses[7]
             )) {
-                throw new java.sql.SQLException("Error updating service center");
+                throw new java.sql.SQLException("Error updating duration details");
             }
             // If the query inserts a row
             if (!JDBC.executeUpdate(
-                "INSERT INTO Employee (" +
-                '"' + "first_name" + '"' + ',' +
-                '"' + "last_name" + '"' + ',' +
-                '"' + "username" + '"' + ',' +
-                '"' + "password" + '"' + ',' +
-                '"' + "eid" + '"' + ',' +
-                '"' + "role" + '"' + ',' +
-                '"' + "sid) VALUES (" +
-                responses[2] + ',' + 
-                responses[3] + ',' + 
-                responses[4] + ',' + 
-                responses[5] + ',' + 
-                responses[7] + ',' + 
-                "M," +
-                responses[0] + ')' 
+                "UPDATE Mechanic SET " +
+                    "rate = " + responses[6] +
+                    "WHERE eid = " + responses[7]
             )) {
                 throw new java.sql.SQLException("Error updating duration details");
             }
         } catch (java.sql.SQLException e) {
-            /*
             // Print an error message
             System.out.println("Error executing query");
             e.printStackTrace();
             // Quit the program
             System.exit(1);
-            */
-            return false;
         }
         // If there aren't any errors
         return true;

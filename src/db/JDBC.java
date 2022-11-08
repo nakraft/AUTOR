@@ -142,13 +142,12 @@ public class JDBC {
         try {
             statement = connection.createStatement();
         } catch (java.sql.SQLException e) {
-            /*
             // Print an error message
             System.out.println("Error creating statement");
             e.printStackTrace();
             // Quit the program
             System.exit(1);
-            */
+
             return false;
         }
 
@@ -158,13 +157,11 @@ public class JDBC {
             statement.executeUpdate(update);
         // If the update can't be executed
         } catch (java.sql.SQLException e) {
-            /*
             // Print an error message
             System.out.println("Error executing update");
             e.printStackTrace();
             // Quit the program
             System.exit(1);
-            */
             return false;
         }
         // Return true if the update was successful

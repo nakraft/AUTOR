@@ -3,6 +3,7 @@ package ui;
 // Import DB classes
 import db.JDBC;
 import db.query;
+import db.managerQuery;
 
 /**
  * ManagerUI class, UI for manager
@@ -43,7 +44,6 @@ public class managerUI {
         "Manager: Add Employees", // Header
         null, // Lines
         new String[] {
-            // TODO: figure out if name is stored as first/last or full name
             "Enter the employee's first name",
             "Enter the employee's last name",
             "Enter the employee's email address",
@@ -162,6 +162,13 @@ public class managerUI {
         while (true) {
             switch (managerAddEmployees.display()) {
                 case 1: // Add Employee
+                    int result = managerQuery.addEmployee(managerAddEmployees.getPromptResponses());
+                    if (result != 0) {
+                        System.out.println("Employee added successfully!");
+                        System.out.println("EID: " + result);
+                    } else {
+                        System.out.println("Error adding employee");
+                    }
                     // TODO: add employee to the database
                     // TODO: print out EID for new employee
                     managerSetupStore();
@@ -216,6 +223,7 @@ public class managerUI {
         while (true) {
             switch (managerSetupMaintenanceServicePrices.display()) {
                 case 1: // Setup Prices
+                    
                     // TODO: set schedule A price in database
                     // TODO: set schedule B price in database
                     // TODO: set schedule C price in database
