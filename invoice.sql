@@ -10,6 +10,7 @@ SELECT c.timeslot_week, c.timeslot_day, c.timeslot, c.eid, c.id
 FROM Calendar c
 WHERE c.sid = 30003 AND  -- this is the customers service center id
         EXISTS (SELECT * FROM Calendar c2 WHERE c2.sid = 30003 AND c2.eid = c.eid AND c2.id = c.id + 1)
+        AND dd.dur + (SELECT COUNT(c3.eid) FROM Calendar c3 WHERE c3.sid = 30003 AND c3.eid = c.eid AND c3.timeslot_week = c1.timeslot_week) <= 50 -- dd.dur is from above, this checks to make sure mechanics who are about to go over time if they picked this up are not displayed. 
 ORDER BY c.timeslot_week, c.timeslot_day, c.timeslot, c.eid; -- if more than 1 hour was scheduled, we would have to jump ahead and do 2 EXISTS statements with c3.id = c.id + 2, etc
 
 --- choose one of the timeslots
