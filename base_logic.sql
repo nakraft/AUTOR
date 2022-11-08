@@ -401,3 +401,49 @@ CREATE TRIGGER mechanic_requests_time_off
         END IF;  
     END; 
 /
+
+CREATE TRIGGER generate_mechanic_schedule 
+    AFTER INSERT ON Mechanic
+    FOR EACH ROW
+    DECLARE 
+        ID_Value NUMBER; 
+        sat_open VARCHAR(5);
+    BEGIN 
+    
+        SELECT s.saturday INTO sat_open
+        FROM Service_Center s 
+        WHERE s.sid = :new.sid;
+                        
+        -- if saturday closed 
+        IF sat_open = 'closed' OR sat_open = 'c' THEN 
+            FOR week_number IN 1..4 LOOP
+                FOR day_number IN 1..5 LOOP
+                    FOR timeslot IN 1..11 LOOP
+                        ID_Value := ((week_number - 1) * 55) + ((day_number - 1) * 11) + timeslot;
+                        INSERT INTO Calendar(timeslot_week, timeslot_day, timeslot, sid, eid, id)  
+                        VALUES (week_number, day_number, timeslot, :new.sid, :new.eid, ID_VALUE);
+                    END LOOP;
+                END LOOP;
+            END LOOP;
+        ELSIF sat_open = 'open' OR sat_open = 'o' THEN 
+            -- if saturday open
+            FOR week_number IN 1..4 LOOP
+                FOR day_number IN 1..6 LOOP
+                    IF day_number <= 5 THEN 
+                        FOR timeslot IN 1..11 LOOP
+                            ID_Value := ((week_number - 1) * 58) + ((day_number - 1) * 11) + timeslot;
+                            INSERT INTO Calendar(timeslot_week, timeslot_day, timeslot, sid, eid, id)  
+                            VALUES (week_number, day_number, timeslot, :new.sid, :new.eid, ID_VALUE);
+                        END LOOP;
+                    ELSIF day_number = 6 THEN 
+                        FOR timeslot IN 2..4 LOOP
+                            ID_Value := ((week_number - 1) * 58) + ((day_number - 1) * 11) + timeslot - 1;
+                            INSERT INTO Calendar(timeslot_week, timeslot_day, timeslot, sid, eid, id)  
+                            VALUES (week_number, day_number, timeslot, :new.sid, :new.eid, ID_VALUE);
+                        END LOOP;
+                    END IF;
+                END LOOP;
+            END LOOP;
+        END IF;
+    END; 
+/
