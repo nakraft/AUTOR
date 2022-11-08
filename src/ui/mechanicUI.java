@@ -1,7 +1,5 @@
 package ui;
 
-import java.util.Scanner;
-
 // Import DB classes
 import db.JDBC;
 import db.mechanicQuery;
@@ -136,8 +134,18 @@ public class mechanicUI {
         // TODO: Query database for schedule
         // TODO: Set lines
         while (true) {
+            System.out.println("Your schedule is as follows:");
+            String[][] output = mechanicQuery.ViewSchedule();
+            if(output == null){
+                System.out.println("No schedule found");
+            }
+            int count = 0;
+            while(count < output.length){
+                mechanicViewSchedule.setLines(output[count]);
+                count++;
+            }
             // Display menu
-            mechanicQuery.ViewSchedule();
+          
             switch (mechanicViewSchedule.display()) {
                 case 1: // Go Back
                     mechanicLanding();
@@ -211,6 +219,7 @@ public class mechanicUI {
                 case 1: // Accept Swap Request
                     // TODO: Accept swap request
                     // TODO: Display status of request
+                    boolean validInputs = mechanicQuery.parseAndValidateInputs();
                     mechanicQuery.ManageSwapRequests(mechanicManageSwapRequests.getPromptResponses());
                     break;
                 case 2: // Reject Swap Request
