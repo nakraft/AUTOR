@@ -444,20 +444,20 @@ public class customerUI {
     /**
      * Customer: Add Scheduled Maintenance
      */
-    public static void customerScheduledMaintenance(String Vin) {
-        while (true) {
-            // Display menu
-            switch( customerScheduledMaintenance.display() ) {
-                case 1: // Accept scheduled maintenance
-                    displayScheduledMaintenance(Vin);
-                    // TODO: Add scheduled maintenance to cart
-                    break;
-                case 2: // Go Back
-                    customerScheduleService();
-                    break;
-            }
-        }
-    }
+    // public static void customerScheduledMaintenance(String Vin) {
+    //     while (true) {
+    //         // Display menu
+    //         switch( customerScheduledMaintenance.display() ) {
+    //             case 1: // Accept scheduled maintenance
+    //                 displayScheduledMaintenance(Vin);
+    //                 // TODO: Add scheduled maintenance to cart
+    //                 break;
+    //             case 2: // Go Back
+    //                 customerScheduleService();
+    //                 break;
+    //         }
+    //     }
+    // }
 
     public static void displayScheduledMaintenance(String Vin) {
         //4Y1BL658
@@ -469,7 +469,8 @@ public class customerUI {
         null, // Lines (Populated with eligible service in method)
         null, // Prompts
         new String[] {
-            "Eligible Schedule : " + eligibleMaintenance[0] + ", Cost : " + scheduleCost, // customerScheduleService
+            "Eligible Schedule : " + eligibleMaintenance[0] + ", Cost : " + scheduleCost + " (Add to Cart)", 
+            "Go back"// customerScheduleService
         } // Options
         
     );
