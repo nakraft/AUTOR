@@ -79,7 +79,8 @@ public class adminUI {
         new String[] {
             "Enter existing service category",
             "Enter service name",
-            "Enter service duration"
+            "Enter service duration",
+            "Enter manufacturer"
         }, // Prompts
         new String[] {
             "Add Service", // remain, addService

@@ -91,30 +91,25 @@ public class adminQuery {
     public static boolean addService(String[] responses) {
         try {
             // Get the last service number
-            ResultSet result = JDBC.executeQuery("SELECT MAX(serviceNumber) FROM Work_Event");
-            String nextId = result.getString(0);
+            ResultSet result = JDBC.executeQuery("SELECT MAX(serviceNumber) AS next FROM Work_Event");
+            result.next();
+            String nextId = result.getString("next");
+            nextId = String.valueOf(Integer.parseInt(nextId) + 1);
             // Insert into the store table
             if(!JDBC.executeUpdate(
-                "INSERT INTO Services (" +
-                '"' + "serviceName" + '"' + ',' +
-                '"' + "serviceNumber" + '"' + ',' +
-                '"' + "repairCategory) VALUES (" +
-                    responses[1] + ',' + 
-                    nextId + ',' + 
-                    responses[0] + ')'
+                "INSERT INTO Services (serviceName,serviceNumber,repair_category) VALUES (" +
+                    "'" + responses[1] + "'" + ',' + 
+                    "'" + nextId + "'" + ',' + 
+                    "'" + responses[0] + "'" + ')'
             )) {
                 throw new java.sql.SQLException("Error updating services");
             }
             if (!JDBC.executeUpdate(
-                    "INSERT INTO Duration_Details (" +
-                    '"' + "manf" + '"' + ',' +
-                    '"' + "dur" + '"' + ',' +
-                    '"' + "serviceName" + '"' + ',' +
-                    '"' + "serviceNumber) VALUES (" +
-                    responses[3] + ',' + 
-                    responses[2] + ',' + 
-                    responses[1] + ',' + 
-                    responses[4] + ')'
+                    "INSERT INTO Duration_Details (manf,dur,serviceName,serviceNumber) VALUES (" +
+                    "'" + responses[3] + "'" + ',' + 
+                    "'" + responses[2] + "'" + ',' + 
+                    "'" + responses[1] + "'" + ',' + 
+                    "'" + nextId + "'" + ')'
                 )) {
                     throw new java.sql.SQLException("Error updating duration details");
                 }
