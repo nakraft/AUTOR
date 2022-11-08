@@ -90,6 +90,9 @@ public class adminQuery {
      */
     public static boolean addService(String[] responses) {
         try {
+            // Get the last service number
+            ResultSet result = JDBC.executeQuery("SELECT MAX(serviceNumber) FROM Work_Event");
+            String nextId = result.getString(0);
             // Insert into the store table
             if(!JDBC.executeUpdate(
                 "INSERT INTO Services (" +
@@ -97,7 +100,7 @@ public class adminQuery {
                 '"' + "serviceNumber" + '"' + ',' +
                 '"' + "repairCategory) VALUES (" +
                     responses[1] + ',' + 
-                    responses[4] + ',' + 
+                    nextId + ',' + 
                     responses[0] + ')'
             )) {
                 throw new java.sql.SQLException("Error updating services");
