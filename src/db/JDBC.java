@@ -120,7 +120,64 @@ public class JDBC {
         // Load the tables from the SQL files
         query.runSQL("base_logic.sql");
         query.runSQL("populating.sql");
-    }        
+    }
+
+    /**
+     * Reset Database (Full Population)
+     */
+    public static void resetDatabaseFull() {
+        // Reset the database
+        resetDatabase();
+        // Then load in the full population file
+        query.runSQL("populating_full.sql");
+    }
+
+    /**
+     * Execute several queries at once
+     * Used to remain atomic :)
+     * 
+     * @param queries Queries to execute
+     * @return Result set of the last query
+     */
+    public static int[] executeQueries(String[] queries) {
+        Statement statement = null;
+        // Create a statement
+        try {
+            statement = connection.createStatement();
+        }
+        // If the statement can't be created
+        catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error creating statement");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        try {
+            // Execute all the queries
+            for (String query : queries) {
+                statement.addBatch(query);
+            }
+            // Disable auto commit
+            connection.setAutoCommit(false);
+            // Execute the queries
+            int[] result = statement.executeBatch();
+            // Commit the changes
+            connection.commit();
+            // Enable auto commit
+            connection.setAutoCommit(true);
+            return result;
+        }
+        // If the queries can't be executed
+        catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error executing queries");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        return null;
+    }
     
 
     /**
