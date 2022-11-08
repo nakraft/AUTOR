@@ -90,22 +90,14 @@ public class query {
                 // Add the current query to the list of queries
                 queries.add(currentQuery);
             }
-            // Execute all the queries
-            for (String query : queries) {
-                // Print out query (debugging)
-                // System.out.println(query);
-                // Execute the query
-                // Execute it as a query if it's not an update
-                if (!query.startsWith("UPDATE")) {
-                    JDBC.executeQuery(query);
-                }
-                // Execute it as an update if it is an update
-                else {
-                    // If the update fails, throw an exception
-                    if (!JDBC.executeUpdate(query))
-                        throw new Exception("Update failed");
-                }
+            // Convert the queries list to an array
+            String[] queryArray = queries.toArray(new String[0]);
+            // Run the queries
+            for (String query : queryArray) {
+                // Run the query
+                JDBC.executeUpdate(query);
             }
+            // JDBC.executeQueries(queryArray);
             // Close the scanner
             scanner.close();
         } catch (Exception e) {
@@ -127,7 +119,7 @@ public class query {
     public static String[] checkCredentials(String username, String password) {
         // Query the employee table
         try {
-            // Query the manager table
+            // Query the Employee table for eid, sid, and role
             ResultSet result = JDBC.executeQuery("SELECT eid, sid, role FROM Employee WHERE username = '" + username + "' AND password = '" + password + "'");
             // If the query returns a result
             if (result.next()) {
@@ -135,9 +127,20 @@ public class query {
                 result.close();
                 return credentials;
             }
-            // If the query does not return a result
+            // Otherwise query the Customer table for cid and sid
             else {
-                return null;
+                result = JDBC.executeQuery("SELECT cid, sid FROM Customer WHERE username = '" + username + "' AND password = '" + password + "'");
+                // If the query returns a result
+                if (result.next()) {
+                    String[] credentials = new String[] { result.getString("cid"), result.getString("sid"), "customer" };
+                    result.close();
+                    return credentials;
+                }
+                // Otherwise return null
+                else {
+                    result.close();
+                    return null;
+                }
             }
         } catch (java.sql.SQLException e) {
             // Print an error message

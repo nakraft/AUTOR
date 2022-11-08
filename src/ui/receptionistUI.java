@@ -30,7 +30,8 @@ public class receptionistUI {
         "Receptionist: Add New Customer Profile", // Header
         null, // Lines
         new String[] {
-            "Enter the customer's name", // TODO: figure out if name is stored as first/last or full name
+            "Enter the customer's first name",
+            "Enter the customer's last name",
             "Enter the customer's address",
             "Enter the customer's email address",
             "Enter the customer's phone number",

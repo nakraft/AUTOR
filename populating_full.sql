@@ -74,17 +74,29 @@ SELECT *
   FROM dual;
 
 UPDATE Mechanic SET rate=35 where eid=132457689 AND sid = 30001;
+
 UPDATE Mechanic SET rate=35 where eid=314275869 AND sid = 30001;
+
 UPDATE Mechanic SET rate=35 where eid=241368579 AND sid = 30001;
+
 UPDATE Mechanic SET rate=25 where eid=423186759 AND sid = 30002;
+
 UPDATE Mechanic SET rate=25 where eid=123789456 AND sid = 30002;
+
 UPDATE Mechanic SET rate=25 where eid=789123456 AND sid = 30002;
+
 UPDATE Mechanic SET rate=25 where eid=125689347 AND sid = 30002;
+
 UPDATE Mechanic SET rate=22 where eid=347812569 AND sid = 30003;
+
 UPDATE Mechanic SET rate=22 where eid=123456780 AND sid = 30003;
+
 UPDATE Mechanic SET rate=22 where eid=123456708 AND sid = 30003;
+
 UPDATE Mechanic SET rate=22 where eid=123456078 AND sid = 30003;
+
 UPDATE Mechanic SET rate=22 where eid=123450678 AND sid = 30003;
+
 UPDATE Mechanic SET rate=22 where eid=123405678 AND sid = 30003;
 
 -- INSERT INTO RECEPTIONIST(eid, sid) VALUES(111111116,1);

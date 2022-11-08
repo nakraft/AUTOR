@@ -29,7 +29,8 @@ public class adminUI {
             "Add New Store", // adminAddNewStore
             "Add New Service", // adminAddNewService
             "Logout", // homeMenu
-            "Reset Database", // JDBC.resetDatabase()
+            "Reset Database (Standard)", // JDBC.resetDatabase()
+            "Reset Database (Full Population)", // JDBC.resetDatabaseFull()
             "Run SQL Commands" // adminRunSQLCommands
         } // Options
     );
@@ -111,11 +112,16 @@ public class adminUI {
                     break;
                 case 5: // Reset Database
                     JDBC.resetDatabase();
-                    adminLanding.setFeedback("Database reset successfully");
+                    adminLanding.setFeedback("Database reset and populated with standard data");
                     break;
-                case 6: // Run SQL Commands
+                case 6: // Reset Database Full
+                    JDBC.resetDatabaseFull();
+                    adminLanding.setFeedback("Database reset and popuplated with full data");
+                    break;
+                case 7: // Run SQL Commands
                     adminRunSQLCommands();
                     break;
+                    
             }
         } 
     }

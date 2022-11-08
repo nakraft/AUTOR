@@ -23,9 +23,14 @@ public class managerQuery {
         // Execute query (username is first initial + last name, password is last name)
         String username = employee[0].substring(0, 1) + employee[1];
         String password = employee[1];
-        // Create an Oracle variable used to keep track of the new employee's EID
-        JDBC.executeQuery("DECLARE prmkkey NUMBER");
-        JDBC.executeQuery("INSERT INTO Employee (first_name, last_name, email, phone, role, start_date, username, password, sid) VALUES ('" + employee[0] + "', '" + employee[1] + "', '" + employee[2] + "', '" + employee[3] + "', '" + employee[4] + "', '" + employee[5] + "', '" + username + "', '" + password + "', " + UI.getCurrentSID() + ") RETURNING eid INTO prmkey)");
+        // Create an Oracle variable used to keep track of the new employee's EID 
+        JDBC.executeQuery("INSERT INTO Employee (" +
+            "first_name, " +
+            "last_name, " +
+            "email, " +
+            "phone, " +
+            "role, " + 
+            "start_date, username, password, sid) VALUES ('" + employee[0] + "', '" + employee[1] + "', '" + employee[2] + "', '" + employee[3] + "', '" + employee[4] + "', '" + employee[5] + "', '" + username + "', '" + password + "', " + UI.getCurrentSID() + ") RETURNING eid INTO prmkey)");
         // Get the new employee's EID
         ResultSet result = JDBC.executeQuery("SELECT prmkey FROM dual");
         // Get the EID of the new employee

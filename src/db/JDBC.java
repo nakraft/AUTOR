@@ -63,6 +63,8 @@ public class JDBC {
     public static void resetDatabase() {
         // Drop all tables
         ResultSet tables = executeQuery("select 'drop table \"'||table_name||'\" cascade constraints' from user_tables");
+        // Drop each sequence the user has added to the table (that the system doesn't own)
+        ResultSet Sequences = executeQuery("select 'drop sequence \"'||sequence_name||'\"' FROM user_sequences WHERE sequence_name LIKE 'AUTO_%'");
         try {
             // Go through each table
             while (tables.next()) {
@@ -88,11 +90,94 @@ public class JDBC {
             // Quit the program
             System.exit(1);
         }
+        // Go through the sequences and close them too
+        try {
+            // Go through each table
+            while (Sequences.next()) {
+                // Print the drop table statement
+                // System.out.println(tables.getString(1));
+                // Drop the table
+                executeUpdate(Sequences.getString(1));
+            }
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        // Close the result set
+        try {
+            Sequences.close();
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error closing result set");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
         
         // Load the tables from the SQL files
         query.runSQL("base_logic.sql");
         query.runSQL("populating.sql");
-    }        
+    }
+
+    /**
+     * Reset Database (Full Population)
+     */
+    public static void resetDatabaseFull() {
+        // Reset the database
+        resetDatabase();
+        // Then load in the full population file
+        query.runSQL("populating_full.sql");
+    }
+
+    /**
+     * Execute several queries at once
+     * Used to remain atomic :)
+     * 
+     * @param queries Queries to execute
+     * @return Result set of the last query
+     */
+    public static int[] executeQueries(String[] queries) {
+        Statement statement = null;
+        // Create a statement
+        try {
+            statement = connection.createStatement();
+        }
+        // If the statement can't be created
+        catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error creating statement");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        try {
+            // Execute all the queries
+            for (String query : queries) {
+                statement.addBatch(query);
+            }
+            // Disable auto commit
+            connection.setAutoCommit(false);
+            // Execute the queries
+            int[] result = statement.executeBatch();
+            // Commit the changes
+            connection.commit();
+            // Enable auto commit
+            connection.setAutoCommit(true);
+            return result;
+        }
+        // If the queries can't be executed
+        catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error executing queries");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        return null;
+    }
     
 
     /**
