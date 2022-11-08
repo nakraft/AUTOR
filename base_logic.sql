@@ -56,7 +56,7 @@ create table SwapRequests(
     desiredDay number(2),
     desiredStartTimeSlot number(2),
     desiredEndTimeSlot number(2),
-    status number(1),
+    status number(1)
 );
 
 CREATE TABLE Receptionist (
