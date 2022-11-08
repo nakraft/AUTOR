@@ -307,9 +307,13 @@ public class customerUI {
         String[] profile = customerQuery.getProfile();
         // Query database for cars owned by customer
         String[][] cars = customerQuery.getVehicles();
-
         // Create a new String array with the profile, then all cars
-        String[] lines = new String[profile.length + cars.length * cars[0].length];
+        String[] lines;
+        if (cars != null) {
+        lines = new String[profile.length + cars.length * cars[0].length];}
+        else {
+            lines = new String[profile.length];
+        }
         // Customer ID:
         lines[0] = "Customer ID: " + profile[0];
         // Full Name:
@@ -320,6 +324,7 @@ public class customerUI {
         lines[3] = "Email Address: " + profile[3];
         // Phone Number:
         lines[4] = "Phone Number: " + profile[4];
+        if (cars != null) {
         for (int i = 0; i < cars.length; i++) {
             // Vehicle i VIN:
             lines[profile.length + i * cars[0].length] = "Vehicle " + (i + 1) + " VIN: " + cars[i][0];
@@ -330,6 +335,7 @@ public class customerUI {
             // Vehicle i Year:
             lines[profile.length + i * cars[0].length + 3] = "Vehicle " + (i + 1) + " Year: " + cars[i][3];
         }
+    }
         // Set menu lines to the new String array
         customerViewProfile.setLines(lines);
         // Display profile
@@ -403,6 +409,7 @@ public class customerUI {
                 case 1: // View Service History
                     // TODO: Query database for service history
                     // TODO: Output service history
+                    
                     break;
                 case 2: // Go Back
                     customerViewScheduleService();

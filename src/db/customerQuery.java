@@ -18,7 +18,7 @@ public class customerQuery {
      */
     public static String[] getProfile() {
         // Create a query
-        String query = "SELECT * FROM employee WHERE eid = '" + UI.getCurrentEID() + "' AND sid = '" + UI.getCurrentSID() + "';";
+        String query = "SELECT * FROM Customer WHERE cid = '" + UI.getCurrentEID() + "' AND sid = '" + UI.getCurrentSID() + "'";
         // Run the query
         try {
             ResultSet result = JDBC.executeQuery(query);
@@ -28,7 +28,7 @@ public class customerQuery {
                 String[] profile = new String[5];
                 // Add the result to the array
                 // Customer ID
-                profile[0] = result.getString("eid");
+                profile[0] = result.getString("cid");
                 // Full Name
                 profile[1] = result.getString("first_name") + " " + result.getString("last_name");
                 // Address
@@ -52,7 +52,7 @@ public class customerQuery {
      */
     public static String[][] getVehicles() {
         // Create a query
-        String query = "SELECT * FROM vehicle WHERE cid = '" + UI.getCurrentEID() + "' AND sid = '" + UI.getCurrentSID() + "';";
+        String query = "SELECT * FROM Vehicle WHERE cid = '" + UI.getCurrentEID() + "' AND sid = '" + UI.getCurrentSID() + "'";
         // Run the query
         try {
             ResultSet result = JDBC.executeQuery(query);
@@ -111,7 +111,7 @@ public class customerQuery {
      */
     public static boolean deleteVehicle(String vin) {
         // Create a query
-        String query = "DELETE FROM vehicle WHERE vin = '" + vin + "' AND cid = '" + UI.getCurrentEID() + "' AND sid = '" + UI.getCurrentSID() + "';";
+        String query = "DELETE FROM vehicle WHERE vin = '" + vin + "' AND cid = '" + UI.getCurrentEID() + "' AND sid = '" + UI.getCurrentSID() + "'";
         // Run the query
         return JDBC.executeUpdate(query);
     }
