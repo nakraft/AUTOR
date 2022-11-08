@@ -2,6 +2,7 @@ package ui;
 
 // Import DB classes
 import db.customerQuery;
+import java.util.ArrayList;
 
 /**
  * CustomerUI class, UI for customer
@@ -528,12 +529,22 @@ public class customerUI {
      */
     public static void customerEngineServices() {
         // TODO: update menu options with eligible services and "Go Back"
+          //4Y1BL658
+        ArrayList<String[]> engineRepairService = customerQuery.getServicesForCategory("Engine Services");
+        String[] serviceNames = new String[engineRepairService.size()+1];
+        for (int i = 0; i < engineRepairService.size(); i++) {
+            serviceNames[i] = engineRepairService.get(i)[0];
+        }
+        serviceNames[engineRepairService.size()] = "Go Back";
+        customerEngineServices.setOptions(serviceNames);  
+        // String a = UI.input.nextLine();
+
         while (true) {
             // Display menu
             customerEngineServices.display();
             // if option is the last option, go back
             if (customerEngineServices.getMenuResponse() == customerEngineServices.getOptions().length) {
-                customerScheduleService();
+                customerScheduledRepair();
             }
             // else, add service to cart
             else {
@@ -547,12 +558,21 @@ public class customerUI {
      */
     public static void customerExhaustServices() {
         // TODO: update menu options with eligible services and "Go Back"
+        ArrayList<String[]> repairService = customerQuery.getServicesForCategory("Exhaust Services");
+        String[] serviceNames = new String[repairService.size()+1];
+        for (int i = 0; i < repairService.size(); i++) {
+            serviceNames[i] = repairService.get(i)[0];
+        }
+        serviceNames[repairService.size()] = "Go Back";
+        customerExhaustServices.setOptions(serviceNames);  
+        // String a = UI.input.nextLine();
+
         while (true) {
             // Display menu
             customerExhaustServices.display();
             // if option is the last option, go back
             if (customerExhaustServices.getMenuResponse() == customerExhaustServices.getOptions().length) {
-                customerScheduleService();
+                customerScheduledRepair();
             }
             // else, add service to cart
             else {
@@ -566,12 +586,19 @@ public class customerUI {
      */
     public static void customerElectricalServices() {
         // TODO: update menu options with eligible services and "Go Back"
+        ArrayList<String[]> repairService = customerQuery.getServicesForCategory("Electrical Services");
+        String[] serviceNames = new String[repairService.size()+1];
+        for (int i = 0; i < repairService.size(); i++) {
+            serviceNames[i] = repairService.get(i)[0];
+        }
+        serviceNames[repairService.size()] = "Go Back";
+        customerElectricalServices.setOptions(serviceNames);  
         while (true) {
             // Display menu
             customerElectricalServices.display();
             // if option is the last option, go back
             if (customerElectricalServices.getMenuResponse() == customerElectricalServices.getOptions().length) {
-                customerScheduleService();
+                customerScheduledRepair();
             }
             // else, add service to cart
             else {
@@ -585,12 +612,19 @@ public class customerUI {
      */
     public static void customerTransmissionServices() {
         // TODO: update menu options with eligible services and "Go Back"
+        ArrayList<String[]> repairService = customerQuery.getServicesForCategory("Transmission Services");
+        String[] serviceNames = new String[repairService.size()+1];
+        for (int i = 0; i < repairService.size(); i++) {
+            serviceNames[i] = repairService.get(i)[0];
+        }
+        serviceNames[repairService.size()] = "Go Back";
+        customerTransmissionServices.setOptions(serviceNames);  
         while (true) {
             // Display menu
             customerTransmissionServices.display();
             // if option is the last option, go back
             if (customerTransmissionServices.getMenuResponse() == customerTransmissionServices.getOptions().length) {
-                customerScheduleService();
+                customerScheduledRepair();
             }
             // else, add service to cart
             else {
@@ -604,12 +638,19 @@ public class customerUI {
      */
     public static void customerTireServices() {
         // TODO: update menu options with eligible services and "Go Back"
+        ArrayList<String[]> repairService = customerQuery.getServicesForCategory("Tire Services");
+        String[] serviceNames = new String[repairService.size()+1];
+        for (int i = 0; i < repairService.size(); i++) {
+            serviceNames[i] = repairService.get(i)[0];
+        }
+        serviceNames[repairService.size()] = "Go Back";
+        customerTireServices.setOptions(serviceNames);  
         while (true) {
             // Display menu
             customerTireServices.display();
             // if option is the last option, go back
             if (customerTireServices.getMenuResponse() == customerTireServices.getOptions().length) {
-                customerScheduleService();
+                customerScheduledRepair();
             }
             // else, add service to cart
             else {
@@ -623,12 +664,19 @@ public class customerUI {
      */
     public static void customerHeatingACServices() {
         // TODO: update menu options with eligible services and "Go Back"
+        ArrayList<String[]> repairService = customerQuery.getServicesForCategory("Heating and A/C Services");
+        String[] serviceNames = new String[repairService.size()+1];
+        for (int i = 0; i < repairService.size(); i++) {
+            serviceNames[i] = repairService.get(i)[0];
+        }
+        serviceNames[repairService.size()] = "Go Back";
+        customerHeatingACServices.setOptions(serviceNames);  
         while (true) {
             // Display menu
             customerHeatingACServices.display();
             // if option is the last option, go back
             if (customerHeatingACServices.getMenuResponse() == customerHeatingACServices.getOptions().length) {
-                customerScheduleService();
+                customerScheduledRepair();
             }
             // else, add service to cart
             else {

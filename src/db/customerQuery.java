@@ -113,6 +113,31 @@ public class customerQuery {
     }
     }
 
+    // get services for the category
+
+    public static ArrayList<String[]> getServicesForCategory(String category) {
+        String query = "SELECT DISTINCT serviceName, serviceNumber FROM Services WHERE repair_category='"+category +"' MINUS select serviceName, serviceNumber FROM MAINTENANCE";
+        try {
+            ResultSet result = JDBC.executeQuery(query);
+        ArrayList<String[]> services = new ArrayList<String[]>();
+        while (result.next()) {
+            String[] service = new String[2];
+            service[0] = result.getString("serviceName");
+            service[1] = result.getString("serviceNumber");
+            services.add(service);
+        }
+        // If there is a result, return it as an array
+        if (services.size() > 0) {
+            // Convert the array list to an array
+            return services;
+        }
+        } catch (SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        return null;}
+        
+        return null;
+    }
+
     public static String getScheduleCost(String scheduleName, String scheduleNumber, String Vin) {
         String query = "SELECT PRICE from Cost_details WHERE serviceName='" + scheduleName +"' AND serviceNumber='"+ scheduleNumber + "' AND sid='" + UI.getCurrentSID() + "' AND manf=(SELECT TRIM(manf) AS manf from Vehicle where vin='"+Vin+"')";
         try {
