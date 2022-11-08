@@ -137,7 +137,6 @@ public class adminUI {
                     String[][] serviceInfo = parseCSV(adminSystemSetUp.getPromptResponse(0));
                     if (serviceInfo != null) {
                         for (int i = 0; i < serviceInfo.length; i++) {
-                            // TODO: add service to database
                             adminQuery.addService(serviceInfo[i]);
                         }
                     }

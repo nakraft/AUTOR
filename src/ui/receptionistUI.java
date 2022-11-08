@@ -3,6 +3,7 @@ package ui;
 // Import DB classes
 import db.JDBC;
 import db.query;
+import db.receptionistQuery;
 
 /**
  * ReceptionistUI class, UI for receptionist
@@ -42,6 +43,7 @@ public class receptionistUI {
             "Enter the customer's car's year"
         }, // Prompts
         new String[] {
+            "Add Customer",
             "Go Back" // receptionistLanding
         } // Options
     );
@@ -85,7 +87,9 @@ public class receptionistUI {
     public static void receptionistAddNewCustomerProfile() {
         while (true) {
             switch (receptionistAddNewCustomerProfile.display()) {
-                case 1: // Go Back
+                case 1: // Add Customer
+                    receptionistQuery.addCustomer(receptionistAddNewCustomerProfile.getPromptResponses());
+                case 2: // Go Back
                     receptionistLanding();
                     return;
             }
