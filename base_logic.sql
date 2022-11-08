@@ -344,25 +344,6 @@ CREATE TRIGGER time_slot_checks
     END; 
 / 
 
-CREATE TRIGGER time_slot_checks_mecahnic_out
-    BEFORE UPDATE ON Mechanic_Out
-    FOR EACH ROW
-    DECLARE 
-        saturday_open EXCEPTION;
-        saturday_hours EXCEPTION;
-        saturday VARCHAR(5);
-    BEGIN 
-        SELECT s.saturday INTO saturday
-        FROM Service_Center s 
-        WHERE s.sid = :new.sid;
-        IF (saturday = 'close' OR saturday = 'c') AND :new.timeslot_day = 6 THEN 
-            RAISE saturday_open; 
-        ELSIF (saturday = 'open' OR saturday = 'o') AND :new.timeslot NOT IN (2,3,4) THEN 
-            RAISE saturday_hours;
-        END IF;
-    END; 
-/ 
-
 CREATE TRIGGER receptionist_for_center
     BEFORE INSERT ON Employee
     FOR EACH ROW
@@ -376,20 +357,27 @@ CREATE TRIGGER receptionist_for_center
 /
 
 CREATE TRIGGER mechanic_requests_time_off
-    BEFORE UPDATE ON Mechanic_Out
+    BEFORE INSERT ON Mechanic_Out
     FOR EACH ROW
     DECLARE 
         mechanics_present NUMBER; 
         service_on NUMBER;
         not_approved EXCEPTION;
+        saturday_open EXCEPTION;
+        saturday_hours EXCEPTION;
+        saturday VARCHAR(5);
     BEGIN 
-        SELECT COUNT(eid) INTO mechanics_present
-        FROM
-            (SELECT e.eid FROM Mechanic e 
-            WHERE e.sid = :new.sid
-            MINUS
-            SELECT o.eid FROM Mechanic_Out o 
-            WHERE o.timeslot_week = :new.timeslot_week AND o.timeslot_day = :new.timeslot_day AND o.timeslot = :new.timeslot AND o.sid = :new.sid);
+        SELECT s.saturday INTO saturday
+        FROM Service_Center s 
+        WHERE s.sid = :new.sid;
+        IF (saturday = 'close' OR saturday = 'c') AND :new.timeslot_day = 6 THEN 
+            RAISE saturday_open; 
+        ELSIF (saturday = 'open' OR saturday = 'o') AND :new.timeslot NOT IN (2,3,4) THEN 
+            RAISE saturday_hours;
+        END IF;
+        SELECT COUNT(eid) INTO mechanics_present 
+        FROM Calendar c 
+        WHERE c.timeslot_week = :new.timeslot_week AND c.timeslot_day = :new.timeslot_day AND c.timeslot = :new.timeslot AND c.sid = :new.sid;
         SELECT COUNT(*) INTO service_on
         FROM Calendar 
         WHERE timeslot_week = :new.timeslot_week AND timeslot_day = :new.timeslot_day AND timeslot = :new.timeslot AND sid = :new.sid AND eid = :new.eid AND invoice_id IS NOT NULL;
@@ -398,7 +386,7 @@ CREATE TRIGGER mechanic_requests_time_off
         ELSE 
             DELETE FROM Calendar 
             WHERE timeslot_week = :new.timeslot_week AND timeslot_day = :new.timeslot_day AND timeslot = :new.timeslot AND sid = :new.sid AND eid = :new.eid;
-        END IF;  
+        END IF;
     END; 
 /
 
