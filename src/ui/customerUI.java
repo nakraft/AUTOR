@@ -711,6 +711,12 @@ public class customerUI {
      * Customer: View Cart and Select Schedule Time
      */
     public static void customerViewCartSelectScheduleTime() {
+        String[] curcart = new String[cart.size()];
+        int i=0;
+        for(String ele:cart) {
+            curcart[i++] = ele;
+        }
+        customerViewCartSelectScheduleTime.setLines(curcart);
         while (true) {
             // Display menu
             switch( customerViewCartSelectScheduleTime.display() ) {
