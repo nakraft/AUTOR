@@ -2,6 +2,8 @@ package db;
 // Import SQL libraries
 import java.sql.*;
 
+import ui.UI;
+
 /**
  * JDBC class for interacting with the database
  */
@@ -10,6 +12,8 @@ public class JDBC {
     static final private String jdbcDriver = "oracle.jdbc.OracleDriver";
     // Database connection
     static private Connection connection = null;
+    // Debug flag
+    static private final boolean DEBUG = false;
 
     /**
      * Database setup method
@@ -20,22 +24,28 @@ public class JDBC {
             Class.forName(jdbcDriver);
         // If the driver can't be loaded
         } catch (ClassNotFoundException e) {
-            // Print an error message
-            System.out.println("JDBC driver not found");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+
+            // // Print an error message
+            // System.out.println("JDBC driver not found");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         // Connect to the database
         try {
             connection = DriverManager.getConnection(url, user, password);
         // If the connection can't be made
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error connecting to database");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+
+            // // Print an error message
+            // System.out.println("Error connecting to database");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
     }
 
@@ -48,11 +58,14 @@ public class JDBC {
             connection.close();
         // If the connection can't be closed
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error closing database connection");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+
+            // // Print an error message
+            // System.out.println("Error closing database connection");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
     }
     
@@ -74,21 +87,26 @@ public class JDBC {
                 executeUpdate(tables.getString(1));
             }
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+            // // Print an error message
+            // System.out.println(e.getMessage());
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         // Close the result set
         try {
             tables.close();
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error closing result set");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+            
+            // // Print an error message
+            // System.out.println("Error closing result set");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         // Go through the sequences and close them too
         try {
@@ -100,21 +118,27 @@ public class JDBC {
                 executeUpdate(Sequences.getString(1));
             }
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+
+            // // Print an error message
+            // System.out.println(e.getMessage());
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         // Close the result set
         try {
             Sequences.close();
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error closing result set");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+
+            // // Print an error message
+            // System.out.println("Error closing result set");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         
         // Load the tables from the SQL files
@@ -147,11 +171,14 @@ public class JDBC {
         }
         // If the statement can't be created
         catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error creating statement");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return null;
+
+            // // Print an error message
+            // System.out.println("Error creating statement");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         try {
             // Execute all the queries
@@ -170,13 +197,15 @@ public class JDBC {
         }
         // If the queries can't be executed
         catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing queries");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return null;
+
+            // // Print an error message
+            // System.out.println("Error executing queries");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
-        return null;
     }
     
 
@@ -191,11 +220,14 @@ public class JDBC {
         try {
             connection.setAutoCommit(true);
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error setting auto commit");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return null;
+
+            // // Print an error message
+            // System.out.println("Error setting auto commit");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
 
         // Create new statement
@@ -203,25 +235,33 @@ public class JDBC {
         try {
             statement = connection.createStatement();
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error creating statement");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return null;
+
+            // // Print an error message
+            // System.out.println("Error creating statement");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
 
         // Execute the query
         ResultSet resultSet = null;
         try {
-            System.out.println(query);
+            if (DEBUG) {
+                System.out.println(query);
+            }
             resultSet = statement.executeQuery(query);
         // If the query can't be executed
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing query");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return null;
+
+            // // Print an error message
+            // System.out.println("Error executing query");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         // Return the result set
         return resultSet;
@@ -237,11 +277,14 @@ public class JDBC {
         try {
             connection.setAutoCommit(true);
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error setting auto commit");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return false;
+
+            // // Print an error message
+            // System.out.println("Error setting auto commit");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         
         // Create new statement
@@ -249,27 +292,32 @@ public class JDBC {
         try {
             statement = connection.createStatement();
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error creating statement");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
-
+            somethingWentWrong(e);
             return false;
+
+            // // Print an error message
+            // System.out.println("Error creating statement");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
 
         // Execute the update
         try {
-            System.out.println(update);
+            if (DEBUG) {
+                System.out.println(update);
+            }
             statement.executeUpdate(update);
         // If the update can't be executed
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing update");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
             return false;
+
+            // // Print an error message
+            // System.out.println("Error executing update");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
         // Return true if the update was successful
         return true;
@@ -295,11 +343,35 @@ public class JDBC {
             }
         // If the results can't be printed
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error printing results");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            somethingWentWrong(e);
+            return;
+
+            // // Print an error message
+            // System.out.println("Error printing results");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
         }
+    }
+
+    /*
+     * Private "Something Went Wrong" Method
+     * Call instead of System.exit(1)
+     */
+    private static void somethingWentWrong(Exception e) {
+        // Print an error message
+        System.out.println("\nSomething went wrong with your request :(");
+        System.out.println("Here are the details:");
+        // Standard error message
+        System.out.println(e.getMessage());
+        // If debugging, print the whole stack trace
+        if (DEBUG) {
+            e.printStackTrace();
+        }
+        /**
+         * Wait for the user to press enter
+         */
+        UI.input.nextLine();
+        // Then return like nothing happened :)
     }
 }

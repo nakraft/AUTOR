@@ -260,9 +260,15 @@ public class managerUI {
                 options[i] = prompts[i];
             }
             options[options.length - 1] = "Manufacturer (leave blank for all)";
-            managerSetupRepairServicePrices.setPrompts(
-                options
-            );
+            if (options.length > 1) {
+                managerSetupRepairServicePrices.setPrompts(options);
+            } else {
+                managerSetupRepairServicePrices.setPrompts(null);
+                managerSetupRepairServicePrices.setLines(new String[] {
+                    "No repair services found"
+                });
+            }
+            managerSetupRepairServicePrices.setPrompts(options);
             switch (managerSetupRepairServicePrices.display()) {
                 case 1: // Setup Prices
                     managerSetupServicePrices.setFeedback("Successfully updated all prices");

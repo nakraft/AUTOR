@@ -25,16 +25,6 @@ public class managerQuery {
         // Get a unique useername
         String username = query.getUniqueUsername(employee[0], employee[1]);
         String password = employee[1].toLowerCase();
-        
-        // Print out the username and password
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
-        // Wait
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         // Insert the employee into the database
         JDBC.executeQuery(
@@ -152,7 +142,7 @@ public class managerQuery {
                 services.add(result.getString("serviceName"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            return new String[0];
         }
         // Return the list of repair services (as an array)
         return services.toArray(new String[services.size()]);
