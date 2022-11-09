@@ -169,6 +169,7 @@ CREATE TABLE Invoice (
 	total_amount REAL,
 	amount_paid REAL DEFAULT 0,
     sid NUMBER(10),
+    date_generated DATE DEFAULT CURRENT_DATE,
     start_timeslot_week NUMBER CHECK (start_timeslot_week IN (1,2,3,4)),
     start_timeslot_day NUMBER CHECK (start_timeslot_day >= 1 AND start_timeslot_day <= 6),
     start_timeslot NUMBER CHECK (start_timeslot >= 1 AND start_timeslot <= 11), 
