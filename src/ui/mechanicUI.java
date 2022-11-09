@@ -188,7 +188,7 @@ public class mechanicUI {
             switch (mechanicRequestSwap.display()) {
                 case 1: // Send Request
                 String[] output = mechanicQuery.RequestedSwap(mechanicRequestSwap.getPromptResponses());  
-                mechanicRequestTimeOff.setLines(output);
+                mechanicRequestSwap.setLines(output);
                     break;
                 case 2: // Go Back
                     mechanicLanding();
@@ -205,10 +205,9 @@ public class mechanicUI {
             // TODO: Query database for swap requests
             // TODO: Set lines
             // Display menu
-            String[] output = mechanicQuery.ManageSwapRequests();
-            mechanicRequestTimeOff.setLines(output);
-            switch (mechanicManageSwapRequests.display()) {
+            switch (mechanicAcceptRejectSwap.display()) {
                 case 1: // Manage Swap Requests
+                mechanicManageSwapRequests();
                     break;
                 case 2: // Go Back
                     mechanicLanding();
@@ -227,12 +226,14 @@ public class mechanicUI {
                 case 1: // Accept Swap Request
                     // TODO: Accept swap request
                     // TODO: Display status of request
-                    String[] output = mechanicQuery.ManageSwapRequests();
-                    mechanicRequestTimeOff.setLines(output);
+                    String[] output = mechanicQuery.AcceptRejectSwap(mechanicManageSwapRequests.getPromptResponse(0), 1);
+                    mechanicManageSwapRequests.setLines(output);
                     break;
                 case 2: // Reject Swap Request
                     // TODO: Reject swap request
                     // TODO: Display status of request
+                    String[] output1 = mechanicQuery.AcceptRejectSwap(mechanicManageSwapRequests.getPromptResponse(0), 0);
+                    mechanicManageSwapRequests.setLines(output1);
                     break;
                 case 3: // Go Back
                     mechanicAcceptRejectSwap();
