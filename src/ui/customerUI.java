@@ -813,7 +813,18 @@ public class customerUI {
                     // TODO: output invoice details
                     String invoice_id = customerViewInvoiceDetails.getPromptResponse(0);
                     String[] invoice = customerQuery.getInvoice(invoice_id);
-                    customerViewInvoiceDetails.setLines(invoice);
+                    String[] invoice_details = new String[10];
+                    invoice_details[0] = "Invoice ID\t-\t"+invoice[0];
+                    invoice_details[1] = "Customer ID\t-\t"+invoice[1];
+                    invoice_details[2] = "VIN\t-\t"+invoice[2];
+                    invoice_details[3] = "Service Date\t-\t"+invoice[3];
+                    invoice_details[4] = "Service(s) IDs\t-\t"+invoice[4];
+                    invoice_details[5] = "Service(s) Type(s)\t-\t"+invoice[5];
+                    invoice_details[6] = "Invoice Status\t-\t"+invoice[6];
+                    invoice_details[7] = "Mechanic name\t-\t"+invoice[7];
+                    invoice_details[8] = "Cost for each service\t-\t"+invoice[8];
+                    invoice_details[9] = "Total cost\t-\t"+invoice[9];
+                    customerViewInvoiceDetails.setLines(invoice_details);
                     break;
                 case 2: // Go Back
                     customerInvoices();
