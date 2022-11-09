@@ -277,7 +277,7 @@ public class customerUI {
                     customerInvoices();
                     break;
                 case 4: // Logout
-                    return;
+                    System.exit(0);
             }
         }
     }
@@ -738,7 +738,7 @@ public class customerUI {
     }
 
     /**
-     * Customer: Schedule Services in Cart
+     * Customer: Schedule Services in Cart 4Y1BL658
      */
     public static void customerScheduleServicesInCart(String Vin, String cost, String duration) {
         // TODO: update menu options with available times
@@ -747,6 +747,11 @@ public class customerUI {
 
             // set options with time slots
             ArrayList<String[]> timeSlots = customerQuery.getTimeSlots(Vin,duration);
+            if (timeSlots == null || timeSlots.size() == 0) {
+                cart.clear();
+                customerLanding.setFeedback("Failed to generate Invoice: Time slot not available for the selected service.");
+                customerLanding();
+            }
             String[] temp = new String[timeSlots.size()+1];
             for (int i = 0; i < timeSlots.size(); i++) {
                 temp[i] = "Day - " + timeSlots.get(i)[0] + ", Week - " + timeSlots.get(i)[1] + ", Timeslot - " + timeSlots.get(i)[2] + " Mechanic - " + timeSlots.get(i)[3] + " id - " + timeSlots.get(i)[4];
@@ -769,8 +774,19 @@ public class customerUI {
                 }
                 // else, checkout cart
                 else {
-                    if(customerQuery.customerCartCheckout(Vin,timeSlots.get(response-1),cost,duration, cart, serviceMapping)) {
+                    Integer result = customerQuery.customerCartCheckout(Vin,timeSlots.get(response-1),cost,duration, cart, serviceMapping);
+                    if(result != -1) {
+                        cart.clear();
+                        customerLanding.setFeedback("Succesfully Generated Invoice with ID "+ result);
                         customerLanding();
+                    }
+                    else if (result == -2) {
+                        customerLanding.setFeedback("Failed to generate Invoice: Time slot not available for the selected service.");
+                        customerLanding();
+                    }
+                    else {
+                        customerLanding.setFeedback("Failed to generate Invoice");
+                        customerLanding(); 
                     }
                 }
             }
