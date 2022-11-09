@@ -3,6 +3,9 @@ package ui;
 // Import DB classes
 import db.customerQuery;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * CustomerUI class, UI for customer
@@ -14,6 +17,8 @@ public class customerUI {
      *************************************************************************/
 
     // Customer: Landing
+    static HashSet<String> cart = new HashSet<String>();
+    static HashMap<String, String> serviceMapping = new HashMap<>();
     private static menu customerLanding = new menu(
         "Customer: Landing", // Header
         null, // Lines
@@ -464,29 +469,25 @@ public class customerUI {
         //4Y1BL658
         // Query database for customer profile
         String[] eligibleMaintenance = customerQuery.getEligibleMaintenance(Vin);
+        serviceMapping.put(eligibleMaintenance[0], eligibleMaintenance[1]);
         String scheduleCost = customerQuery.getScheduleCost(eligibleMaintenance[0], eligibleMaintenance[1], Vin);
-        customerScheduledMaintenance = new menu(
-        "Customer: Add Scheduled Maintenance", // Header
-        null, // Lines (Populated with eligible service in method)
-        null, // Prompts
-        new String[] {
-            "Eligible Schedule : " + eligibleMaintenance[0] + ", Cost : " + scheduleCost + " (Add to Cart)", 
-            "Go back"// customerScheduleService
-        } // Options
-        
-    );
-    while (true) {
-        // Display menu
-        switch( customerScheduledMaintenance.display() ) {
-            case 1: // Accept scheduled maintenance
-                //add to cart 
-                // TODO: Add scheduled maintenance to cart
-                break;
-            case 2: // Go Back
-                customerScheduleService();
-                break;
+        String[] temp = new String[2];
+        temp[0] = "Eligible Schedule : " + eligibleMaintenance[0] + ", Cost : " + scheduleCost + " (Add to Cart)";
+        temp[1] = "Go back";
+        customerScheduledMaintenance.setOptions(temp);
+        while (true) {
+            // Display menu
+            customerScheduledMaintenance.display();
+            // if option is the last option, go back
+            int response = customerScheduledMaintenance.getMenuResponse();
+            if ( response == customerScheduledMaintenance.getOptions().length) {
+                customerViewScheduleService();
+            }
+            // else, add service to cart
+            else {
+                cart.add(eligibleMaintenance[0]);
+            }
         }
-    }
         // display the next eligible maintenance and cost, allow user to add it to cart
         // Query database for cars owned by customer
 
@@ -534,20 +535,31 @@ public class customerUI {
         String[] serviceNames = new String[engineRepairService.size()+1];
         for (int i = 0; i < engineRepairService.size(); i++) {
             serviceNames[i] = engineRepairService.get(i)[0];
+            serviceMapping.put(engineRepairService.get(i)[0], engineRepairService.get(i)[1]);
         }
         serviceNames[engineRepairService.size()] = "Go Back";
         customerEngineServices.setOptions(serviceNames);  
-        // String a = UI.input.nextLine();
+        
 
         while (true) {
             // Display menu
             customerEngineServices.display();
             // if option is the last option, go back
-            if (customerEngineServices.getMenuResponse() == customerEngineServices.getOptions().length) {
+            int response = customerEngineServices.getMenuResponse();
+            if ( response == customerEngineServices.getOptions().length) {
                 customerScheduledRepair();
             }
             // else, add service to cart
             else {
+                cart.add(engineRepairService.get(response-1)[0]);
+                // Iterator<String> it = cart.iterator();
+                // while (it.hasNext()) {
+                //     // Print HashSet values
+                //     System.out.print(it.next() + " ");
+                // }
+                //String a = UI.input.nextLine();
+
+                
                 // TODO: add service to cart
             }
         }
@@ -562,6 +574,7 @@ public class customerUI {
         String[] serviceNames = new String[repairService.size()+1];
         for (int i = 0; i < repairService.size(); i++) {
             serviceNames[i] = repairService.get(i)[0];
+            serviceMapping.put(repairService.get(i)[0], repairService.get(i)[1]);
         }
         serviceNames[repairService.size()] = "Go Back";
         customerExhaustServices.setOptions(serviceNames);  
@@ -571,12 +584,13 @@ public class customerUI {
             // Display menu
             customerExhaustServices.display();
             // if option is the last option, go back
-            if (customerExhaustServices.getMenuResponse() == customerExhaustServices.getOptions().length) {
+            int response = customerExhaustServices.getMenuResponse();
+            if ( response == customerExhaustServices.getOptions().length) {
                 customerScheduledRepair();
             }
             // else, add service to cart
             else {
-                // TODO: add service to cart
+                cart.add(repairService.get(response-1)[0]);
             }
         }
     }
@@ -590,6 +604,7 @@ public class customerUI {
         String[] serviceNames = new String[repairService.size()+1];
         for (int i = 0; i < repairService.size(); i++) {
             serviceNames[i] = repairService.get(i)[0];
+            serviceMapping.put(repairService.get(i)[0], repairService.get(i)[1]);
         }
         serviceNames[repairService.size()] = "Go Back";
         customerElectricalServices.setOptions(serviceNames);  
@@ -597,12 +612,13 @@ public class customerUI {
             // Display menu
             customerElectricalServices.display();
             // if option is the last option, go back
-            if (customerElectricalServices.getMenuResponse() == customerElectricalServices.getOptions().length) {
+            int response = customerElectricalServices.getMenuResponse();
+            if ( response == customerElectricalServices.getOptions().length) {
                 customerScheduledRepair();
             }
             // else, add service to cart
             else {
-                // TODO: add service to cart
+                cart.add(repairService.get(response-1)[0]);
             }
         }
     }
@@ -616,6 +632,7 @@ public class customerUI {
         String[] serviceNames = new String[repairService.size()+1];
         for (int i = 0; i < repairService.size(); i++) {
             serviceNames[i] = repairService.get(i)[0];
+            serviceMapping.put(repairService.get(i)[0], repairService.get(i)[1]);
         }
         serviceNames[repairService.size()] = "Go Back";
         customerTransmissionServices.setOptions(serviceNames);  
@@ -623,12 +640,13 @@ public class customerUI {
             // Display menu
             customerTransmissionServices.display();
             // if option is the last option, go back
-            if (customerTransmissionServices.getMenuResponse() == customerTransmissionServices.getOptions().length) {
+            int response = customerTransmissionServices.getMenuResponse();
+            if ( response == customerTransmissionServices.getOptions().length) {
                 customerScheduledRepair();
             }
             // else, add service to cart
             else {
-                // TODO: add service to cart
+                cart.add(repairService.get(response-1)[0]);
             }
         }
     }
@@ -642,6 +660,7 @@ public class customerUI {
         String[] serviceNames = new String[repairService.size()+1];
         for (int i = 0; i < repairService.size(); i++) {
             serviceNames[i] = repairService.get(i)[0];
+            serviceMapping.put(repairService.get(i)[0], repairService.get(i)[1]);
         }
         serviceNames[repairService.size()] = "Go Back";
         customerTireServices.setOptions(serviceNames);  
@@ -649,12 +668,13 @@ public class customerUI {
             // Display menu
             customerTireServices.display();
             // if option is the last option, go back
-            if (customerTireServices.getMenuResponse() == customerTireServices.getOptions().length) {
+            int response = customerTireServices.getMenuResponse();
+            if ( response == customerTireServices.getOptions().length) {
                 customerScheduledRepair();
             }
             // else, add service to cart
             else {
-                // TODO: add service to cart
+                cart.add(repairService.get(response-1)[0]);
             }
         }
     }
@@ -668,6 +688,7 @@ public class customerUI {
         String[] serviceNames = new String[repairService.size()+1];
         for (int i = 0; i < repairService.size(); i++) {
             serviceNames[i] = repairService.get(i)[0];
+            serviceMapping.put(repairService.get(i)[0], repairService.get(i)[1]);
         }
         serviceNames[repairService.size()] = "Go Back";
         customerHeatingACServices.setOptions(serviceNames);  
@@ -675,12 +696,13 @@ public class customerUI {
             // Display menu
             customerHeatingACServices.display();
             // if option is the last option, go back
-            if (customerHeatingACServices.getMenuResponse() == customerHeatingACServices.getOptions().length) {
+            int response = customerHeatingACServices.getMenuResponse();
+            if ( response == customerHeatingACServices.getOptions().length) {
                 customerScheduledRepair();
             }
             // else, add service to cart
             else {
-                // TODO: add service to cart
+                cart.add(repairService.get(response-1)[0]);
             }
         }
     }
@@ -709,6 +731,7 @@ public class customerUI {
         // TODO: update menu options with available times
         while (true) {
             // Display menu
+
             customerScheduleServicesInCart.display();
             // TODO: generate new invoice with selected services and time
             // return to customer landing
