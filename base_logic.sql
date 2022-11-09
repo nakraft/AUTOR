@@ -483,7 +483,7 @@ CREATE TRIGGER invoice_checks
         WHERE eid = :new.eid AND sid = :new.sid AND timeslot_week >= :new.start_timeslot_week 
             AND timeslot_week <= :new.end_timeslot_week AND timeslot_day >= :new.start_timeslot_day
             AND timeslot_day <= :new.start_timeslot_day AND timeslot >= :new.start_timeslot
-            AND timeslot < :new.end_timeslot;
+            AND timeslot <= :new.end_timeslot;
         IF length_services != dura THEN 
             raise wrongTime;
         END IF; 
@@ -511,7 +511,7 @@ CREATE TRIGGER invoice_propogate
             AND timeslot_day = :new.end_timeslot_day AND timeslot = :new.end_timeslot AND eid = :new.eid;
         UPDATE Calendar 
         SET invoice_id = :new.id
-        WHERE id >= start_id AND id < end_id AND sid = :new.sid AND eid = :new.eid;
+        WHERE id >= start_id AND id <= end_id AND sid = :new.sid AND eid = :new.eid;
         -- update vehicles if needed 
         SELECT COUNT(serviceName) INTO aa
         FROM Invoice_HasService 
