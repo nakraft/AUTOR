@@ -22,7 +22,7 @@ CREATE TABLE Employee (
 	password VARCHAR(50),
 	address VARCHAR(100),
 	email VARCHAR(50),
-    start_date DATE DEFAULT CURRENT_DATE,
+    start_date VARCHAR(20) DEFAULT '2022-01-01',
 	sid NUMBER(10) NOT NULL,
 	role VARCHAR(20) NOT NULL, 
 	PRIMARY KEY (eid, sid),
