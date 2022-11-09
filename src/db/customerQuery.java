@@ -232,10 +232,7 @@ public class customerQuery {
             }
             querystr += " SELECT * FROM DUAL";
             JDBC.executeUpdate(querystr);
-            System.out.println(duration);
-            System.out.println(querystr);
             String query2 = "INSERT INTO Invoice(id,sid,eid,cid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin, total_amount)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", "+ UI.getCurrentEID() +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", '" + Vin + "', "+cost+")";
-            System.out.println(query2);
             JDBC.executeUpdate(query2);
             
         }

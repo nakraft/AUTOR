@@ -792,7 +792,7 @@ public class customerUI {
                     customerViewInvoiceDetails();
                     break;
                 case 2: // Pay Invoice
-                    customerPayInvoice();
+                    customerPayInvoice(customerInvoices.getPromptResponses()[0]);
                     break;
                 case 3: // Go Back
                     customerLanding();
@@ -822,7 +822,7 @@ public class customerUI {
     /**
      * Customer: Pay Invoice
      */
-    public static void customerPayInvoice() {
+    public static void customerPayInvoice(String invoice_id) {
         while (true) {
             // Display menu
             switch( customerPayInvoice.display() ) {
