@@ -244,6 +244,32 @@ public class customerQuery {
         return true;
     }
 
+    public static String[] getInvoice(String invoice_id) {
+        String[] invoice = new String[10];
+        try {
+            String query = "SELECT cid,vin,status,CONCAT(e.first_name,' ',e.last_name) AS name,total_amount FROM Invoice CROSS JOIN Employee e WHERE i.eid = e.eid" + invoice_id;
+            ResultSet res = JDBC.executeQuery(query);
+            while (res.next()) {
+                String[] ts = new String[5];
+                invoice[0] = invoice_id;
+                invoice[1] = res.getString("cid");
+                invoice[2] = res.getString("vin");
+                invoice[3] = res.getString("vin"); // service dates
+                invoice[4] = res.getString("vin"); // service ids
+                invoice[5] = res.getString("vin"); // service types
+                invoice[6] = res.getString("status"); // invoice status
+                invoice[7] = res.getString("name"); // mechanics name
+                invoice[8] = res.getString("vin"); // cost for each service
+                invoice[9] = res.getString("total_amount"); // total cost
+            }
+            return invoice;
+        }
+        catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+    }
+
     /**
      * Add Car to the database
      * 

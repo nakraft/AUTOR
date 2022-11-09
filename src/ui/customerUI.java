@@ -811,6 +811,9 @@ public class customerUI {
                 case 1: // View Invoice
                     // TODO: query database for invoice details
                     // TODO: output invoice details
+                    String invoice_id = customerViewInvoiceDetails.getPromptResponse(0);
+                    String[] invoice = customerQuery.getInvoice(invoice_id);
+                    customerViewInvoiceDetails.setLines(invoice);
                     break;
                 case 2: // Go Back
                     customerInvoices();

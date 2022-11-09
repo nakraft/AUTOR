@@ -76,7 +76,7 @@ public class receptionistQuery {
     public static String[] getCustomersWithPendingInvoices() {        
         try {
             ArrayList<String> customers = new ArrayList<>();
-            ResultSet result = JDBC.executeQuery("SELECT C.cid AS cid,CONCAT(C.first_name,C.last_name) AS name,I.id AS id,I.date_generated AS date_generated,I.total_amount AS total_amount FROM Vehicle V CROSS JOIN Customer C CROSS JOIN Invoice I WHERE C.cid=V.cid AND C.sid=V.sid AND V.vin=I.vin AND 0<(I.total_amount-I.amount_paid)");
+            ResultSet result = JDBC.executeQuery("SELECT C.cid AS cid,CONCAT(C.first_name,' ',C.last_name) AS name,I.id AS id,I.date_generated AS date_generated,I.total_amount AS total_amount FROM Vehicle V CROSS JOIN Customer C CROSS JOIN Invoice I WHERE C.cid=V.cid AND C.sid=V.sid AND V.vin=I.vin AND 0<(I.total_amount-I.amount_paid)");
             while(result.next()) {
                 customers.add(result.getString("cid") +
                 result.getString("name") +
