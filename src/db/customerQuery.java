@@ -295,10 +295,14 @@ public class customerQuery {
      * @return boolean true if successful, false if not
      */
     public static boolean addVehicle(String[] information) {
-        // Create a query
+        String query1 = "Select * from Vehicle where vin = '"+information[0]+"'";
         String query = "INSERT INTO vehicle (vin, manf, mileage, year, cid, sid) VALUES ('" + information[0] + "', '" + information[1] + "', '" + information[2] + "', '" + information[3] + "', '" + UI.getCurrentEID() + "', '" + UI.getCurrentSID() + "')";
         // Run the query
         try {
+            ResultSet result = JDBC.executeQuery(query1);
+            if (result.next()) {
+            return false;
+            }   
             return JDBC.executeQuery(query).next();
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -313,10 +317,18 @@ public class customerQuery {
      * @return boolean true if successful, false if not
      */
     public static boolean deleteVehicle(String vin) {
-        // Create a query
+        String query1 = "Select * from Vehicle where vin = '"+vin+"'";
         String query = "DELETE FROM vehicle WHERE vin = '" + vin + "' AND cid = '" + UI.getCurrentEID() + "' AND sid = '" + UI.getCurrentSID() + "'";
-        // Run the query
-        return JDBC.executeUpdate(query);
+        try {
+            ResultSet result = JDBC.executeQuery(query1);
+            if (!result.next()) {
+            return false;
+            }   
+            return JDBC.executeUpdate(query);
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
     }
 
     public static String[] getInvoiceStatus(String invoice_id) {

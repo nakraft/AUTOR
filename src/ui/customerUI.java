@@ -359,7 +359,14 @@ public class customerUI {
             // Display menu
             switch( customerAddCar.display() ) {
                 case 1: // Add Car
-                    customerQuery.addVehicle(customerAddCar.getPromptResponses());
+                    if(customerQuery.addVehicle(customerAddCar.getPromptResponses())) {
+                        customerLanding.setFeedback("Vehicle added Successfully");
+                        customerLanding();
+                    }
+                    else {
+                        customerLanding.setFeedback("Vehicle already exists");
+                        customerLanding();
+                    }
                     break;
                 case 2: // Go Back
                     customerLanding();
@@ -376,7 +383,14 @@ public class customerUI {
             // Display menu
             switch( customerDeleteCar.display() ) {
                 case 1: // Delete Car
-                    customerQuery.deleteVehicle(customerDeleteCar.getPromptResponses()[0]);
+                    if(customerQuery.deleteVehicle(customerDeleteCar.getPromptResponses()[0])) {
+                        customerLanding.setFeedback("Vehicle Deleted Successfully");
+                        customerLanding();
+                    }
+                    else {
+                        customerLanding.setFeedback("Vehicle does not exists");
+                        customerLanding();
+                    }
                     break;
                 case 2: // Go Back
                     customerLanding();
