@@ -100,9 +100,9 @@ public class receptionistUI {
      * Receptionist: Find Customers with Pending Invoices
      */
     public static void receptionistFindCustomersWithPendingInvoices() {
-        // TODO: query database for customers with pending invoices
-        // TODO: set menu lines to list of customers with pending invoices
         while (true) {
+            String[] customers = receptionistQuery.getCustomersWithPendingInvoices();
+            receptionistFindCustomersWithPendingInvoices.setLines(customers);
             switch (receptionistFindCustomersWithPendingInvoices.display()) {
                 case 1: // Go Back
                     receptionistLanding();

@@ -165,6 +165,7 @@ CREATE TABLE Invoice (
     sid NUMBER(10) NOT NULL,
     timeslot_id_start NUMBER(10) NOT NULL,
     timeslot_id_end NUMBER(10) NOT NULL,
+    date_generated DATE DEFAULT CURRENT_DATE,
 	vin VARCHAR(10) NOT NULL,
 	eid NUMBER(9) NOT NULL,
 	PRIMARY KEY (id),
