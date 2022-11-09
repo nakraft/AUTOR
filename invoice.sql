@@ -37,3 +37,9 @@ INSERT ALL
     INTO Invoice_HasService ( id, name, number ) VALUES ( 1, 'Belt Replacement', 101)
     INTO Invoice_HasService ( id, name, number) VALUES ( 1, 'WHeel Alignment', 110 )
 SELECT * FROM dual;
+
+
+----- UPDATED QUERIES 
+
+-- to pay for an invoice 
+UPDATE Invoice SET amount_paid = 200 WHERE id = 1; -- status will automatically be updated 

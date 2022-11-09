@@ -10,7 +10,6 @@ public class JDBC {
     static final private String jdbcDriver = "oracle.jdbc.OracleDriver";
     // Database connection
     static private Connection connection = null;
-
     /**
      * Database setup method
      */
