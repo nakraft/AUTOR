@@ -160,7 +160,7 @@ CREATE TABLE Invoice_HasService (
 	id NUMBER(10),
 	serviceName VARCHAR(50),
     serviceNumber NUMBER(10),
-	PRIMARY KEY (id, serviceName, serviceNumber),
+	PRIMARY KEY (id),
 	FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
 );
 
@@ -183,6 +183,7 @@ CREATE TABLE Invoice (
 	FOREIGN KEY (sid) REFERENCES Service_Center,
 	FOREIGN KEY (vin) REFERENCES Vehicle,
     FOREIGN KEY (eid, sid) REFERENCES Mechanic,
+    FOREIGN KEY (id) REFERENCES Invoice_HasService (id),
     FOREIGN KEY (cid, sid) REFERENCES Customer
 );
 
@@ -229,7 +230,7 @@ CREATE TABLE Mechanic_Swap_Request (
     recieve_timeslot_week NUMBER CHECK (recieve_timeslot_week IN (1,2,3,4)),
     recieve_timeslot_begin NUMBER CHECK (recieve_timeslot_begin >= 1 AND recieve_timeslot_begin <= 11), 
     recieve_timeslot_end NUMBER CHECK (recieve_timeslot_end >= 1 AND recieve_timeslot_end <= 11), 
-    state NUMBER DEFAULT 0 CHECK (state IN (0, 1, 2)),
+    status NUMBER DEFAULT 0 CHECK (status IN (0, 1, 2)),
     PRIMARY KEY (id, sid), 
     FOREIGN KEY (donor_eid, sid) REFERENCES Mechanic (eid, sid)
         ON DELETE CASCADE,
@@ -520,7 +521,7 @@ CREATE TRIGGER invoice_propogate
         WHERE id = :new.id AND serviceName = 'B';
         SELECT COUNT(serviceName) INTO cc
         FROM Invoice_HasService 
-        WHERE id = :new.id AND serviceName = 'B';
+        WHERE id = :new.id AND serviceName = 'C';
         IF aa > 0 THEN 
             UPDATE Vehicle 
             SET schedule = 'B'
@@ -543,31 +544,37 @@ CREATE TRIGGER request_swap
     BEFORE INSERT ON Mechanic_Swap_Request
     FOR EACH ROW 
     DECLARE 
-        recieve_begin_id NUMBER; 
-        donor_begin_id NUMBER;
+        donor_exists NUMBER; 
+        recieve_exists NUMBER;
         invalid_eid EXCEPTION;
+        PRAGMA exception_init( invalid_eid, -20001 );
+        donor_free NUMBER; 
+        recieve_free NUMBER;
         busy_error EXCEPTION;
+        PRAGMA exception_init( busy_error, -20002 );
         too_many_hours EXCEPTION;
+        PRAGMA exception_init( too_many_hours, -20003 );
         donor_hours NUMBER; 
         recieve_hours NUMBER;
     BEGIN
-        -- get the two timeslot values 
-        SELECT DISTINCT(c.id) INTO donor_begin_id
-        FROM Calendar c 
-        WHERE c.timeslot_week = :new.donor_timeslot_week 
-            AND c.timeslot_day = :new.donor_timeslot_day AND c.timeslot = :new.donor_timeslot_begin;
-        SELECT DISTINCT(c.id) INTO recieve_begin_id
-        FROM Calendar c 
-        WHERE c.timeslot_week = :new.recieve_timeslot_week 
-            AND c.timeslot_day = :new.recieve_timeslot_day AND c.timeslot = :new.recieve_timeslot_begin;
-        -- make sure there exists an invoice with that id and that eid with that timeslot in the invoice table for both donor and recipeint 
-        IF NOT EXISTS (SELECT * FROM Invoice WHERE timeslot_id_start = donor_begin_id AND timeslot_id_end = (donor_begin_id + :new.donor_timeslot_end - :new.donor_timeslot_begin) AND eid = :new.donor_eid AND sid = :new.sid) 
-            OR NOT EXISTS (SELECT * FROM Invoice WHERE timeslot_id_start = recieve_begin_id AND timeslot_id_end = (recieve_begin_id + :new.recieve_timeslot_end - :new.recieve_timeslot_begin) AND eid = :new.recieve_eid AND sid = :new.sid) THEN 
+        -- make sure the people and the times match the invoices to switch
+        SELECT COUNT(*) INTO donor_exists FROM Invoice WHERE start_timeslot_week = :new.donor_timeslot_week AND start_timeslot_day = :new.donor_timeslot_day AND 
+        start_timeslot = :new.donor_timeslot_begin and end_timeslot = :new.donor_timeslot_end AND eid = :new.donor_eid AND sid = :new.sid; 
+        SELECT COUNT(*) INTO recieve_exists FROM Invoice WHERE start_timeslot_week = :new.recieve_timeslot_week AND start_timeslot_day = :new.recieve_timeslot_day AND 
+        start_timeslot = :new.recieve_timeslot_begin and end_timeslot = :new.recieve_timeslot_end AND eid = :new.recieve_eid AND sid = :new.sid; 
+        IF donor_exists = 0 OR recieve_exists = 0 THEN 
             raise invalid_eid;
         END IF;
         -- make sure there does not exist an invoice with that id and the eid of the other person in either of those slots (double booked)
-        IF EXISTS (SELECT * FROM Invoice WHERE timeslot_id_start = donor_begin_id AND timeslot_id_end = (donor_begin_id + :new.donor_timeslot_end - :new.donor_timeslot_begin) AND eid = :new.recieve_eid AND sid = :new.sid) 
-            OR EXISTS (SELECT * FROM Invoice WHERE timeslot_id_start = recieve_begin_id AND timeslot_id_end = (recieve_begin_id + :new.recieve_timeslot_end - :new.recieve_timeslot_begin) AND eid = :new.donor_eid AND sid = :new.sid) THEN 
+        SELECT COUNT(*) INTO donor_free FROM Invoice WHERE start_timeslot_week = :new.recieve_timeslot_week AND start_timeslot_day = :new.recieve_timeslot_day 
+        AND eid = :new.donor_eid AND sid = :new.sid AND 
+        ((start_timeslot <= :new.recieve_timeslot_begin AND end_timeslot >= :new.recieve_timeslot_begin) OR 
+        (start_timeslot <= :new.recieve_timeslot_end AND end_timeslot >= :new.recieve_timeslot_end));
+        SELECT COUNT(*) INTO recieve_free FROM Invoice WHERE start_timeslot_week = :new.donor_timeslot_week AND start_timeslot_day = :new.donor_timeslot_day 
+        AND eid = :new.recieve_eid AND sid = :new.sid AND 
+        ((start_timeslot <= :new.donor_timeslot_begin AND end_timeslot >= :new.donor_timeslot_begin) OR 
+        (start_timeslot <= :new.donor_timeslot_end AND end_timeslot >= :new.donor_timeslot_end));
+        IF donor_free != 0 OR recieve_free != 0 THEN 
             raise busy_error;
         END IF;
         -- make sure that this rebooking does not cause either person to become overbooked 
@@ -577,11 +584,41 @@ CREATE TRIGGER request_swap
         SELECT COUNT(*) INTO recieve_hours
         FROM Calendar
         WHERE eid = :new.recieve_eid AND timeslot_week = :new.donor_timeslot_week AND invoice_id IS NOT NULL;
-        IF (:new.donor_timeslot_week = :new.recieve_timeslot_week AND ((donor_hours - (:new.donor_timeslot_end - :new.donor_timeslot_begin) + (:new.recieve_timeslot_end - :new.recieve_timeslot_begin)) > 50 OR 
-                (recieve_hours + (:new.donor_timeslot_end - :new.donor_timeslot_begin) - (:new.recieve_timeslot_end - :new.recieve_timeslot_begin)) > 50)) OR 
-            (:new.donor_timeslot_week != :new.recieve_timeslot_week AND ((donor_hours + (:new.recieve_timeslot_end - :new.recieve_timeslot_begin)) > 50 OR 
-                (recieve_hours + (:new.donor_timeslot_end - :new.donor_timeslot_begin)) > 50)) THEN 
-                raise too_many_hours;
+        IF (:new.donor_timeslot_week = :new.recieve_timeslot_week AND ((donor_hours - (:new.donor_timeslot_end - :new.donor_timeslot_begin + 1) + (:new.recieve_timeslot_end - :new.recieve_timeslot_begin + 1)) > 50 OR 
+                (recieve_hours + (:new.donor_timeslot_end - :new.donor_timeslot_begin + 1) - (:new.recieve_timeslot_end - :new.recieve_timeslot_begin + 1)) > 50)) OR 
+            (:new.donor_timeslot_week != :new.recieve_timeslot_week AND ((donor_hours + (:new.recieve_timeslot_end - :new.recieve_timeslot_begin + 1)) > 50 OR 
+                (recieve_hours + (:new.donor_timeslot_end - :new.donor_timeslot_begin + 1)) > 50)) THEN 
+            raise too_many_hours;
+        END IF; 
+    END;
+/
+
+CREATE TRIGGER update_swap
+    AFTER UPDATE ON Mechanic_Swap_Request
+    FOR EACH ROW 
+    DECLARE 
+    BEGIN
+        IF :new.status = 1 THEN -- condition accepted swap places and close (if 0/2 no action needed)
+            UPDATE Calendar 
+            SET eid = :new.donor_eid 
+            WHERE sid = :new.sid AND eid = :new.recieve_eid AND timeslot_week = :new.recieve_timeslot_week AND 
+            timeslot_day = :new.recieve_timeslot_day AND timeslot >= :new.recieve_timeslot_begin AND
+            timeslot <= :new.recieve_timeslot_end;
+            UPDATE Calendar 
+            SET eid = :new.recieve_eid 
+            WHERE sid = :new.sid AND eid = :new.donor_eid AND timeslot_week = :new.donor_timeslot_week AND 
+            timeslot_day = :new.donor_timeslot_day AND timeslot >= :new.donor_timeslot_begin AND
+            timeslot <= :new.donor_timeslot_end;
+            UPDATE Invoice
+            SET eid = :new.donor_eid 
+            WHERE sid = :new.sid AND eid = :new.recieve_eid AND start_timeslot_week = :new.recieve_timeslot_week AND end_timeslot_week = :new.recieve_timeslot_week
+            AND start_timeslot_day = :new.recieve_timeslot_day AND end_timeslot_day = :new.recieve_timeslot_day 
+            AND start_timeslot = :new.recieve_timeslot_begin AND end_timeslot = :new.recieve_timeslot_end; 
+            UPDATE Invoice
+            SET eid = :new.recieve_eid 
+            WHERE sid = :new.sid AND eid = :new.donor_eid AND start_timeslot_week = :new.donor_timeslot_week AND end_timeslot_week = :new.donor_timeslot_week
+            AND start_timeslot_day = :new.donor_timeslot_day AND end_timeslot_day = :new.donor_timeslot_day 
+            AND start_timeslot = :new.donor_timeslot_begin AND end_timeslot = :new.donor_timeslot_end; 
         END IF; 
     END;
 /
