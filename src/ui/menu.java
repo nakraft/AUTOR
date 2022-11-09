@@ -211,7 +211,7 @@ public class menu {
             promptResponses = new String[getPrompts().length];
             for (int i = 0; i < getPrompts().length; i++) {
                 System.out.print(getPrompts()[i] + ": ");
-                promptResponses[i] = UI.input.nextLine();
+                promptResponses[i] = UI.input.nextLine().trim();
             }
             // Line of padding
             System.out.println();

@@ -187,6 +187,17 @@ public class JDBC {
      * @return the result set of the query
      */
     public static ResultSet executeQuery(String query) {
+        // Make sure auto commit is enabled
+        try {
+            connection.setAutoCommit(true);
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error setting auto commit");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+
         // Create new statement
         Statement statement = null;
         try {
@@ -222,6 +233,17 @@ public class JDBC {
      * @param update the update to execute
      */
     public static boolean executeUpdate(String update) {
+        // Make sure auto commit is enabled
+        try {
+            connection.setAutoCommit(true);
+        } catch (java.sql.SQLException e) {
+            // Print an error message
+            System.out.println("Error setting auto commit");
+            e.printStackTrace();
+            // Quit the program
+            System.exit(1);
+        }
+        
         // Create new statement
         Statement statement = null;
         try {

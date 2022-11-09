@@ -117,7 +117,7 @@ public class adminUI {
                     break;
                 case 6: // Reset Database Full
                     JDBC.resetDatabaseFull();
-                    adminLanding.setFeedback("Database reset and popuplated with full data");
+                    adminLanding.setFeedback("Database reset and populated with full data");
                     break;
                 case 7: // Run SQL Commands
                     adminRunSQLCommands();

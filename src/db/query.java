@@ -160,10 +160,16 @@ public class query {
      * @return true if the username is found, otherwise false
      */
     public static boolean findUsername(String username) {
-        // Possible tables: MANAGER, RECEPTIONIST, MECHANIC, CUSTOMER
         try {
-            // Query all the tables at once
-            ResultSet result = JDBC.executeQuery("SELECT * FROM Manager, Receptionist, Mechanic, Customer WHERE username = '" + username + "'"); 
+            // First check for the username in the Employee table
+            ResultSet result = JDBC.executeQuery("SELECT * FROM Employee WHERE username = '" + username + "'"); 
+            // If the query returns a result
+            if (result.next()) {
+                // Return true
+                return true;
+            }
+            // Then check for the username in the Customer table
+            result = JDBC.executeQuery("SELECT * FROM Customer WHERE username = '" + username + "'");
             // If the query returns a result
             if (result.next()) {
                 // Return true
@@ -178,6 +184,27 @@ public class query {
         }
         // If no matching username is found
         return false;
+    }
+
+    /**
+     * Get unique username
+     * 
+     * @param first First name of user
+     * @param last  Last name of user
+     * 
+     * @return unique username
+     */
+    public static String getUniqueUsername(String first, String last) {
+        // Create a username
+        String username = first.toLowerCase().substring(0, 1) + last.toLowerCase();
+        // If the username is already taken, add a number to the end
+        int i = 1;
+        while (findUsername(username)) {
+            username = first.toLowerCase().substring(0, 1) + last.toLowerCase() + i;
+            i++;
+        }
+        // Return the username
+        return username;
     }
 
     /**

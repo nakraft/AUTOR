@@ -1,8 +1,6 @@
 package ui;
 
 // Import DB classes
-import db.JDBC;
-import db.query;
 import db.managerQuery;
 
 /**
@@ -46,10 +44,11 @@ public class managerUI {
         new String[] {
             "Enter the employee's first name",
             "Enter the employee's last name",
+            "Enter the employee's address",
             "Enter the employee's email address",
             "Enter the employee's phone number",
-            "Enter the employee's role",
-            "Enter the employee's start date",
+            "Enter the employee's role (mechanic or receptionist)",
+            "Enter the employee's start date (YYYY-MM-DD)",
             "Enter the employee's compensation"
         }, // Prompts
         new String[] {
@@ -90,7 +89,8 @@ public class managerUI {
         new String[] {
             "Schedule A Price",
             "Schedule B Price",
-            "Schedule C Price"
+            "Schedule C Price",
+            "Manufacturer (leave blank for all)"
         }, // Prompts
         new String[] {
             "Setup Prices", // set prices, then go to managerSetupServicePrices
@@ -123,7 +123,6 @@ public class managerUI {
                     managerSetupStore();
                     break;
                 case 2: // Add New Employee
-                    // TODO: figure out if duplicate add employee flow?
                     managerAddEmployees();
                     break;
                 case 3: // Logout
@@ -162,15 +161,13 @@ public class managerUI {
         while (true) {
             switch (managerAddEmployees.display()) {
                 case 1: // Add Employee
-                    int result = managerQuery.addEmployee(managerAddEmployees.getPromptResponses());
-                    if (result != 0) {
-                        System.out.println("Employee added successfully!");
-                        System.out.println("EID: " + result);
+                    String result = managerQuery.addEmployee(managerAddEmployees.getPromptResponses());
+                    // If it starts with ERROR, it's an error
+                    if (result.startsWith("ERROR")) {
+                        managerSetupStore.setFeedback("Failed to add employee (error " + result + ")");
                     } else {
-                        System.out.println("Error adding employee");
+                        managerSetupStore.setFeedback("Added employee with EID " + result);
                     }
-                    // TODO: add employee to the database
-                    // TODO: print out EID for new employee
                     managerSetupStore();
                     return;
                 case 2: // Go Back
@@ -187,7 +184,11 @@ public class managerUI {
         while (true) {
             switch (managerSetupOperationalHours.display()) {
                 case 1: // Setup Operational Hours
-                    // TODO: set operational hours in database
+                    if (managerQuery.setOperationalHours(managerSetupOperationalHours.getPromptResponses()[0])) {
+                        managerSetupStore.setFeedback("Successfully set operational hours");
+                    } else {
+                        managerSetupStore.setFeedback("Failed to set operational hours");
+                    }
                     managerSetupStore();
                     return;
                 case 2: // Go Back
@@ -223,10 +224,21 @@ public class managerUI {
         while (true) {
             switch (managerSetupMaintenanceServicePrices.display()) {
                 case 1: // Setup Prices
-                    
-                    // TODO: set schedule A price in database
-                    // TODO: set schedule B price in database
-                    // TODO: set schedule C price in database
+                    boolean updateA = false, updateB = false, updateC = false;
+                    if ((updateA = managerQuery.setSchedulePrice("A", managerSetupMaintenanceServicePrices.getPromptResponses()[0],  managerSetupMaintenanceServicePrices.getPromptResponses()[3]))
+                    && (updateB = managerQuery.setSchedulePrice("B", managerSetupMaintenanceServicePrices.getPromptResponses()[1],  managerSetupMaintenanceServicePrices.getPromptResponses()[3]))
+                    && (updateC = managerQuery.setSchedulePrice("C", managerSetupMaintenanceServicePrices.getPromptResponses()[2],  managerSetupMaintenanceServicePrices.getPromptResponses()[3]))
+                    ) {
+                        managerSetupMaintenanceServicePrices.setFeedback("Successfully updated all prices");
+                    } else {
+                        if (!updateA) {
+                            managerSetupMaintenanceServicePrices.setFeedback("Failed to update price for schedule A");
+                        } else if (!updateB) {
+                            managerSetupMaintenanceServicePrices.setFeedback("Failed to update price for schedule B");
+                        } else if (!updateC) {
+                            managerSetupMaintenanceServicePrices.setFeedback("Failed to update price for schedule C");
+                        }
+                    }
                     managerSetupServicePrices();
                     return;
                 case 2: // Go Back
@@ -240,13 +252,25 @@ public class managerUI {
      * Manager: Setup Repair Service Prices
      */
     public static void managerSetupRepairServicePrices() {
-        // TODO: get list of services from database
-        // TODO: set prompts for each service
         while (true) {
+            String[] prompts = managerQuery.getRepairServices();
+            // Add "Manufactuer" prompt to the end
+            String[] options = new String[prompts.length + 1];
+            for (int i = 0; i < prompts.length; i++) {
+                options[i] = prompts[i];
+            }
+            options[options.length - 1] = "Manufacturer (leave blank for all)";
+            managerSetupRepairServicePrices.setPrompts(
+                options
+            );
             switch (managerSetupRepairServicePrices.display()) {
                 case 1: // Setup Prices
-                    // TODO: set prices for each service in database
-                    managerSetupServicePrices();
+                    managerSetupRepairServicePrices.setFeedback("Successfully updated all prices");
+                    for (int i = 0; i < managerSetupRepairServicePrices.getPromptResponses().length - 1; i++) {
+                        if (!managerQuery.setRepairServicePrice(managerSetupRepairServicePrices.getPromptResponses()[i], managerSetupRepairServicePrices.getPromptResponses()[i], managerSetupRepairServicePrices.getPromptResponses()[managerSetupRepairServicePrices.getPromptResponses().length - 1])) {
+                            managerSetupRepairServicePrices.setFeedback("Failed to update price for service " + managerSetupRepairServicePrices.getPromptResponses()[i]);
+                        }
+                    }
                     return;
                 case 2: // Go Back
                     managerSetupServicePrices();
