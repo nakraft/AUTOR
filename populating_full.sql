@@ -258,12 +258,12 @@ SELECT *
   FROM dual;
 
 INSERT ALL 
-  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (1, 30003, 123405678, 10501, 1, 2, 1, 1, 2, 1, 'P39VN198')
-  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (2, 30003, 123450678, 10010, 1, 2, 1, 1, 2, 1, '39YVS415')
-  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status)  VALUES (3, 30003, 123456780, 10062, 1, 1, 1, 1, 1, 1, '29T56WC3', 1)
-  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status)  VALUES (4, 30002, 423186759, 10035, 2, 4, 2, 2, 4, 5, '9R2UHP54', 1)
-  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status)  VALUES (5, 30002, 125689347, 10053, 2, 1, 3, 2, 1, 5, '5TR3K914', 1)
+  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, total_amount)  VALUES (1, 30003, 123405678, 10501, 1, 2, 1, 1, 2, 1, 'P39VN198', 210)
+  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, total_amount)  VALUES (2, 30003, 123450678, 10010, 1, 2, 1, 1, 2, 1, '39YVS415', 175)
+  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status, total_amount, amount_paid)  VALUES (3, 30003, 123456780, 10062, 1, 1, 1, 1, 1, 1, '29T56WC3', 1, 105, 105)
+  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status, total_amount, amount_paid)  VALUES (4, 30002, 423186759, 10035, 2, 4, 2, 2, 4, 5, '9R2UHP54', 1, 420, 420)
+  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status, total_amount, amount_paid)  VALUES (5, 30002, 125689347, 10053, 2, 1, 3, 2, 1, 5, '5TR3K914', 1, 720, 720)
   -- INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status)  VALUES (6, 30002, 789123456, 10010, 2, 6, 2, 2, 6, 7, '15DC9A87', 1) THIS IS AN INVALID SERVICE 
-  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status)  VALUES (7, 30002, 125689347, 10001, 3, 5, 5, 3, 5, 7, '18S5R2D8', 1)
+  INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status, total_amount, amount_paid)  VALUES (7, 30002, 125689347, 10001, 3, 5, 5, 3, 5, 7, '18S5R2D8', 1, 195, 195)
 SELECT * 
   FROM dual;

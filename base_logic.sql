@@ -540,6 +540,17 @@ CREATE TRIGGER invoice_propogate
     END; 
 / 
 
+CREATE TRIGGER decide_status_invoice 
+    AFTER UPDATE ON Invoice 
+    BEGIN
+        IF UPDATING('amount_paid') THEN
+            UPDATE Invoice 
+            SET status = 1
+            WHERE total_amount = amount_paid;
+        END IF;
+    END;
+/
+
 CREATE TRIGGER request_swap
     BEFORE INSERT ON Mechanic_Swap_Request
     FOR EACH ROW 
