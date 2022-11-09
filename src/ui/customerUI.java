@@ -825,8 +825,7 @@ public class customerUI {
             // Display menu
             switch( customerViewInvoiceDetails.display() ) {
                 case 1: // View Invoice
-                    // TODO: query database for invoice details
-                    // TODO: output invoice details
+                    // TODO: query database for types of service in invoice
                     String invoice_id = customerViewInvoiceDetails.getPromptResponse(0);
                     String[] invoice = customerQuery.getInvoice(invoice_id);
                     String[] invoice_details = new String[10];

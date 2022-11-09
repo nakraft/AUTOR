@@ -253,19 +253,32 @@ public class customerQuery {
     public static String[] getInvoice(String invoice_id) {
         String[] invoice = new String[10];
         try {
-            String query = "SELECT cid,vin,status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,total_amount FROM Invoice i CROSS JOIN Employee e WHERE i.eid = e.eid and i.id = " + invoice_id;
+            String query = "SELECT i.cid AS cid,i.vin AS vin,i.status AS status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,i.total_amount AS total_amount,i.start_timeslot_day AS start_timeslot_day,i.start_timeslot_week AS start_timeslot_week,TRIM(v.manf) AS manf FROM Invoice i CROSS JOIN Employee e CROSS JOIN Vehicle v WHERE i.eid = e.eid and i.vin = v.vin and i.id = " + invoice_id;
             ResultSet res = JDBC.executeQuery(query);
             while (res.next()) {
                 invoice[0] = invoice_id;
                 invoice[1] = res.getString("cid");
                 invoice[2] = res.getString("vin");
-                invoice[3] = res.getString("vin"); // service dates
-                invoice[4] = res.getString("vin"); // service ids
-                invoice[5] = res.getString("vin"); // service types
-                invoice[6] = res.getString("status"); // invoice status
+                invoice[3] = "Week:" + res.getString("start_timeslot_week") + " Day:" + res.getString("start_timeslot_day"); // service date
+                invoice[4] = ""; // service ids
+                invoice[5] = ""; // service types
+                invoice[8] = ""; // cost for each service
+                invoice[6] = (res.getString("status") == "0") ? "Unpaid" : "Paid"; // invoice status
                 invoice[7] = res.getString("name"); // mechanics name
-                invoice[8] = res.getString("vin"); // cost for each service
                 invoice[9] = res.getString("total_amount"); // total cost
+                String query2 = "SELECT * FROM Invoice_HasService WHERE id = " + invoice_id;
+                ResultSet res2 = JDBC.executeQuery(query2);
+                while (res2.next()) {
+                    String sname = res2.getString("serviceName");
+                    String snumber = res2.getString("serviceNumber");     
+                    String manf = res.getString("manf");               
+                    invoice[4] += ("\n"+snumber);       
+                    String query3 = "SELECT price FROM Cost_Details WHERE serviceName = '" + sname + "' AND serviceNumber = " + snumber+ " AND manf = '" + manf + "' AND sid = " + UI.getCurrentSID();
+                    ResultSet res3 = JDBC.executeQuery(query3);
+                    while (res3.next()) {
+                        invoice[8] += ("\n"+res3.getString("price"));    
+                    } 
+                }
             }
             return invoice;
         }
