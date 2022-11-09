@@ -438,7 +438,7 @@ public class customerUI {
                     customerScheduledRepair();
                     break;
                 case 3: // View Cart and Select Schedule Time
-                    customerViewCartSelectScheduleTime();
+                    customerViewCartSelectScheduleTime(customerScheduleService.getPromptResponses()[0]);
                     break;
                 case 4: // Go Back
                     customerViewScheduleService();
@@ -481,7 +481,7 @@ public class customerUI {
             // if option is the last option, go back
             int response = customerScheduledMaintenance.getMenuResponse();
             if ( response == customerScheduledMaintenance.getOptions().length) {
-                customerViewScheduleService();
+                customerScheduleService();
             }
             // else, add service to cart
             else {
@@ -519,7 +519,7 @@ public class customerUI {
                     customerHeatingACServices();
                     break;
                 case 7: // Go Back
-                    customerViewScheduleService();
+                    customerScheduleService();
                     break;                
             }
         }
@@ -710,18 +710,25 @@ public class customerUI {
     /**
      * Customer: View Cart and Select Schedule Time
      */
-    public static void customerViewCartSelectScheduleTime() {
-        String[] curcart = new String[cart.size()];
+    public static void customerViewCartSelectScheduleTime(String Vin) {
+        String[] curcart = new String[cart.size()+3];
+        String querystr = "";
         int i=0;
+        curcart[i++] = "Cart items";
         for(String ele:cart) {
             curcart[i++] = ele;
+            querystr += ("('" + ele.trim() + "','" + serviceMapping.get(ele) + "'),");
         }
+        querystr = querystr.substring(0,querystr.length()-1);
+        String[] cartDetails =  customerQuery.getCartCostDur(querystr, Vin);
+        curcart[i++] = "Total cost - "+cartDetails[0];
+        curcart[i++] = "Total duration - "+cartDetails[1];
         customerViewCartSelectScheduleTime.setLines(curcart);
         while (true) {
             // Display menu
             switch( customerViewCartSelectScheduleTime.display() ) {
                 case 1: // Proceed with Scheduling
-                    customerScheduleServicesInCart();
+                    customerScheduleServicesInCart(Vin,cartDetails[0],cartDetails[1]);
                     break;
                 case 2: // Go Back
                     customerScheduleService();
@@ -733,15 +740,44 @@ public class customerUI {
     /**
      * Customer: Schedule Services in Cart
      */
-    public static void customerScheduleServicesInCart() {
+    public static void customerScheduleServicesInCart(String Vin, String cost, String duration) {
         // TODO: update menu options with available times
         while (true) {
             // Display menu
 
-            customerScheduleServicesInCart.display();
+            // set options with time slots
+            ArrayList<String[]> timeSlots = customerQuery.getTimeSlots(Vin,duration);
+            String[] temp = new String[timeSlots.size()+1];
+            for (int i = 0; i < timeSlots.size(); i++) {
+                temp[i] = "Day - " + timeSlots.get(i)[0] + ", Week - " + timeSlots.get(i)[1] + ", Timeslot - " + timeSlots.get(i)[2] + " Mechanic - " + timeSlots.get(i)[3] + " id - " + timeSlots.get(i)[4];
+            }
+            temp[timeSlots.size()] = "Go Back";
+            customerScheduleServicesInCart.setOptions(temp);
+            // for(String ele:temp) {
+            //     System.out.println(ele);  
+            // }
+            // String test = UI.input.nextLine();
+            // get slot from prompt
+
+            while (true) {
+                // Display menu
+                customerScheduleServicesInCart.display();
+                // if option is the last option, go back
+                int response = customerScheduleServicesInCart.getMenuResponse();
+                if ( response == temp.length) {
+                    customerViewCartSelectScheduleTime(Vin);
+                }
+                // else, checkout cart
+                else {
+                    if(customerQuery.customerCartCheckout(Vin,timeSlots.get(response-1),cost,duration, cart, serviceMapping)) {
+                        customerLanding();
+                    }
+                }
+            }
+
             // TODO: generate new invoice with selected services and time
             // return to customer landing
-            customerLanding();
+            // customerLanding();
         }
     }
 

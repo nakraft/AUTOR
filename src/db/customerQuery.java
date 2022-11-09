@@ -5,6 +5,8 @@ import java.sql.*;
 
 // Import array list
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Queries for customers
@@ -151,6 +153,99 @@ public class customerQuery {
             System.out.println("Error: " + e.getMessage());
             return null;}
     }
+
+    public static String[] getCartCostDur(String querystr, String Vin) {
+        
+        String querycost = "SELECT SUM(price) AS PRICE FROM Cost_Details WHERE (serviceName, serviceNumber) in (" + querystr +") AND sid='"+ UI.getCurrentSID() + "' AND manf=(SELECT TRIM(manf) AS manf from Vehicle where vin='"+Vin+"')";
+        String querydur = "SELECT SUM(dur) AS DUR FROM Duration_Details WHERE (serviceName, serviceNumber) in (" + querystr +") AND manf=(SELECT TRIM(manf) AS manf from Vehicle where vin='"+Vin+"')";
+        try {
+            String cartCost =null, cartDur =null;;
+            ResultSet res = JDBC.executeQuery(querycost);
+            while (res.next()) {
+                cartCost = res.getString("PRICE");
+            }
+            res = JDBC.executeQuery(querydur);
+            while (res.next()) {
+                cartDur = res.getString("DUR");
+            }
+            String[] temp = new String[2];
+            temp[0] = cartCost;
+            temp[1] = cartDur;
+            return temp;
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;}
+    }
+
+    public static ArrayList<String[]> getTimeSlots(String Vin, String duration) {
+        ArrayList<String[]> timeSlots = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM Calendar c WHERE c.sid = " + UI.getCurrentSID() + " AND c.invoice_id IS NULL AND (SELECT COUNT(c2.id) FROM Calendar c2 WHERE c2.sid = c.sid AND c2.eid = c.eid AND c2.id >= c.id AND c2.id <= c.id + "+duration+" AND c2.invoice_id IS NULL) = "+duration+" ORDER BY c.timeslot_week, c.timeslot_day, c.timeslot, c.eid";
+            ResultSet res = JDBC.executeQuery(query);
+            while (res.next()) {
+                String[] ts = new String[5];
+                ts[0] = res.getString("timeslot_day");
+                ts[1] = res.getString("timeslot_week");
+                ts[2] = res.getString("timeslot");
+                ts[3] = res.getString("eid");
+                ts[4] = res.getString("id");
+                timeSlots.add(ts);
+            }
+            return timeSlots;
+        }
+        catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static Boolean customerCartCheckout(String Vin, String[] timeSlot, String cost, String duration, HashSet<String> cart, HashMap<String, String> serviceMapping ) {
+        // insert into invoice has service
+        String invoiceID = "1";
+        try{
+            // generate id for invoice
+            ResultSet result = JDBC.executeQuery("SELECT MAX(id) AS id FROM Invoice");
+            while(result.next()) {
+                invoiceID = result.getString("id");
+                invoiceID = String.valueOf(Integer.parseInt(invoiceID) + 1);
+            }
+
+            // insert into invoice has schedule
+
+            // insert into invoice
+            // gives the ending timeslot
+            String end_timeslot_week="",end_timeslot_day="",end_timeslot="";
+            String query1 = "SELECT timeslot_week,timeslot_day,timeslot,eid FROM Calendar WHERE id = " + String.valueOf(Integer.parseInt(timeSlot[4]) + Integer.parseInt(duration)) + " and eid = " + UI.getCurrentEID() +" AND sid = " + UI.current_sid;
+            result = JDBC.executeQuery(query1);
+            while(result.next()) {
+                end_timeslot_week = result.getString("timeslot_week");
+                end_timeslot_day = result.getString("timeslot_day");
+                end_timeslot = result.getString("timeslot");
+            }
+
+            // invoice has service query
+
+            String querystr = "INSERT ALL ";
+            int i=0;
+            for(String ele:cart) {
+            querystr += "INTO Invoice_HasService ( id, serviceName, serviceNumber ) VALUES ( "+invoiceID+",'"+ele+"'," + serviceMapping.get(ele) + ") ";
+            }
+            querystr += " SELECT * DUAL";
+
+            String query2 = "INSERT INTO Invoice(id,sid,eid,cid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", "+ UI.getCurrentEID() +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", " + Vin + ")";
+            System.out.println(duration);
+            System.out.println(querystr);
+            System.out.println(query2);
+            String a = UI.input.nextLine();
+        }
+        catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Add Car to the database
      * 
