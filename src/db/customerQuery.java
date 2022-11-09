@@ -215,7 +215,7 @@ public class customerQuery {
             // insert into invoice
             // gives the ending timeslot
             String end_timeslot_week="",end_timeslot_day="",end_timeslot="";
-            String query1 = "SELECT timeslot_week,timeslot_day,timeslot,eid FROM Calendar WHERE id = " + String.valueOf(Integer.parseInt(timeSlot[4]) + Integer.parseInt(duration)) + " and eid = " + UI.getCurrentEID() +" AND sid = " + UI.current_sid;
+            String query1 = "SELECT timeslot_week,timeslot_day,timeslot,eid FROM Calendar WHERE id = " + String.valueOf(Integer.parseInt(timeSlot[4]) + Integer.parseInt(duration) - 1) + " and eid = " + timeSlot[3] +" AND sid = " + UI.current_sid;
             result = JDBC.executeQuery(query1);
             while(result.next()) {
                 end_timeslot_week = result.getString("timeslot_week");
@@ -230,13 +230,14 @@ public class customerQuery {
             for(String ele:cart) {
             querystr += "INTO Invoice_HasService ( id, serviceName, serviceNumber ) VALUES ( "+invoiceID+",'"+ele+"'," + serviceMapping.get(ele) + ") ";
             }
-            querystr += " SELECT * DUAL";
-
-            String query2 = "INSERT INTO Invoice(id,sid,eid,cid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", "+ UI.getCurrentEID() +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", " + Vin + ")";
+            querystr += " SELECT * FROM DUAL";
+            JDBC.executeUpdate(querystr);
             System.out.println(duration);
             System.out.println(querystr);
+            String query2 = "INSERT INTO Invoice(id,sid,eid,cid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin, total_amount)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", "+ UI.getCurrentEID() +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", '" + Vin + "', "+cost+")";
             System.out.println(query2);
-            String a = UI.input.nextLine();
+            JDBC.executeUpdate(query2);
+            
         }
         catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());

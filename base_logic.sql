@@ -160,7 +160,7 @@ CREATE TABLE Invoice_HasService (
 	id NUMBER(10),
 	serviceName VARCHAR(50),
     serviceNumber NUMBER(10),
-	PRIMARY KEY (id),
+	PRIMARY KEY (id, serviceName, serviceNumber),
 	FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
 );
 
@@ -183,7 +183,6 @@ CREATE TABLE Invoice (
 	FOREIGN KEY (sid) REFERENCES Service_Center,
 	FOREIGN KEY (vin) REFERENCES Vehicle,
     FOREIGN KEY (eid, sid) REFERENCES Mechanic,
-    FOREIGN KEY (id) REFERENCES Invoice_HasService (id),
     FOREIGN KEY (cid, sid) REFERENCES Customer
 );
 
