@@ -4,6 +4,12 @@ SELECT SUM(dd.dur)
 FROM duration_details dd
 WHERE dd.manf = 'Honda' AND ((dd.serviceNumber = 101 AND dd.serviceName = 'Belt Replacement') OR (dd.serviceNumber = 110 AND dd.serviceName = 'Wheel Alignment'));
 
+        SELECT SUM(d.dur) INTO length_services  
+        FROM Invoice_HasService i 
+        LEFT JOIN Duration_Details d 
+        ON i.serviceName = d.serviceName AND i.serviceNumber = d.serviceNumber 
+        WHERE d.manf = (SELECT manf FROM Vehicle WHERE vin = :new.vin) AND i.id = :new.id;
+        
 --- first, find a list of available timeslots for the customer's sid 
 
 SELECT c.timeslot_week, c.timeslot_day, c.timeslot, c.eid, c.id

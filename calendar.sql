@@ -72,69 +72,6 @@ CREATE TRIGGER time_slot_checks_mecahnic_out
     END; 
 / 
 
--- THIS SHOULD BE ADDED AS ID FIELD CALCULAteD AND INSErted ON FRONT END FOR VALUE
--- CREATE TRIGGER update_id 
---     AFTER INSERT ON Calendar 
---     FOR EACH ROW 
---     DECLARE 
---         PRAGMA AUTONOMOUS_TRANSACTION;
---         idd NUMBER(10); 
---         sat_open VARCHAR(5); 
---     BEGIN 
-    
---         SELECT s.saturday INTO sat_open
---         FROM Service_Center s 
---         WHERE s.sid = :new.sid;
-        
---         IF (sat_open = 'open' OR sat_open = 'o') AND :new.timeslot_day != 6  THEN 
---           idd := ((:new.timeslot_week - 1) * 58) + ((:new.timeslot_day - 1) * 11) + :new.timeslot;
---         ELSIF (sat_open = 'open' OR sat_open = 'o') AND :new.timeslot_day = 6  THEN 
---           idd := ((:new.timeslot_week - 1) * 58) + ((:new.timeslot_day - 1) * 11) + :new.timeslot - 1;
---         ELSE
---             idd := ((:new.timeslot_week - 1) * 55) + ((:new.timeslot_day - 1) * 11) + :new.timeslot;
---         END IF;
-        
---         UPDATE Calendar
---         SET id = idd 
---         WHERE sid = :new.sid AND timeslot_week = :new.timeslot_week AND timeslot_day = :new.timeslot_day AND timeslot = :new.timeslot;
---     END; 
--- /
-
-INSERT ALL 
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 1, 30001, 132457689, 1)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 2, 30001, 132457689, 2)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 3, 30001, 132457689, 3)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 4, 30001, 132457689, 4)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 5, 30001, 132457689, 5)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 6, 30001, 132457689, 6)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 7, 30001, 132457689, 7)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 8, 30001, 132457689, 8)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 9, 30001, 132457689, 9)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 10, 30001, 132457689, 10)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 1, 11, 30001, 132457689, 11)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 1, 30001, 132457689, 12)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 2, 30001, 132457689, 13)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 3, 30001, 132457689, 14)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 4, 30001, 132457689, 15)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 5, 30001, 132457689, 16)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 6, 30001, 132457689, 17)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 7, 30001, 132457689, 18)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 8, 30001, 132457689, 19)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 9, 30001, 132457689, 20)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 10, 30001, 132457689, 21)
-  INTO Calendar(time_slot_week, time_slot_day, timeslot, sid, eid, id)  VALUES (1, 2, 11, 30001, 132457689, 22)
-SELECT *
-  FROM dual;
-
-CREATE TRIGGER mechanic_joins
-    AFTER UPDATE ON Mechanic 
-    FOR EACH ROW
-    BEGIN 
-        -- add the mechanic to the full extent of the calendar with null invoice_ids
-        -- this should be identical to the above insert into staetments, but automated based on growing the numbers for the full month ahead. 
-        
-    END; 
-/
 
 CREATE TRIGGER mechanic_requests_time_off
     BEFORE UPDATE ON Mechanic_Out
