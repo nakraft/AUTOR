@@ -128,7 +128,7 @@ public class managerQuery {
         // Else if openSaturday is "n" or "no"
         else if ("n".equals(openSaturday) || "no".equals(openSaturday)) {
             // Update the operational hours to not open on Saturday
-            return JDBC.executeUpdate("UPDATE Service_Center SET saturday = 'closed' WHERE sid = " + UI.getCurrentSID());
+            return JDBC.executeUpdate("UPDATE Service_Center SET saturday = 'close' WHERE sid = " + UI.getCurrentSID());
         }
         // Else return false
         return false;
@@ -162,6 +162,7 @@ public class managerQuery {
      * Set the price of a repair service
      */
     public static boolean setRepairServicePrice(String serviceName, String price, String manufacturer) {
+        System.out.println("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + serviceName + "' AND sid = " + UI.getCurrentSID());
         // If manufacturer is null or not specified
         if (manufacturer == null || manufacturer.equals("")) {
             // Update the price for all manufacturers

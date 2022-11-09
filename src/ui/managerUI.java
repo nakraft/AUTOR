@@ -265,12 +265,13 @@ public class managerUI {
             );
             switch (managerSetupRepairServicePrices.display()) {
                 case 1: // Setup Prices
-                    managerSetupRepairServicePrices.setFeedback("Successfully updated all prices");
+                    managerSetupServicePrices.setFeedback("Successfully updated all prices");
                     for (int i = 0; i < managerSetupRepairServicePrices.getPromptResponses().length - 1; i++) {
-                        if (!managerQuery.setRepairServicePrice(managerSetupRepairServicePrices.getPromptResponses()[i], managerSetupRepairServicePrices.getPromptResponses()[i], managerSetupRepairServicePrices.getPromptResponses()[managerSetupRepairServicePrices.getPromptResponses().length - 1])) {
-                            managerSetupRepairServicePrices.setFeedback("Failed to update price for service " + managerSetupRepairServicePrices.getPromptResponses()[i]);
+                        if (!managerQuery.setRepairServicePrice(options[i], managerSetupRepairServicePrices.getPromptResponses()[i], managerSetupRepairServicePrices.getPromptResponses()[managerSetupRepairServicePrices.getPromptResponses().length - 1])) {
+                            managerSetupServicePrices.setFeedback("Failed to update price for service " + managerSetupRepairServicePrices.getPromptResponses()[i]);
                         }
                     }
+                    managerSetupServicePrices();
                     return;
                 case 2: // Go Back
                     managerSetupServicePrices();
