@@ -300,4 +300,36 @@ public class customerQuery {
         return JDBC.executeUpdate(query);
     }
 
+    public static String[] getInvoiceStatus(String invoice_id) {
+        String query = "SELECT * FROM Invoice where id='"+invoice_id+"'";
+        String[] invoice_details = new String[3];
+        try {
+            ResultSet result = JDBC.executeQuery(query);
+            while (result.next()) {
+                invoice_details[0] = result.getString("total_amount");
+                invoice_details[1] = result.getString("amount_paid");
+                invoice_details[2] = result.getString("Status");
+                return invoice_details;
+            }
+            return null;
+        } catch (SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        return null;
+    }
+    }
+
+    public static boolean payInvoice(String invoice_id) {
+        String query = "UPDATE Invoice SET amount_paid=total_amount, status=1 where id='"+invoice_id+"'";
+        
+        try {
+            if (!JDBC.executeUpdate(query)) {
+                throw new java.sql.SQLException("Error updating duration details");
+            }
+            return true;
+        } catch(SQLException e) {
+        System.out.println("Error: " + e.getMessage());
+        return false;
+    }
+    }
+
 }

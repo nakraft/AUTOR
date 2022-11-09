@@ -792,7 +792,7 @@ public class customerUI {
                     customerViewInvoiceDetails();
                     break;
                 case 2: // Pay Invoice
-                    customerPayInvoice(customerInvoices.getPromptResponses()[0]);
+                    customerPayInvoice();
                     break;
                 case 3: // Go Back
                     customerLanding();
@@ -836,12 +836,36 @@ public class customerUI {
     /**
      * Customer: Pay Invoice
      */
-    public static void customerPayInvoice(String invoice_id) {
+    public static void customerPayInvoice() {
+        // invoice status: total amount, amount paid, status
+        
+        
         while (true) {
             // Display menu
             switch( customerPayInvoice.display() ) {
                 case 1: // Pay Invoice
-                    // TODO: update invoice status to paid
+                String invoice_id = customerPayInvoice.getPromptResponses()[0];
+                String[] invoiceStatus = customerQuery.getInvoiceStatus(invoice_id);
+                if (invoiceStatus == null) {
+                    customerPayInvoice.setFeedback("Invalid Invoice ID, Invoice doesn't exist");
+                    break;
+                }
+                System.out.println(invoiceStatus[0]);
+                System.out.println(invoiceStatus[2]);
+                if (Integer.parseInt(invoiceStatus[2]) == 0) {
+                    boolean response = customerQuery.payInvoice(invoice_id);
+                    if (response== true) {
+                        customerPayInvoice.setFeedback("Invoice Sucessfully paid");
+                    }
+                    else {
+                        customerPayInvoice.setFeedback("Failed to pay Invoice");
+                    }
+
+                    
+                }
+                else {
+                    customerPayInvoice.setFeedback("Invoice has already been paid, Choose a different invoice");
+                }
                     break;
                 case 2: // Go Back
                     customerInvoices();
