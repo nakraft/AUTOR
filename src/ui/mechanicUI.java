@@ -59,12 +59,15 @@ public class mechanicUI {
         "Mechanic: Request Swap", // Header
         null, // Lines
         new String[] {
-            "Enter the Week ID",
-            "Enter the Day ID",
+            "Enter the Mechanic EID of the mechanic you want to swap with",
+            "Enter the Week ID to swap",
+            "Enter the Day ID to swap",
             "Enter the Start Time ID",
             "Enter the End Time ID",
-            "Enter the Mechanic ID of the mechanic you want to swap with",
-            "Enter the Timeslot range of the requested mechanic"
+            "Enter the Week ID to swap",
+            "Enter the Day ID to swap",
+            "Enter the Start Time ID",
+            "Enter the End Time ID"
         }, // Prompts
         new String[] {
             "Send Request", // Display status of request, stay on page
@@ -163,7 +166,6 @@ public class mechanicUI {
                     String[] output = mechanicQuery.RequestedTimeOff(mechanicRequestTimeOff.getPromptResponses());
                     String[] lines = new String[1];        
                     if(output == null){
-                        lines[0] = "Time Off Approved";
                         mechanicRequestTimeOff.setLines(lines);
                     }else{
                         mechanicRequestTimeOff.setLines(output);
@@ -185,7 +187,8 @@ public class mechanicUI {
             // Display menu
             switch (mechanicRequestSwap.display()) {
                 case 1: // Send Request
-                mechanicQuery.RequestedSwap(mechanicRequestSwap.getPromptResponses());
+                String[] output = mechanicQuery.RequestedSwap(mechanicRequestSwap.getPromptResponses());  
+                mechanicRequestTimeOff.setLines(output);
                     break;
                 case 2: // Go Back
                     mechanicLanding();
@@ -202,9 +205,10 @@ public class mechanicUI {
             // TODO: Query database for swap requests
             // TODO: Set lines
             // Display menu
-            switch (mechanicAcceptRejectSwap.display()) {
+            String[] output = mechanicQuery.ManageSwapRequests();
+            mechanicRequestTimeOff.setLines(output);
+            switch (mechanicManageSwapRequests.display()) {
                 case 1: // Manage Swap Requests
-                    mechanicQuery.AcceptRejectSwap();
                     break;
                 case 2: // Go Back
                     mechanicLanding();
@@ -223,8 +227,8 @@ public class mechanicUI {
                 case 1: // Accept Swap Request
                     // TODO: Accept swap request
                     // TODO: Display status of request
-                    boolean validInputs = mechanicQuery.parseAndValidateInputs();
-                    mechanicQuery.ManageSwapRequests(mechanicManageSwapRequests.getPromptResponses());
+                    String[] output = mechanicQuery.ManageSwapRequests();
+                    mechanicRequestTimeOff.setLines(output);
                     break;
                 case 2: // Reject Swap Request
                     // TODO: Reject swap request

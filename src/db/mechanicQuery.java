@@ -298,153 +298,48 @@ public class mechanicQuery {
                 || timeSlotParameters[3] < 1 || timeSlotParameters[3] > 9 /* valid slot end */
         );
     }
-    public static boolean parseAndValidateInputs() {
-        Scanner scanner = new Scanner(System.in);
+    
+   
+    // private static boolean validateTimeSlotRange(int start, int end) {
+    //     if (start > end) {
+    //         System.out.println(
+    //                 "\nInvalid time slot range. Please enter a start time slot that is less than or equal to the end time slot.\n");
+    //         return false;
+    //     }
 
-        boolean validInitialTimeSlots = parseAndValidateInitialTimeSlots(scanner);
-        if (!validInitialTimeSlots) {
-            return false;
-        }
+    //     return true;
+    // }
+    // private static boolean validateRequestingMechanicWorkingWithinTimeSlotRange(Integer week, Integer day,
+    //         Integer startTimeSlot, Integer endTimeSlot) {
+    //         ResultSet rs = null;
+    //     try {
+    //         // Query the database for the mechanic's time slots
+    //         // deepcode ignore NoStringConcat: <not needed>
+    //         rs = JDBC.executeQuery(validRequestingMechanicWorkingQuery(week, day, startTimeSlot, endTimeSlot));
 
-        return parseAndValidateDesiredTimeSlots(scanner); // all inputs are valid
-    }
-    private static boolean parseAndValidateInitialTimeSlots(Scanner scanner) {
-        try {
-            System.out.println("Timeslot range to swap:");
-
-            System.out.print("Timeslot week (1-4): ");
-            initialTimeSlotParameters[0] = scanner.nextInt();
-            if (initialTimeSlotParameters[0] < 1 || initialTimeSlotParameters[0] > 4) {
-                System.out.println("\nInvalid week number. Please enter a number between 1 and 4.\n");
-                scanner.close();
-                return false;
-            }
-
-            System.out.print("Timeslot day (1-7): ");
-            initialTimeSlotParameters[1] = scanner.nextInt();
-            if (initialTimeSlotParameters[1] < 1 || initialTimeSlotParameters[1] > 7) {
-                System.out.println("\nInvalid day number. Please enter a number between 1 and 7.\n");
-                scanner.close();
-                return false;
-            }
-
-            System.out.print("Timeslot start (1-9): ");
-            initialTimeSlotParameters[2] = scanner.nextInt();
-            if (initialTimeSlotParameters[2] < 1 || initialTimeSlotParameters[2] > 9) {
-                System.out.println("\nInvalid start time slot. Please enter a number between 1 and 9.\n");
-                scanner.close();
-                return false;
-            }
-
-            System.out.print("Timeslot end (1-9): ");
-            initialTimeSlotParameters[3] = scanner.nextInt();
-            if (initialTimeSlotParameters[3] < 1 || initialTimeSlotParameters[3] > 9) {
-                System.out.println("\nInvalid end time slot. Please enter a number between 1 and 9.\n");
-                scanner.close();
-                return false;
-            }
-        } catch (InputMismatchException e) {
-            System.out.println(INVALID_INPUT_ERROR_MESSAGE);
-            scanner.close();
-            return false;
-        }
-
-        // validate the start time slot is less than the end time slot
-        if (!validateTimeSlotRange(initialTimeSlotParameters[2], initialTimeSlotParameters[3])) {
-            return false;
-        }
-
-        // validate the mechanic is working within the given time slot range
-        return validateRequestingMechanicWorkingWithinTimeSlotRange(initialTimeSlotParameters[0],
-                initialTimeSlotParameters[1],
-                initialTimeSlotParameters[2], initialTimeSlotParameters[3]); // all inputs are valid
-    }
-    private static boolean validateTimeSlotRange(int start, int end) {
-        if (start > end) {
-            System.out.println(
-                    "\nInvalid time slot range. Please enter a start time slot that is less than or equal to the end time slot.\n");
-            return false;
-        }
-
-        return true;
-    }
-    private static boolean validateRequestingMechanicWorkingWithinTimeSlotRange(Integer week, Integer day,
-            Integer startTimeSlot, Integer endTimeSlot) {
-            ResultSet rs = null;
-        try {
-            // Query the database for the mechanic's time slots
-            // deepcode ignore NoStringConcat: <not needed>
-            rs = JDBC.executeQuery(validRequestingMechanicWorkingQuery(week, day, startTimeSlot, endTimeSlot));
-
-            // If the result set is empty, the mechanic is not working within the given time
-            // slot range
-            if (!rs.next()) {
-                System.out.println(
-                        "\nYou are not working within the specified initial time slot range. Try again with a time slot range in which you are working.\n");
-                return false;
-            }
-        } catch (final SQLException e) {
-            // file deepcode ignore DontUsePrintStackTrace: <not needed>
-            e.printStackTrace();
-        } 
-        return true;
-    }
-    private static String validRequestingMechanicWorkingQuery(Integer week, Integer day, Integer timeSlotStart,
-    Integer timeSlotEnd) {
-    return "SELECT COUNT(*) AS numOfMechanics"
-            + " FROM Calendar"
-            + " WHERE eid = " + UI.getCurrentEID()
-            + " WHERE sid = " + UI.getCurrentSID()
-            + " AND timeslot_week = " + week
-            + " AND timeslot_day = " + day
-            + " AND timeSlot >= " + timeSlotStart
-            + " AND timeSlot <= " + timeSlotEnd;
-    }
-    private static boolean parseAndValidateDesiredTimeSlots(Scanner scanner) {
-        try {
-            System.out.println("\nDesired timeslot range to swap with:");
-
-            System.out.print("Timeslot week (1-4): ");
-            desiredTimeSlotParameters[0] = scanner.nextInt();
-            if (desiredTimeSlotParameters[0] < 1 || desiredTimeSlotParameters[0] > 4) {
-                System.out.println("\nInvalid week number. Please enter a number between 1 and 4.\n");
-                scanner.close();
-                return false;
-            }
-
-            System.out.print("Timeslot day (1-7): ");
-            desiredTimeSlotParameters[1] = scanner.nextInt();
-            if (desiredTimeSlotParameters[1] < 1 || desiredTimeSlotParameters[1] > 7) {
-                System.out.println("\nInvalid day number. Please enter a number between 1 and 7.\n");
-                scanner.close();
-                return false;
-            }
-
-            System.out.print("Timeslot start (1-9): ");
-            desiredTimeSlotParameters[2] = scanner.nextInt();
-            if (desiredTimeSlotParameters[2] < 1 || desiredTimeSlotParameters[2] > 9) {
-                System.out.println("\nInvalid start time slot. Please enter a number between 1 and 9.\n");
-                scanner.close();
-                return false;
-            }
-
-            System.out.print("Timeslot end (1-9): ");
-            desiredTimeSlotParameters[3] = scanner.nextInt();
-            if (desiredTimeSlotParameters[3] < 1 || desiredTimeSlotParameters[3] > 9) {
-                System.out.println("\nInvalid end time slot. Please enter a number between 1 and 9.\n");
-                scanner.close();
-                return false;
-            }
-        } catch (InputMismatchException e) {
-            System.out.println(INVALID_INPUT_ERROR_MESSAGE);
-            scanner.close();
-            return false;
-        }
-
-        // validate the start time slot is less than the end time slot
-        if (!validateTimeSlotRange(desiredTimeSlotParameters[2], desiredTimeSlotParameters[3])) {
-            return false;
-        }
-        return true;
-    }
+    //         // If the result set is empty, the mechanic is not working within the given time
+    //         // slot range
+    //         if (!rs.next()) {
+    //             System.out.println(
+    //                     "\nYou are not working within the specified initial time slot range. Try again with a time slot range in which you are working.\n");
+    //             return false;
+    //         }
+    //     } catch (final SQLException e) {
+    //         // file deepcode ignore DontUsePrintStackTrace: <not needed>
+    //         e.printStackTrace();
+    //     } 
+    //     return true;
+    // }
+    // private static String validRequestingMechanicWorkingQuery(Integer week, Integer day, Integer timeSlotStart,
+    // Integer timeSlotEnd) {
+    // return "SELECT COUNT(*) AS numOfMechanics"
+    //         + " FROM Calendar"
+    //         + " WHERE eid = " + UI.getCurrentEID()
+    //         + " WHERE sid = " + UI.getCurrentSID()
+    //         + " AND timeslot_week = " + week
+    //         + " AND timeslot_day = " + day
+    //         + " AND timeSlot >= " + timeSlotStart
+    //         + " AND timeSlot <= " + timeSlotEnd;
+    // }
+   
 }
