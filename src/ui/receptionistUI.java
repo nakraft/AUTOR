@@ -88,8 +88,13 @@ public class receptionistUI {
         while (true) {
             switch (receptionistAddNewCustomerProfile.display()) {
                 case 1: // Add Customer
-                    receptionistQuery.addCustomer(receptionistAddNewCustomerProfile.getPromptResponses());
+                    if(!receptionistQuery.addCustomer(receptionistAddNewCustomerProfile.getPromptResponses())) {
+                        receptionistLanding.setFeedback("Failed to add customer profile");
+                    }
+                    receptionistLanding();
+                    return;
                 case 2: // Go Back
+                    // Return to the receptionist landing page
                     receptionistLanding();
                     return;
             }
