@@ -49,11 +49,12 @@ public class adminQuery {
                 throw new java.sql.SQLException("Error updating duration details");
             }
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing query");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            // // Print an error message
+            // System.out.println("Error executing query");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
+            return false;
         }
         // If there aren't any errors
         return true;
@@ -75,11 +76,12 @@ public class adminQuery {
                 return true;
             }
         } catch (java.sql.SQLException e) {
-            // Print an error message
-            System.out.println("Error executing query");
-            e.printStackTrace();
-            // Quit the program
-            System.exit(1);
+            // // Print an error message
+            // System.out.println("Error executing query");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
+            return false;
         }
         // If no matching service category is found
         return false;

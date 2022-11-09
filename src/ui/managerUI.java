@@ -164,7 +164,7 @@ public class managerUI {
                     String result = managerQuery.addEmployee(managerAddEmployees.getPromptResponses());
                     // If it starts with ERROR, it's an error
                     if (result.startsWith("ERROR")) {
-                        managerSetupStore.setFeedback("Failed to add employee (error " + result + ")");
+                        managerSetupStore.setFeedback("Failed to add employee (" + result + ")");
                     } else {
                         managerSetupStore.setFeedback("Added employee with EID " + result);
                     }

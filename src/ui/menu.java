@@ -212,6 +212,8 @@ public class menu {
             for (int i = 0; i < getPrompts().length; i++) {
                 System.out.print(getPrompts()[i] + ": ");
                 promptResponses[i] = UI.input.nextLine().trim();
+                // SQL injection prevention on prompt responses
+                promptResponses[i] = promptResponses[i].replace("'", "");
             }
             // Line of padding
             System.out.println();

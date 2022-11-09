@@ -20,14 +20,28 @@ public class managerQuery {
         // If role is not a receptionist or mechanic
         if (!employee[5].equals("receptionist") && !employee[5].equals("mechanic")) {
             // Return false
-            return "Error: Invalid role";
+            return "ERROR: Invalid role";
         }
+        // Query for a receptionist that already exists at the same location
+        ResultSet result = JDBC.executeQuery(
+            "SELECT * FROM Receptionist WHERE sid = " + UI.getCurrentSID()
+        );
+        // If there are any results (there shouldn't be)
+        try {
+            if (result.next()) {
+                // Return false
+                return "ERROR: Receptionist already exists at this location";
+            }
+        } catch (SQLException e) {
+            return "ERROR: Issue checking for existing receptionist";
+        }
+
         // Get a unique useername
         String username = query.getUniqueUsername(employee[0], employee[1]);
         String password = employee[1].toLowerCase();
 
         // Insert the employee into the database
-        JDBC.executeQuery(
+        result = JDBC.executeQuery(
         "INSERT INTO Employee (" + 
                 "first_name, last_name, address, email, phone, role, start_date, username, password, sid" +
             ") VALUES (" +
@@ -42,8 +56,11 @@ public class managerQuery {
                 "'" + password + "', " +
                 "'" + UI.getCurrentSID() + "'" +
             ")");
+        if (result == null) {
+            return "ERROR: Could not add employee";
+        }
         // Lookup the new employee's EID
-        ResultSet result = JDBC.executeQuery("SELECT eid FROM Employee WHERE username = '" + username + "'");
+        result = JDBC.executeQuery("SELECT eid FROM Employee WHERE username = '" + username + "'");
         int eid = -1;
         // If there is a result
         try {
@@ -51,32 +68,32 @@ public class managerQuery {
             if (result.next()) {
                 // Set eid to the result
                 eid = result.getInt("eid");
-                return String.valueOf(eid);
+                // return String.valueOf(eid);
             }
             if (eid == -1) {
-                return "Error: Could not find new employee in table";
+                return "ERROR: Could not find new employee in table";
             }
         } catch (SQLException e) {
-            return "Error: Could not find new employee in table";
+            return "ERROR: Could not find new employee in table";
         }
         // If the role is a mechanic
-        if (employee[4].toLowerCase().equals("mechanic")) {
+        if (employee[5].toLowerCase().equals("mechanic")) {
             // Execute update on eid and sid in Mechanic table
             boolean success = JDBC.executeUpdate("UPDATE Mechanic SET rate=" + employee[7] + " WHERE eid = " + eid + " AND sid = " + UI.getCurrentSID());
             if (!success) {
                 // Remove the employee from the database
                 JDBC.executeUpdate("DELETE FROM Employee WHERE eid = " + eid);
-                return "Error: Could not update mechanic";
+                return "ERROR: Could not update mechanic";
             }
         }
         // Else if the role is a receptionist
-        else if (employee[4].toLowerCase().equals("receptionist")) {
+        else if (employee[5].toLowerCase().equals("receptionist")) {
             // Execute update on eid and sid in Receptionist table
             boolean success = JDBC.executeUpdate("UPDATE Receptionist SET salary=" + employee[7] + " WHERE eid = " + eid + " AND sid = " + UI.getCurrentSID());    
             if (!success) {
                 // Remove the employee from the Employee table
                 JDBC.executeUpdate("DELETE FROM Employee WHERE eid = " + eid);
-                return "Error: Could not update receptionist";
+                return "ERROR: Could not update receptionist";
             }
         }
         // Return the EID

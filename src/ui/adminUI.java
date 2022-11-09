@@ -171,11 +171,12 @@ public class adminUI {
             switch (adminAddNewStore.display()) {
                 case 1: // Add Store
                     if (adminQuery.addStore(adminAddNewStore.getPromptResponses())) {
-                        System.out.println("Store added successfully");
+                        adminAddNewStore.setFeedback("Store added successfully");
                     }
                     else {
-                        System.out.println("Adding a new store failed");
+                        adminAddNewStore.setFeedback("Store not added");
                     }
+                    adminAddNewStore();
                     break;
                 case 2: // Go Back
                     // Return to the admin landing page
