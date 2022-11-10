@@ -17,7 +17,8 @@ INSERT INTO Mechanic_Swap_Request (sid, donor_eid, recieve_eid, donor_timeslot_w
 INSERT INTO Mechanic_Swap_Request(sid, donor_eid, recieve_eid, donor_timeslot_week, donor_timeslot_day, donor_timeslot_begin, donor_timeslot_end, recieve_timeslot_week, recieve_timeslot_day, recieve_timeslot_begin, recieve_timeslot_end) VALUES (30002, 423186759, 125689347, 2, 4, 2, 5, 3, 5, 5, 7)
 
 -- to view by requesting Mechanic 
-SELECT s.id, m.first_name, m.last_name, s.recieve_timeslot_week, s.recieve_timeslot_day, 
-s.recieve_timeslot_begin, s.recieve_timeslot_end, s.donor_timeslot_week, s.donor_timeslot_day,
-s.donor_timeslot_begin, s.donor_timeslot_end 
-FROM Employee m, Mechanic_Swap_Request s WHERE s.sid = 30002 AND s.recieve_eid = 125689347 AND s.donor_eid = m.eid AND s.status = 0 -- recieve id should be the current mechanics ID 
+SELECT s.id, m.first_name, m.last_name, s.recieve_timeslot_week, s.recieve_timeslot_day, s.recieve_timeslot_begin, s.recieve_timeslot_end, s.donor_timeslot_week, s.donor_timeslot_day,s.donor_timeslot_begin, s.donor_timeslot_end FROM Employee m, Mechanic_Swap_Request s WHERE s.sid = 30002 AND s.recieve_eid = 125689347 AND s.donor_eid = m.eid AND s.status = 0
+ -- recieve id should be the current mechanics ID 
+
+ -- to update the status to 1 (accept)
+ UPDATE Mechanic_Swap_Request SET status = 1 WHERE id = 1

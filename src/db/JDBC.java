@@ -13,7 +13,7 @@ public class JDBC {
     // Database connection
     static private Connection connection = null;
     // Debug flag
-    static private final boolean DEBUG = false;
+    static private final boolean DEBUG = true;
 
     /**
      * Database setup method
