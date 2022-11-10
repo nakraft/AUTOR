@@ -36,7 +36,7 @@ public class mechanicQuery {
         try {
             // Insert into the store table
             rs = JDBC.executeQuery(
-                "SELECT timeslot_week, timeslot_day, timeSlot"
+                "SELECT timeslot_week, timeslot_day, timeSlot "
                 + " FROM Calendar"
                 + " WHERE eid = " + UI.getCurrentEID()
                 + " AND sid = " + UI.getCurrentSID()
@@ -241,12 +241,16 @@ public class mechanicQuery {
                     " AND timeslot_day = " + day2 +
                     " AND timeSlot = " + timeSlot2
                 );
-                JDBC.executeUpdate(
+                if(JDBC.executeUpdate(
                     "UPDATE Mechanic_Swap_Request " +
                     " SET state = 1 " +
                     " WHERE id = " + swapRequestID
-                );
-                list.add("Accept swap request successfully");
+                )){
+                    list.add("Accept swap request successfully");
+                }
+                else{
+                    list.add("Accept swap request denied");
+                }
             }else{
                 JDBC.executeUpdate(
                     "UPDATE Mechanic_Swap_Request " +

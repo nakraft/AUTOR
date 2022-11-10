@@ -64,10 +64,10 @@ public class mechanicUI {
             "Enter the Day ID to swap",
             "Enter the Start Time ID",
             "Enter the End Time ID",
-            "Enter the Week ID to swap",
-            "Enter the Day ID to swap",
-            "Enter the Start Time ID",
-            "Enter the End Time ID"
+            "Enter the Week ID to swap with",
+            "Enter the Day ID to swap with",
+            "Enter the Start Time ID with",
+            "Enter the End Time ID with"
         }, // Prompts
         new String[] {
             "Send Request", // Display status of request, stay on page
