@@ -193,15 +193,19 @@ CREATE TABLE Calendar (
 	timeslot NUMBER CHECK (timeslot >= 1 AND timeslot <= 11), -- 1 corresonds to 8AM, 5 corresponds to 1 PM. Lunch hour is skipped.
 	invoice_id NUMBER(10),
 	sid NUMBER(10) NOT NULL,
-    eid NUMBER(10) NOT NULL,
+    eid NUMBER(10),
 	id NUMBER(10),
-	PRIMARY KEY (timeslot_week, timeslot_day, timeslot, sid, eid), 
+    CONSTRAINT pkcalendar
+	PRIMARY KEY (timeslot_week, timeslot_day, timeslot, sid, eid) deferrable initially deferred, 
     FOREIGN KEY (invoice_id) REFERENCES Invoice, 
     FOREIGN KEY (sid) REFERENCES Service_Center 
         ON DELETE CASCADE, 
     FOREIGN KEY (eid, sid) REFERENCES Mechanic
         ON DELETE CASCADE
+    -- CONSTRAINT nonulleid CHECK (eid IS NOT NULL)
 );
+
+-- SET CONSTRAINTS SYS_C00464762 DEFERRED;
 
 CREATE TABLE Mechanic_Out (
     timeslot_day NUMBER(1) CHECK (timeslot_day >= 1 AND timeslot_day <= 6),
@@ -608,16 +612,28 @@ CREATE TRIGGER update_swap
     AFTER UPDATE ON Mechanic_Swap_Request
     FOR EACH ROW 
     DECLARE 
+        invoiceDonor NUMBER; 
+        invoiceRecieve NUMBER; 
     BEGIN
         IF :new.status = 1 THEN -- condition accepted swap places and close (if 0/2 no action needed)
+            SELECT id INTO invoiceDonor
+            FROM Invoice 
+            WHERE sid = :new.sid AND eid = :new.donor_eid AND start_timeslot_week = :new.donor_timeslot_week AND end_timeslot_week = :new.donor_timeslot_week
+            AND start_timeslot_day = :new.donor_timeslot_day AND end_timeslot_day = :new.donor_timeslot_day AND start_timeslot = :new.donor_timeslot_begin 
+            AND end_timeslot = :new.donor_timeslot_end;
+            SELECT id INTO invoiceRecieve
+            FROM Invoice 
+            WHERE sid = :new.sid AND eid = :new.recieve_eid AND start_timeslot_week = :new.recieve_timeslot_week AND end_timeslot_week = :new.recieve_timeslot_week
+            AND start_timeslot_day = :new.recieve_timeslot_day AND end_timeslot_day = :new.recieve_timeslot_day AND start_timeslot = :new.recieve_timeslot_begin 
+            AND end_timeslot = :new.recieve_timeslot_end;
             UPDATE Calendar 
-            SET eid = :new.donor_eid 
-            WHERE sid = :new.sid AND eid = :new.recieve_eid AND timeslot_week = :new.recieve_timeslot_week AND 
+            SET invoice_id = CASE WHEN invoice_id IS NULL THEN invoiceRecieve ELSE NULL END
+            WHERE sid = :new.sid AND eid IN (:new.donor_eid, :new.recieve_eid) AND timeslot_week = :new.recieve_timeslot_week AND 
             timeslot_day = :new.recieve_timeslot_day AND timeslot >= :new.recieve_timeslot_begin AND
             timeslot <= :new.recieve_timeslot_end;
             UPDATE Calendar 
-            SET eid = :new.recieve_eid 
-            WHERE sid = :new.sid AND eid = :new.donor_eid AND timeslot_week = :new.donor_timeslot_week AND 
+            SET invoice_id = CASE WHEN invoice_id IS NULL THEN invoiceDonor ELSE NULL END
+            WHERE sid = :new.sid AND eid IN (:new.donor_eid, :new.recieve_eid) AND timeslot_week = :new.donor_timeslot_week AND 
             timeslot_day = :new.donor_timeslot_day AND timeslot >= :new.donor_timeslot_begin AND
             timeslot <= :new.donor_timeslot_end;
             UPDATE Invoice
