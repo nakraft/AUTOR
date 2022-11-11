@@ -80,7 +80,9 @@ public class adminUI {
             "Enter existing service category",
             "Enter service name",
             "Enter service duration",
-            "Enter manufacturer"
+            "Enter manufacturer",
+            "Enter the price" ,
+            "Enter service center ID"
         }, // Prompts
         new String[] {
             "Add Service", // remain, addService

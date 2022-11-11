@@ -3,6 +3,8 @@ package db;
 // Import SQL libraries
 import java.sql.*;
 
+import ui.UI;
+
 /**
  * Queries for admins
  */
@@ -110,6 +112,16 @@ public class adminQuery {
                     "INSERT INTO Duration_Details (manf,dur,serviceName,serviceNumber) VALUES (" +
                     "'" + responses[3] + "'" + ',' + 
                     "'" + responses[2] + "'" + ',' + 
+                    "'" + responses[1] + "'" + ',' + 
+                    "'" + nextId + "'" + ')'
+                )) {
+                    throw new java.sql.SQLException("Error updating duration details");
+                }
+            if (!JDBC.executeUpdate(
+                    "INSERT INTO Cost_Details (manf,price,sid,serviceName, serviceNumber) VALUES (" +
+                    "'" + responses[3] + "'" + ',' + 
+                    "'" + responses[4] + "'" + ',' + 
+                    "'" + responses[5] + "'" + ',' + 
                     "'" + responses[1] + "'" + ',' + 
                     "'" + nextId + "'" + ')'
                 )) {

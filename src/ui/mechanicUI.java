@@ -222,6 +222,7 @@ public class mechanicUI {
         while (true) {
             // Display menu
             String[] request_output = mechanicQuery.ManageSwapRequests();
+            String[] output1 = null;
             mechanicManageSwapRequests.setLines(request_output);
             switch (mechanicManageSwapRequests.display()) {
                 case 1: // Accept Swap Request
@@ -233,7 +234,7 @@ public class mechanicUI {
                 case 2: // Reject Swap Request
                     // TODO: Reject swap request
                     // TODO: Display status of request
-                    String[] output1 = mechanicQuery.AcceptRejectSwap(mechanicManageSwapRequests.getPromptResponse(0), 0);
+                    output1 = mechanicQuery.AcceptRejectSwap(mechanicManageSwapRequests.getPromptResponse(0), 0);
                     mechanicManageSwapRequests.setLines(output1);
                     break;
                 case 3: // Go Back
