@@ -130,8 +130,8 @@ public class mechanicQuery {
     public static String[] RequestedTimeOff(String[] responses) {
         ArrayList<String> list = new ArrayList<String>(); 
         // check to see if the mechanic is scheduled to work during the requested time off
-        boolean request = JDBC.executeUpdate(viewTimeOffRequestsQuery(responses[0], responses[1],
-                responses[2], responses[3]));
+        boolean request = JDBC.executeUpdate(timeOffRequestsQuery(responses[0], responses[1],
+                responses[2]));
         if (!request) {
             list.add(
                     "Unable to allow time off since you are already scheduled for work within that time range.\nPlease request another time range instead.");
@@ -148,7 +148,7 @@ public class mechanicQuery {
         ArrayList<String> list = new ArrayList<String>(); 
         try {
             // Insert into the store table
-            boolean request = JDBC.executeUpdate("INSERT INTO Mechanic_Swap_Request (sid, donor_eid, recieve_eid, donor_timeslot_day, donor_timeslot_week, donor_timeslot_begin, donor_timeslot_end, recieve_timeslot_day, recieve_timeslot_week, recieve_timeslot_begin, recieve_timeslot_end, state) VALUES ("
+            boolean request = JDBC.executeUpdate("INSERT INTO Mechanic_Swap_Request (sid, donor_eid, recieve_eid, donor_timeslot_day, donor_timeslot_week, donor_timeslot_begin, donor_timeslot_end, recieve_timeslot_day, recieve_timeslot_week, recieve_timeslot_begin, recieve_timeslot_end, status) VALUES ("
             + UI.getCurrentSID() + ", "
             + UI.getCurrentEID() + ", "
             + responses[0] + ", "
@@ -162,7 +162,7 @@ public class mechanicQuery {
             + responses[8] + ", "
             + 0 + ")");
             if(request){
-                list.add("Successfully created swap request with employee ID: " + responses[1]);
+                list.add("Successfully created swap request with employee ID: " + responses[2]);
             }
             else{
                 list.add(
@@ -178,16 +178,13 @@ public class mechanicQuery {
         } 
         return list.toArray(new String[list.size()]);
     }
-    private static String viewTimeOffRequestsQuery(String responses, String responses2, String responses3,
-            String responses4) {
-        return "SELECT timeslot_week, timeslot_day, timeSlot"
-                + " FROM Calendar"
-                + " WHERE eid = " + UI.getCurrentEID()
-                + " AND sid = " + UI.getCurrentSID()
-                + " AND timeslot_week = " + responses
-                + " AND timeslot_day = " + responses2
-                + " AND timeSlot >= " + responses3
-                + " AND timeSlot <= " + responses4;
+    private static String timeOffRequestsQuery(String responses, String responses2, String responses3) {
+        return "INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeSlot, sid, eid) VALUES ("
+                + responses + ", "
+                + responses2 + ", "
+                + responses3 + ", "
+                + UI.getCurrentSID() + ", "
+                + UI.getCurrentEID()+ ")";
     }
      /**
      * Handles functionality for accept and reject swap of mechanics
@@ -198,31 +195,40 @@ public class mechanicQuery {
         try {
             if(accept == 1){
                 rs = JDBC.executeQuery(
-                    "SELECT id, donor_eid, donor_timeslot_week, donor_timeslot_day, donor_timeslot_begin, recieve_eid, recieve_timeslot_week, recieve_timeslot_day, recieve_timeslot_begin " +
-                    " FROM Mechanic_Swap_Request " +
-                    " WHERE id = " + swapRequestID +
-                    " AND state = 0"
+                    "SELECT s.id, m.first_name, m.last_name, s.recieve_timeslot_week, s.recieve_timeslot_day, " +
+                    "s.recieve_timeslot_begin, s.recieve_timeslot_end, s.donor_timeslot_week, s.donor_timeslot_day, " +
+                    "s.donor_timeslot_begin, s.donor_timeslot_end  " +
+                    " FROM Employee m, Mechanic_Swap_Request s " +
+                    " WHERE s.id = " + swapRequestID +
+                    " AND s.recieve_eid = " + UI.getCurrentEID() +
+                    " AND s.donor_eid = m.eid" +
+                    " AND status = 0"
                 );
-                int mechanicId1 = 0;
-                int mechanicId2 = 0;
-                int week1 = 0;
-                int week2 = 0;
-                int day1 = 0;
-                int day2 = 0;
-                int timeSlot1 = 0;
-                int timeSlot2 = 0;
-                if(rs.next()){
-                    mechanicId1 = rs.getInt("donor_eid");
-                    mechanicId2 = rs.getInt("recieve_eid");
-                    week1 = rs.getInt("donor_timeslot_week");
-                    week2 = rs.getInt("recieve_timeslot_week");
-                    day1 = rs.getInt("donor_timeslot_day");
-                    day2 = rs.getInt("recieve_timeslot_day");
-                    timeSlot1 = rs.getInt("donor_timeslot_begin");
-                    timeSlot2 = rs.getInt("recieve_timeslot_begin");
+                if (rs == null) {
+                    list.add("ERROR: Swap Request ID is not Found");
+                    return list.toArray(new String[list.size()]);
                 }
-                // accept and reject swap
-                JDBC.executeUpdate(
+                String mechanicId1 = null;
+                String mechanicId2 = null;
+                String week1 = null;
+                String week2 = null;
+                String day1 = null;
+                String day2 = null;
+                String timeSlot1 = null;
+                String timeSlot2 = null;
+                while(rs.next()) {
+                    mechanicId1 = rs.getString("first_name");
+                    mechanicId2 = rs.getString("last_name");
+                    week1 = rs.getString("donor_timeslot_week");
+                    week2 = rs.getString("recieve_timeslot_week");
+                    day1 = rs.getString("donor_timeslot_day");
+                    day2 = rs.getString("recieve_timeslot_day");
+                    timeSlot1 = rs.getString("donor_timeslot_begin");
+                    timeSlot2 = rs.getString("recieve_timeslot_begin");
+                    list.add("INFO: " + mechanicId1 + mechanicId2 + week1 + week2 + day1 + day2 + timeSlot1 + timeSlot2 );
+                }
+                
+                if(JDBC.executeUpdate(
                     "UPDATE Calendar " +
                     " SET timeslot_week = " + week2 +
                     ", timeslot_day = " + day2 +
@@ -231,8 +237,7 @@ public class mechanicQuery {
                     " AND timeslot_week = " + week1 +
                     " AND timeslot_day = " + day1 +
                     " AND timeSlot = " + timeSlot1
-                );
-                JDBC.executeUpdate(
+                ) & JDBC.executeUpdate(
                     "UPDATE Calendar " +
                     " SET timeslot_week = " + week1 +
                     ", timeslot_day = " + day1 +
@@ -241,10 +246,9 @@ public class mechanicQuery {
                     " AND timeslot_week = " + week2 +
                     " AND timeslot_day = " + day2 +
                     " AND timeSlot = " + timeSlot2
-                );
-                if(JDBC.executeUpdate(
+                ) & JDBC.executeUpdate(
                     "UPDATE Mechanic_Swap_Request " +
-                    " SET state = 1 " +
+                    " SET status = 1 " +
                     " WHERE id = " + swapRequestID
                 )){
                     list.add("Accept swap request successfully");
@@ -255,7 +259,7 @@ public class mechanicQuery {
             }else{
                 JDBC.executeUpdate(
                     "UPDATE Mechanic_Swap_Request " +
-                    " SET state = 2 " +
+                    " SET status = 2 " +
                     " WHERE id = " + swapRequestID
                 );
                 list.add("Reject swap request successfully");
@@ -264,7 +268,7 @@ public class mechanicQuery {
                 throw new java.sql.SQLException("Error requesting timeoff");
             }
         } catch (java.sql.SQLException e) {
-            list.add("Incorrect SQL Statement");
+            list.add(e.getMessage());
         }
         
         
@@ -282,10 +286,14 @@ public class mechanicQuery {
             "SELECT s.id, m.first_name, m.last_name, s.recieve_timeslot_week, s.recieve_timeslot_day, s.recieve_timeslot_begin, s.recieve_timeslot_end, s.donor_timeslot_week, s.donor_timeslot_day, s.donor_timeslot_begin, s.donor_timeslot_end" +
             " FROM Employee m, Mechanic_Swap_Request s " +
             " WHERE s.sid = " + UI.getCurrentSID() +
-            "AND s.recieve_eid = 125689347 " +
-            "AND s.donor_eid = m.eid " +
-            "AND s.status = 0 "
+            " AND s.recieve_eid = " + UI.getCurrentEID() +
+            " AND s.donor_eid = m.eid " +
+            " AND s.status = 0"
             );
+            if (rs == null) {
+                list.add("ERROR: No Swap Request is Found");
+                return list.toArray(new String[list.size()]);
+            }
             while(rs.next()) {
                 list.add(rs.getString("id") +
                     rs.getString("first_name") +
@@ -300,10 +308,10 @@ public class mechanicQuery {
                     rs.getString("donor_timeslot_end") );
             }
            {
-                throw new java.sql.SQLException("Error requesting timeoff");
+                throw new java.sql.SQLException("Error manage swap request");
             }
         } catch (java.sql.SQLException e) {
-            list.add("Incorrect SQL Statement");
+            list.add(e.getMessage());
         }
         return list.toArray(new String[list.size()]);
     }

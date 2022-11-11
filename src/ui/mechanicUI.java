@@ -45,8 +45,7 @@ public class mechanicUI {
         new String[] {
             "Enter the Week ID",
             "Enter the Day ID",
-            "Enter the Start Time ID",
-            "Enter the End Time ID"
+            "Enter the Time Slot"
         }, // Prompts
         new String[] {
             "Send Request", // Display status of request, stay on page
@@ -222,6 +221,8 @@ public class mechanicUI {
     public static void mechanicManageSwapRequests() {
         while (true) {
             // Display menu
+            String[] request_output = mechanicQuery.ManageSwapRequests();
+            mechanicManageSwapRequests.setLines(request_output);
             switch (mechanicManageSwapRequests.display()) {
                 case 1: // Accept Swap Request
                     // TODO: Accept swap request
