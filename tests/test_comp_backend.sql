@@ -149,6 +149,67 @@ INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, 
 -- FAIL : A service cannot be scheduled on a saturday at a time when the store isn't open (error 20002)
 INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (9, 30001, 241368579, 10001, 3, 6, 4, 3, 6, 5, '4Y1BL658')
 
+-- PASS : A mechanic can work 49 hours a week 
+    -- setup 
+    SELECT * FROM Calendar WHERE invoice_id IS NOT NULL AND eid = 888966655 AND sid = 30004 -- checks to make sure currently no services scheduled for this guy 
+    INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10001,'Peter','Parker',30004,'pparker1','parker')
+    INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10002,'Diana','Prince',30004,'dprince1','prince')
+    INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10003,'Billy','Batson',30004,'bbatson1','batson')
+
+    INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('AAAAAAAA','Toyota',53000,'C',2007,10001,30004)
+    INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('AAAAAAAB','Honda',117000,'C',1999,10001,30004)
+    INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('CCCCCCCC','Nissan',111000,'C',2015,10002, 30004)
+    INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('CCCCCCCD','Toyota',53000,'C',2007,10002,30004)
+    INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('EEEEEEEE','Honda',117000,'C',1999,10003,30004)
+    INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('EEEEEEEF','Nissan',111000,'C',2015,10003,30004)
+
+-- PASS : A mechanic can be scheduled 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (10, 'C', 115)
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (10, 'Power Lock Repair', 106)
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (10, 'Muffler Repair', 104)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (10, 30004, 888966655, 10001, 1, 1, 1, 1, 2, 5, 'AAAAAAAA')
+    -- check that insert was good 
+    SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND invoice_id IS NOT NULL -- should see 16 entries 
+
+-- PASS : A mechanic can be scheduled 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (11, 'C', 115)
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (11, 'Power Lock Repair', 106)
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (11, 'Muffler Repair', 104)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (11, 30004, 888966655, 10001, 1, 2, 6, 1, 3, 10, 'CCCCCCCC')
+    SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND invoice_id = 11
+    SELECT * FROM Vehicle WHERE vin = 'CCCCCCCC' -- check to make sure the schedule should next be A to complete 
+
+-- PASS : A mechanic can be scheduled without a break between 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (12, 'C', 115)
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (12, 'Power Lock Repair', 106)
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (12, 'Muffler Repair', 104)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (12, 30004, 888966655, 10001, 1, 3, 11, 1, 5, 4, 'EEEEEEEE')
+    -- check that a mechanic has been scheduled for 48 hours 
+    SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND invoice_id = 12
+    SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND eid = 888966655 AND invoice_id IS NOT NULL
+
+-- PASS: a mechanic can be be scheduled for a timeslot next week 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (13, 'C', 115)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (13, 30004, 888966655, 10001, 2, 1, 1, 2, 1, 9, 'AAAAAAAB')
+    -- check 
+    SELECT * FROM Calendar WHERE sid = 30004 AND invoice_id = 13
+
+-- FAIL: a mechanic can not be scheduled for more than 50 hours a week 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (14, 'A', 113)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (14, 30004, 888966655, 10001, 1, 5, 5, 1, 5, 7, 'CCCCCCCC')
+
+-- PASS : but another mechanic can be working then 
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (14, 30004, 888966666, 10001, 1, 5, 5, 1, 5, 7, 'CCCCCCCC')
+    -- check 
+    SELECT * FROM Calendar WHERE sid = 30004 and eid = 888966666 AND invoice_id IS NOT NULL
+
+-- PASS : the earlier mechanic can get scheduled for the other two hours though 
+    -- setup 
+    SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND invoice_id IS NOT NULL AND eid = 888966655 AND timeslot_week = 1
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (15, 'Muffler Repair', 104)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (15, 30004, 888966655, 10001, 1, 5, 5, 1, 5, 6, 'EEEEEEEE')
+    -- check (should be at 50 hours)
+        SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND invoice_id IS NOT NULL AND eid = 888966655 AND timeslot_week = 1
 
 -- generic testing left... scheduling services (creating invoice), payment of invoice (and lack thereof) changes customer standing
 -- mechanic time off cannot be scheduled over, mechanic swap time can occur, mechanic hours are not exceeded 
