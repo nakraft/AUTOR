@@ -209,9 +209,9 @@ CREATE TABLE Calendar (
 -- SET CONSTRAINTS SYS_C00464762 DEFERRED;
 
 CREATE TABLE Mechanic_Out (
-    start_timeslot_day NUMBER(1) CHECK (timeslot_day >= 1 AND timeslot_day <= 6),
-    start_timeslot_week NUMBER(1) CHECK (timeslot_week IN (1,2,3,4)),
-	start_timeslot NUMBER CHECK (timeslot >= 1 AND timeslot <= 11), -- 1 corresonds to 8AM, 5 corresponds to 1 PM. Lunch hour is skipped.
+    timeslot_day NUMBER(1) CHECK (timeslot_day >= 1 AND timeslot_day <= 6),
+    timeslot_week NUMBER(1) CHECK (timeslot_week IN (1,2,3,4)),
+	timeslot NUMBER CHECK (timeslot >= 1 AND timeslot <= 11), -- 1 corresonds to 8AM, 5 corresponds to 1 PM. Lunch hour is skipped.
 	sid NUMBER(10),
     eid NUMBER(10),
 	PRIMARY KEY (timeslot_week, timeslot_day, timeslot, sid, eid),

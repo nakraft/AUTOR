@@ -86,3 +86,7 @@ INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALU
 -- FAIL : A service cannot be added that is actually a schedule 
 INSERT INTO Services(serviceName, serviceNumber) VALUES('A', 113)
 
+-- FAIL : A customer id must be an integer
+INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES('100','Virginia','Potts',30003,'vpotts','potts')
+
+
