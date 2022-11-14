@@ -126,3 +126,5 @@ DELETE FROM Vehicle WHERE cid = 10 AND sid = 30003 AND vin = '4Y1BL651'
 -- FAIL : A vehicle must be alphanumeric only 
 INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1B*651','Toyota',53500,'A',2006,10,30003)
 
+-- generic testing left... scheduling services (creating invoice), payment of invoice (and lack thereof) changes customer standing
+-- mechanic time off cannot be scheduled over, mechanic swap time can occur, mechanic hours are not exceeded 
