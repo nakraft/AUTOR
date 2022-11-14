@@ -1,0 +1,19 @@
+{
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar"
+        ]
+    },
+    // Set the JUnit testing location to the main folder
+    "java.test.config": {
+        "name": "Junit",
+        "workingDirectory": "${workspaceFolder}",
+        "args": [],
+        "vmArgs": [],
+        "env": {},
+        "preLaunchTask": ""
+    }
+}

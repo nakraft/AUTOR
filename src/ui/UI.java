@@ -96,34 +96,33 @@ public class UI {
             switch (loginMenu.display()) {
                 // Sign in
                 case 1:
-                    String[] results = query.checkCredentials(loginMenu.getPromptResponse(0), loginMenu.getPromptResponse(1));
-                    // If null, the creentials are invalid
-                    if (results == null) {
+                    // Call the signIn menu and pass the credentials
+                    boolean signInSuccess = signIn(loginMenu.getPromptResponse(0), loginMenu.getPromptResponse(1));
+                    // If false, the creentials are invalid
+                    if (signInSuccess == false) {
                         loginMenu.setFeedback("Invalid credentials");
                         break;
                     }
-                   // Set eid, sid, and user type
-                    setCurrentEID(results[0]);
-                    setCurrentSID(results[1]);
-                    String type = results[2];
-                    // Go to the appropriate landing page
-                    switch (type) {
-                        case "customer":
-                            customerUI.customerLanding();
-                            break;
+                    // Otherwise, redirect to the appropriate landing page
+                    switch(query.checkCredentials(loginMenu.getPromptResponse(0), loginMenu.getPromptResponse(1))[2].toLowerCase()) {
+                        // Manager
                         case "manager":
                             managerUI.managerLanding();
                             break;
-                        case "mechanic":
-                            mechanicUI.mechanicLanding();
-                            break;
+                        // Receptionist
                         case "receptionist":
                             receptionistUI.receptionistLanding();
                             break;
-                        default:
-                            loginMenu.setFeedback("Invalid user type");
+                        // Mechanic
+                        case "mechanic":
+                            mechanicUI.mechanicLanding();
+                            break;
+                        // Technician
+                        case "customer":
+                            customerUI.customerLanding();
                             break;
                     }
+                    break;
                 // Return to main menu
                 case 2:
                 homeMenu();
@@ -228,5 +227,17 @@ public class UI {
      */
     private static void setCurrentSID(String sid) {
         current_sid = sid;
-    }    
+    }   
+    
+    public static boolean signIn(String username, String password) {
+        String[] results = query.checkCredentials(username, password);
+        // If null, the credentials are invalid
+        if (results == null) {
+            return false;
+        }
+        // Otherwise, set the current employee ID and store ID
+        setCurrentEID(results[0]);
+        setCurrentSID(results[1]);
+        return true;
+    }
 }

@@ -13,7 +13,7 @@ public class managerQuery {
     /**
      * Add employee to the database
      * 
-     * @param String[] of employee information (first name, last name, email, phone, role, start date, compensation)
+     * @param String[] of employee information (first name, last name, address, email, phone, role, start date, compensation)
      * @return int of new employee's EID
      */
     public static String addEmployee(String[] employee) {
@@ -22,23 +22,30 @@ public class managerQuery {
             // Return false
             return "ERROR: Invalid role";
         }
-        // Query for a receptionist that already exists at the same location
-        ResultSet result = JDBC.executeQuery(
-            "SELECT * FROM Receptionist WHERE sid = " + UI.getCurrentSID()
-        );
-        // If there are any results (there shouldn't be)
-        try {
-            if (result.next()) {
-                // Return false
-                return "ERROR: Receptionist already exists at this location";
+        ResultSet result;
+        // If the employee is a receptionist
+        if (employee[5].equals("receptionist")) {
+            // Query for a receptionist that already exists at the same location
+            result = JDBC.executeQuery(
+                "SELECT * FROM Receptionist WHERE sid = " + UI.getCurrentSID()
+            );
+            // If there are any results (there shouldn't be)
+            try {
+                if (result.next()) {
+                    // Return false
+                    return "ERROR: Receptionist already exists at this location";
+                }
+            } catch (SQLException e) {
+                return "ERROR: Issue checking for existing receptionist";
             }
-        } catch (SQLException e) {
-            return "ERROR: Issue checking for existing receptionist";
         }
 
         // Get a unique useername
         String username = query.getUniqueUsername(employee[0], employee[1]);
         String password = employee[1].toLowerCase();
+
+        // Strip any non-numbers out of the phone number
+        String phone = employee[3].replaceAll("[^0-9]", "");
 
         // Insert the employee into the database
         result = JDBC.executeQuery(
@@ -49,7 +56,7 @@ public class managerQuery {
                 "'" + employee[1] + "', " +
                 "'" + employee[2] + "', " +
                 "'" + employee[3] + "', " +
-                "'" + employee[4] + "', " +
+                "'" + phone + "', " +
                 "'" + employee[5] + "', " +
                 "'" + employee[6] + "', " +
                 "'" + username + "', " +
