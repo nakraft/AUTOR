@@ -14,6 +14,13 @@ Initializing the system with information UNIVERSAL to all stores
 */
 
 INSERT ALL
+  INTO schedule(serviceName, serviceNumber) VALUES('A', 113)
+  INTO schedule(serviceName, serviceNumber) VALUES('B', 114)
+  INTO schedule(serviceName, serviceNumber) VALUES('C', 115)
+SELECT *
+  FROM dual;
+
+INSERT ALL
   INTO Services(serviceName, serviceNumber, repair_category) VALUES('Belt Replacement', 101, 'Engine Services')
   INTO Services(serviceName, serviceNumber, repair_category) VALUES('Engine Repair', 102, 'Engine Services')
   INTO Services(serviceName, serviceNumber, repair_category) VALUES('Exhaust Repair', 103, 'Exhaust Services')
@@ -30,25 +37,18 @@ SELECT *
   FROM dual;
 
 INSERT ALL
-  INTO schedule(serviceName, serviceNumber) VALUES('A', 113)
-  INTO schedule(serviceName, serviceNumber) VALUES('B', 114)
-  INTO schedule(serviceName, serviceNumber) VALUES('C', 115)
-SELECT *
-  FROM dual;
-
-INSERT ALL
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Oil Changes', 113, 'A')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Filter Replacements', 113, 'A')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Oil Changes', 114, 'B')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Filter Replacements', 114, 'B')
-  INTO Maintenance(serviceName, serviceNumber, schedule, repairType) VALUES('Brake Repair', 114, 'B', 'repair')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Check Engine Light Diagnostics', 114, 'B')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Oil Changes', 115, 'C')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Filter Replacements', 115, 'C')
-  INTO Maintenance(serviceName, serviceNumber, schedule, repairType) VALUES('Brake Repair', 115, 'C', 'repair')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Check Engine Light Diagnostics', 115, 'C')
-  INTO Maintenance(serviceName, serviceNumber, schedule) VALUES('Suspension Repair', 115, 'C')
-  INTO Maintenance(serviceName, serviceNumber, schedule, repairType) VALUES('Evaporator Repair', 115, 'C', 'repair')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Oil Changes', 113, 'A')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Filter Replacements', 113, 'A')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Oil Changes', 114, 'B')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Filter Replacements', 114, 'B')
+  INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES('Brake Repair', 114, 'B', 'Transmission Services')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Check Engine Light Diagnostics', 114, 'B')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Oil Changes', 115, 'C')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Filter Replacements', 115, 'C')
+  INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES('Brake Repair', 115, 'C', 'Transmission Services')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Check Engine Light Diagnostics', 115, 'C')
+  INTO Services(serviceName, serviceNumber, schedule) VALUES('Suspension Repair', 115, 'C')
+  INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES('Evaporator Repair', 115, 'C', 'Heating and A/C Services')
 SELECT *
   FROM dual;
  

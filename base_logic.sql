@@ -101,20 +101,21 @@ CREATE TABLE Services (
 	serviceName VARCHAR(50),
     serviceNumber NUMBER(10),
     repair_category VARCHAR(50),
+    schedule VARCHAR(1) CHECK (schedule IN ('A', 'B', 'C')),
 	PRIMARY KEY (serviceName, serviceNumber),
     FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
     	ON DELETE CASCADE
 );
 
-CREATE TABLE Maintenance (
-	serviceName VARCHAR(50),
-    serviceNumber NUMBER(10),
-    repairType VARCHAR(50),
-    schedule VARCHAR(1) CHECK (schedule IN ('A', 'B', 'C') ),
-	PRIMARY KEY (serviceName, serviceNumber),
-	FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
-	    ON DELETE CASCADE
-);
+-- CREATE TABLE Maintenance (
+-- 	serviceName VARCHAR(50),
+--     serviceNumber NUMBER(10),
+--     repairType VARCHAR(50),
+--     schedule VARCHAR(1) CHECK (schedule IN ('A', 'B', 'C') ),
+-- 	PRIMARY KEY (serviceName, serviceNumber),
+-- 	FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
+-- 	    ON DELETE CASCADE
+-- );
 
 CREATE TABLE Maintenance_Schedule (
 	mname VARCHAR(50),
@@ -122,7 +123,7 @@ CREATE TABLE Maintenance_Schedule (
     sname VARCHAR(50),
     snumber NUMBER(10),
 	PRIMARY KEY (mname, mnumber, sname, snumber),
-    FOREIGN KEY (mname, mnumber) REFERENCES Maintenance(serviceName,serviceNumber),
+    FOREIGN KEY (mname, mnumber) REFERENCES Services(serviceName,serviceNumber),
     FOREIGN KEY (sname, snumber) REFERENCES Schedule(serviceName,serviceNumber)
 );
 
@@ -285,7 +286,13 @@ CREATE TRIGGER employee_isa
 CREATE TRIGGER service_isa
     BEFORE INSERT ON Services
     FOR EACH ROW
+    DECLARE
+        invalid_category EXCEPTION;
+        PRAGMA exception_init( invalid_category, -20001 );
     BEGIN
+        IF :new.repair_category IS NOT NULL AND :new.repair_category NOT IN ('Engine Services', 'Exhaust Services', 'Electrical Services', 'Transmission Services', 'Tire Services', 'Heating and A/C Services') THEN 
+            raise invalid_category; 
+        END IF; 
         INSERT INTO work_event (serviceName, serviceNumber) 
         VALUES (:new.serviceName, :new.serviceNumber);
     END;
@@ -299,35 +306,34 @@ CREATE TRIGGER schedule_isa
         VALUES (:new.serviceName, :new.serviceNumber);
     END;
 /
-                    
-CREATE TRIGGER maintence_isa
-    BEFORE INSERT ON Maintenance
-    FOR EACH ROW
-    DECLARE cat VARCHAR(50);
-    BEGIN
-        IF (:new.repairType = 'repair') THEN
-            SELECT DISTINCT s.repair_category INTO cat
-                    FROM Services s
-                    WHERE s.serviceName = :new.serviceName;
-            INSERT INTO Services (serviceName, serviceNumber, repair_category) 
-            VALUES (:new.serviceName, :new.serviceNumber, cat);
-        ELSE
-            INSERT INTO work_event (serviceName, serviceNumber) 
-            VALUES (:new.serviceName, :new.serviceNumber);
-        END IF;
-    END;
-/
 
 CREATE TRIGGER maintence_isa_schedule
-    AFTER INSERT ON Maintenance
+    AFTER INSERT ON Services
     FOR EACH ROW
-    DECLARE schedNumber NUMBER(10);
+    DECLARE 
+        schedNumber1 NUMBER(10);
+        schedNumber2 NUMBER(10);
+        schedNumber3 NUMBER(10);
     BEGIN
-        SELECT DISTINCT s.serviceNumber INTO schedNumber 
-        FROM Schedule s
-        WHERE s.serviceName = :new.schedule;
-        INSERT INTO Maintenance_Schedule (mname, mnumber, sname, snumber) 
-        VALUES (:new.serviceName, :new.serviceNumber, :new.schedule, schedNumber);
+        IF :new.schedule IS NOT NULL THEN 
+            SELECT DISTINCT s.serviceNumber INTO schedNumber1
+            FROM Schedule s
+            WHERE s.serviceName = :new.schedule;
+            INSERT INTO Maintenance_Schedule (mname, mnumber, sname, snumber) 
+            VALUES (:new.serviceName, :new.serviceNumber, :new.schedule, schedNumber1);
+            -- IF :new.schedule = 'A' THEN 
+            --     SELECT DISTINCT s.serviceNumber INTO schedNumber2
+            --     FROM Schedule s
+            --     WHERE s.serviceName = 'B';
+            --     INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES(:new.serviceName, schedNumber2, 'B', :new.repair_category);
+            -- END IF; 
+            -- IF :new.schedule = 'B' THEN 
+            --     SELECT DISTINCT s.serviceNumber INTO schedNumber3
+            --     FROM Schedule s
+            --     WHERE s.serviceName = 'C';
+            --     INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES(:new.serviceName, schedNumber3, 'B', :new.repair_category);
+            -- END IF; 
+        END IF; 
     END;
 /
     

@@ -44,6 +44,25 @@ INSERT INTO Employee(sid, eid, role) VALUES (30004, 888966666, 'mechanic')
     -- check 
     SELECT * FROM Service_Center WHERE sid = 30004     -- now in available mode as 3 mechanics, receptionist and saturday open all there
 
+-- FAIL : a service must be in one of the 6 repair subcategories (error 20001 thrown)
+INSERT INTO Services(serviceName, serviceNumber, repair_category) VALUES('Evaporator Repair', 113, 'Heating Services')
 
-    
-    
+-- PASS : a new service can be added (just a repair)
+INSERT INTO Services(serviceName, serviceNumber, repair_category) VALUES('Evaporator Repair', 113, 'Heating and A/C Services')
+    -- check 
+    SELECT * FROM Services WHERE serviceNumber = 113
+
+-- PASS : a new maintenance service can be added
+INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES('Windsheild Fluid Add', 117, 'A', 'Engine Services')
+    -- check 
+    SELECT * FROM Maintenance_Schedule WHERE sname = 'A'
+    SELECT * FROM Services WHERE schedule IS NOT NULL
+
+-- NOTE: no downward inclusion has been done, 2 insert statements must be made in database given that we want to prevent insert in currently mutating table
+
+-- FAIL : A maintenance service must belong to an actual schedule 
+INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES('Windsheild Fluid', 118, 'D', 'Engine Services')
+  
+-- FAIL : A service cannot be added that is actually a schedule 
+INSERT INTO Services(serviceName, serviceNumber) VALUES('A', 113)
+
