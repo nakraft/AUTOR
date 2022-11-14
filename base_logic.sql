@@ -133,7 +133,7 @@ CREATE TABLE Customer (
 	phone NUMBER(10),
 	first_name VARCHAR(50),
 	last_name VARCHAR(50),
-    status NUMBER(1) DEFAULT 1,
+    status NUMBER(1) DEFAULT 0, -- inactive on add. Then active when car added 
     standing NUMBER(1) DEFAULT 0,
     address VARCHAR(100),
     email VARCHAR(50),
@@ -659,4 +659,24 @@ CREATE TRIGGER update_swap
             AND start_timeslot = :new.donor_timeslot_begin AND end_timeslot = :new.donor_timeslot_end; 
         END IF; 
     END;
+/
+
+CREATE TRIGGER vehicle_makes_customer_active
+    AFTER INSERT ON Vehicle
+    FOR EACH ROW 
+    BEGIN
+        UPDATE Customer 
+        SET status = status + 1
+        WHERE cid = :new.cid AND sid = :new.sid;
+    END; 
+/
+
+CREATE TRIGGER vehicle_makes_customer_inactive
+    AFTER DELETE ON Vehicle
+    FOR EACH ROW 
+    BEGIN
+        UPDATE Customer 
+        SET status = status - 1
+        WHERE cid = :old.cid AND sid = :old.sid;
+    END; 
 /

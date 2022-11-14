@@ -87,6 +87,38 @@ INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALU
 INSERT INTO Services(serviceName, serviceNumber) VALUES('A', 113)
 
 -- FAIL : A customer id must be an integer
-INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES('100','Virginia','Potts',30003,'vpotts','potts')
+INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES('AAA','Virginia','Potts',30003,'vpotts','potts')
 
+-- PASS : A customer should be inactive when they are first added to the system 
+INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10, 'Virginia','Old',30003,'vold','old')
+    -- check 
+    SELECT * FROM Customer WHERE sid = 30003 AND status = 0 AND cid = 10
 
+-- PASS : A customer can have a vehicle added for it 
+INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1BL651','Toyota',53500,'A',2006,10,30003)
+    -- check a customer should now be active 
+    SELECT * FROM Customer WHERE sid = 30003 AND status = 1 AND cid = 10
+    -- check a car should now be included 
+    SELECT * FROM Vehicle WHERE cid = 10 AND sid = 30003 
+
+-- PASS : A car should be deleted and the customer should have 0 status again 
+DELETE FROM Vehicle WHERE cid = 10 AND sid = 30003 
+    -- check a customer should now be inactive 
+    SELECT * FROM Customer WHERE sid = 30003 AND cid = 10
+    -- check a car should not be included 
+    SELECT * FROM Vehicle WHERE cid = 10 AND sid = 30003 
+
+-- PASS : A customer can have 2 vehicles attributes to it 
+INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1BL651','Toyota',53500,'A',2006,10,30003)
+INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1BL650','Toyota',73500,'C',2006,10,30003)
+    -- check a customer should now be active 
+    SELECT * FROM Customer WHERE sid = 30003 AND cid = 10
+    -- check a car should now be included 
+    SELECT * FROM Vehicle WHERE cid = 10 AND sid = 30003 
+
+-- PASS : A car should be deleted and the customer should still have an active status 
+DELETE FROM Vehicle WHERE cid = 10 AND sid = 30003 AND vin = '4Y1BL651'   
+    -- check a customer should still be active 
+    SELECT * FROM Customer WHERE sid = 30003 AND cid = 10
+    -- only 1 car should be left 
+    SELECT * FROM Vehicle WHERE cid = 10 AND sid = 30003 
