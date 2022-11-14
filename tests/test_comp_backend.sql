@@ -126,5 +126,29 @@ DELETE FROM Vehicle WHERE cid = 10 AND sid = 30003 AND vin = '4Y1BL651'
 -- FAIL : A vehicle must be alphanumeric only 
 INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1B*651','Toyota',53500,'A',2006,10,30003)
 
+-- PASS : A service can be scheduled (invoice added) When the employee is free and the length 
+-- of the services listed matches the length of the time alotted 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (8, 'Tire Balancing', 109)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (8, 30003, 123405678, 10, 1, 3, 9, 1, 3, 10, '4Y1BL650')
+    -- check 
+    SELECT * FROM Calendar WHERE invoice_id = 8 -- two timeslots should be schedules 
+    SELECT * FROM Invoice WHERE id = 8 -- amount paid should be 0, total amount should be 95
+
+-- FAIL : A service cannot be scheduled when the employee is not free (error 20003) (even if only part of their time overlaps)
+INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(11, 'Virginia','New',30003,'vnew','new')
+INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1BL651','Toyota',53500,'A',2006,11,30003)
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (9, 'Tire Balancing', 109)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (9, 30003, 123405678, 11, 1, 3, 10, 1, 3, 11, '4Y1BL651')
+  
+-- FAIL : A service cannot be scheduled when the duration of the service is not the same length as the duration requested (error 20003)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (9, 30003, 123405678, 11, 2, 3, 8, 2, 3, 11, '4Y1BL651')
+  
+-- FAIL : A service cannot be scheduled on a saturday if the store isn't open then (error 20001)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (9, 30003, 123405678, 11, 1, 6, 2, 1, 6, 3, '4Y1BL651')
+
+-- FAIL : A service cannot be scheduled on a saturday at a time when the store isn't open (error 20002)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (9, 30001, 241368579, 10001, 3, 6, 4, 3, 6, 5, '4Y1BL658')
+
+
 -- generic testing left... scheduling services (creating invoice), payment of invoice (and lack thereof) changes customer standing
 -- mechanic time off cannot be scheduled over, mechanic swap time can occur, mechanic hours are not exceeded 

@@ -480,6 +480,8 @@ CREATE TRIGGER invoice_checks
         dura NUMBER;
         wrongTime EXCEPTION;
         PRAGMA exception_init( wrongTime, -20003 );
+        overworking EXCEPTION;
+        PRAGMA exception_init( overworking, -20004 );
     BEGIN 
         -- checks to make sure it is being scheduled for a time that is allowable by the calendar 
         SELECT s.saturday INTO saturday
@@ -505,6 +507,13 @@ CREATE TRIGGER invoice_checks
         IF length_services != dura THEN 
             raise wrongTime;
         END IF; 
+        -- ensures that if this got scheduled with this mechanic, the mechanic wouldn't be working more than the required time a week 
+        SELECT SUM(c.price) INTO :new.total_amount
+        FROM Invoice_HasService i 
+        LEFT JOIN Cost_Details c 
+        ON i.serviceName = c.serviceName AND i.serviceNumber = c.serviceNumber
+        WHERE i.id = :new.id AND c.manf = (SELECT v.manf FROM Vehicle v WHERE v.vin = :new.vin) 
+        AND c.sid = :new.sid;
     END;
 /
 
