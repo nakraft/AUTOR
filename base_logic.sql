@@ -162,11 +162,7 @@ CREATE TABLE Invoice_HasService (
 	id NUMBER(10),
 	serviceName VARCHAR(50),
     serviceNumber NUMBER(10),
-<<<<<<< HEAD
     PRIMARY KEY (id, serviceName, serviceNumber),
-=======
-	PRIMARY KEY (id, serviceName, serviceNumber),
->>>>>>> 4291667 (updated base logic)
 	FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
 );
 
@@ -200,11 +196,7 @@ CREATE TABLE Calendar (
 	timeslot NUMBER CHECK (timeslot >= 1 AND timeslot <= 11), -- 1 corresonds to 8AM, 5 corresponds to 1 PM. Lunch hour is skipped.
 	invoice_id NUMBER(10),
 	sid NUMBER(10) NOT NULL,
-<<<<<<< HEAD
-    eid NUMBER(10),
-=======
     eid NUMBER(10) NOT NULL,
->>>>>>> 4291667 (updated base logic)
 	id NUMBER(10),
     CONSTRAINT pkcalendar
 	PRIMARY KEY (timeslot_week, timeslot_day, timeslot, sid, eid) deferrable initially deferred, 
