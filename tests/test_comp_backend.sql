@@ -44,6 +44,26 @@ INSERT INTO Employee(sid, eid, role) VALUES (30004, 888966666, 'mechanic')
     -- check 
     SELECT * FROM Service_Center WHERE sid = 30004     -- now in available mode as 3 mechanics, receptionist and saturday open all there
 
+-- FAIL : With only three mechanics at the service center no one can request time off 
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888966666, 1)
+
+-- PASS : Anouther mechanic can be added and now the day can be taken off 
+INSERT INTO Employee(sid, eid, role) VALUES (30004, 888966655, 'mechanic')
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888966666, 1)
+    -- check 
+    SELECT * FROM Mechanic_Out
+
+-- FAIL : A mechanic cannot ask for the same time off twice 
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888966666, 1)
+
+-- FAIL : Anouther mechanic cannot ask for the time off now as there is already a person out from it (20005 error)
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888999666, 1)
+
+-- FAIL : Schedule someone to work... a mechanic cannot take this time off either -- NOTE THIS ONLY WORKS AS INVOICE_ID ALREADY IS 1 
+UPDATE Calendar SET invoice_id = 1 WHERE eid = 888999666 AND sid = 30004 and id = 2
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 2, 30004, 888999666, 2)
+UPDATE Calendar SET invoice_id = 0 WHERE eid = 888999666 AND sid = 30004 and id = 2
+
 -- FAIL : a service must be in one of the 6 repair subcategories (error 20001 thrown)
 INSERT INTO Services(serviceName, serviceNumber, repair_category) VALUES('Evaporator Repair', 113, 'Heating Services')
 

@@ -209,12 +209,11 @@ CREATE TABLE Calendar (
 -- SET CONSTRAINTS SYS_C00464762 DEFERRED;
 
 CREATE TABLE Mechanic_Out (
-    timeslot_day NUMBER(1) CHECK (timeslot_day >= 1 AND timeslot_day <= 6),
-    timeslot_week NUMBER(1) CHECK (timeslot_week IN (1,2,3,4)),
-	timeslot NUMBER CHECK (timeslot >= 1 AND timeslot <= 11), -- 1 corresonds to 8AM, 5 corresponds to 1 PM. Lunch hour is skipped.
+    start_timeslot_day NUMBER(1) CHECK (timeslot_day >= 1 AND timeslot_day <= 6),
+    start_timeslot_week NUMBER(1) CHECK (timeslot_week IN (1,2,3,4)),
+	start_timeslot NUMBER CHECK (timeslot >= 1 AND timeslot <= 11), -- 1 corresonds to 8AM, 5 corresponds to 1 PM. Lunch hour is skipped.
 	sid NUMBER(10),
     eid NUMBER(10),
-    id NUMBER(10),
 	PRIMARY KEY (timeslot_week, timeslot_day, timeslot, sid, eid),
     FOREIGN KEY (sid) REFERENCES Service_Center 
         ON DELETE CASCADE, 
@@ -395,8 +394,11 @@ CREATE TRIGGER mechanic_requests_time_off
         mechanics_present NUMBER; 
         service_on NUMBER;
         not_approved EXCEPTION;
+        PRAGMA exception_init( not_approved, -20005 );
         saturday_open EXCEPTION;
+        PRAGMA exception_init( saturday_open, -20010 );
         saturday_hours EXCEPTION;
+        PRAGMA exception_init( saturday_hours, -20011 );
         saturday VARCHAR(5);
     BEGIN 
         SELECT s.saturday INTO saturday
@@ -404,8 +406,10 @@ CREATE TRIGGER mechanic_requests_time_off
         WHERE s.sid = :new.sid;
         IF (saturday = 'close' OR saturday = 'c') AND :new.timeslot_day = 6 THEN 
             RAISE saturday_open; 
+            DBMS_OUTPUT.put_line ('The store is not open saturday, timeslot day invalid'); 
         ELSIF (saturday = 'open' OR saturday = 'o') AND :new.timeslot NOT IN (2,3,4) THEN 
             RAISE saturday_hours;
+            DBMS_OUTPUT.put_line ('The store is open saturday, but these timeslots are invalid'); 
         END IF;
         SELECT COUNT(eid) INTO mechanics_present 
         FROM Calendar c 
@@ -415,6 +419,7 @@ CREATE TRIGGER mechanic_requests_time_off
         WHERE timeslot_week = :new.timeslot_week AND timeslot_day = :new.timeslot_day AND timeslot = :new.timeslot AND sid = :new.sid AND eid = :new.eid AND invoice_id IS NOT NULL;
         IF mechanics_present < 4 OR service_on != 0 THEN 
             RAISE not_approved;
+            DBMS_OUTPUT.put_line ('The mechanic is not allowed to take off at this time.'); 
         ELSE 
             DELETE FROM Calendar 
             WHERE timeslot_week = :new.timeslot_week AND timeslot_day = :new.timeslot_day AND timeslot = :new.timeslot AND sid = :new.sid AND eid = :new.eid;
@@ -432,7 +437,7 @@ CREATE TRIGGER generate_mechanic_schedule
         FROM Service_Center s 
         WHERE s.sid = :new.sid;
         -- if saturday closed 
-        IF (saturday = 'closed' OR saturday = 'c') THEN 
+        IF (saturday = 'close' OR saturday = 'c') THEN 
             FOR week_number IN 1..4 LOOP
                 FOR day_number IN 1..5 LOOP
                     FOR timeslot IN 1..11 LOOP
