@@ -171,7 +171,6 @@ CREATE TABLE Invoice (
 	total_amount REAL,
 	amount_paid REAL DEFAULT 0,
     sid NUMBER(10),
-    date_generated DATE DEFAULT CURRENT_DATE,
     start_timeslot_week NUMBER CHECK (start_timeslot_week IN (1,2,3,4)),
     start_timeslot_day NUMBER CHECK (start_timeslot_day >= 1 AND start_timeslot_day <= 6),
     start_timeslot NUMBER CHECK (start_timeslot >= 1 AND start_timeslot <= 11), 
@@ -196,7 +195,7 @@ CREATE TABLE Calendar (
 	timeslot NUMBER CHECK (timeslot >= 1 AND timeslot <= 11), -- 1 corresonds to 8AM, 5 corresponds to 1 PM. Lunch hour is skipped.
 	invoice_id NUMBER(10),
 	sid NUMBER(10) NOT NULL,
-    eid NUMBER(10) NOT NULL,
+    eid NUMBER(10),
 	id NUMBER(10),
     CONSTRAINT pkcalendar
 	PRIMARY KEY (timeslot_week, timeslot_day, timeslot, sid, eid) deferrable initially deferred, 
@@ -693,7 +692,6 @@ CREATE TRIGGER update_swap
     AFTER UPDATE ON Mechanic_Swap_Request
     FOR EACH ROW 
     DECLARE 
-<<<<<<< HEAD
         invoiceDonor NUMBER; 
         invoiceRecieve NUMBER; 
     BEGIN
@@ -716,18 +714,6 @@ CREATE TRIGGER update_swap
             UPDATE Calendar 
             SET invoice_id = CASE WHEN invoice_id IS NULL THEN invoiceDonor ELSE NULL END
             WHERE sid = :new.sid AND eid IN (:new.donor_eid, :new.recieve_eid) AND timeslot_week = :new.donor_timeslot_week AND 
-=======
-    BEGIN
-        IF :new.status = 1 THEN -- condition accepted swap places and close (if 0/2 no action needed)
-            UPDATE Calendar 
-            SET eid = :new.donor_eid 
-            WHERE sid = :new.sid AND eid = :new.recieve_eid AND timeslot_week = :new.recieve_timeslot_week AND 
-            timeslot_day = :new.recieve_timeslot_day AND timeslot >= :new.recieve_timeslot_begin AND
-            timeslot <= :new.recieve_timeslot_end;
-            UPDATE Calendar 
-            SET eid = :new.recieve_eid 
-            WHERE sid = :new.sid AND eid = :new.donor_eid AND timeslot_week = :new.donor_timeslot_week AND 
->>>>>>> 4291667 (updated base logic)
             timeslot_day = :new.donor_timeslot_day AND timeslot >= :new.donor_timeslot_begin AND
             timeslot <= :new.donor_timeslot_end;
             UPDATE Invoice
