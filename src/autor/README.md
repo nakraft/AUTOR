@@ -37,5 +37,6 @@ __Other__
 - It is assumed that mechanics can only swap schedules for a timeperiod that occurs on the same day.  <!-- This is a bad assumption, fix it  -->
 
 ### Corrections in Sample Data 
-Based on our implementation, one of the entries of the sample data is inaccurate: 
-- This is the invoice data for: Bruce Wayne (15DC9A87) for Week 2, Day 6, Time 2-8. As Day 6 is a Saturday, the time allotment 
+Based on our implementation, two of the entries of the sample data is inaccurate: 
+- This is the invoice data for: Bruce Wayne (15DC9A87) for Week 2, Day 6, Time 2-8. As Day 6 is a Saturday, the time allotment is invalid. This sample has been removed due to the inconsistency.
+- This is the invoice data for: Sam Wilson (29T56WC3) for Week 1, Day 1, Time 1-2. As this service requires a time of 2 hours, the scheduled time is too short. This sample has been extended by one hour to account for the inconsistency. 

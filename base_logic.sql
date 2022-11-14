@@ -146,7 +146,7 @@ CREATE TABLE Customer (
 
 CREATE TABLE Vehicle (
     vin VARCHAR(10) CHECK (REGEXP_LIKE(vin, '^[A-Za-z0-9]{8}$')),
-    manf CHAR(50),
+    manf VARCHAR(50),
     year NUMBER,
     mileage REAL,
     schedule CHAR(1) DEFAULT 'A',
@@ -472,11 +472,14 @@ CREATE TRIGGER invoice_checks
     FOR EACH ROW 
     DECLARE 
         saturday_open EXCEPTION;
+        PRAGMA exception_init( saturday_open, -20001 );
         saturday_hours EXCEPTION;
+        PRAGMA exception_init( saturday_hours, -20002 );
         saturday VARCHAR(5);
         length_services NUMBER; 
         dura NUMBER;
         wrongTime EXCEPTION;
+        PRAGMA exception_init( wrongTime, -20003 );
     BEGIN 
         -- checks to make sure it is being scheduled for a time that is allowable by the calendar 
         SELECT s.saturday INTO saturday
@@ -498,7 +501,7 @@ CREATE TRIGGER invoice_checks
         WHERE eid = :new.eid AND sid = :new.sid AND timeslot_week >= :new.start_timeslot_week 
             AND timeslot_week <= :new.end_timeslot_week AND timeslot_day >= :new.start_timeslot_day
             AND timeslot_day <= :new.start_timeslot_day AND timeslot >= :new.start_timeslot
-            AND timeslot <= :new.end_timeslot;
+            AND timeslot <= :new.end_timeslot AND invoice_id IS NULL;
         IF length_services != dura THEN 
             raise wrongTime;
         END IF; 
