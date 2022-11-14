@@ -122,3 +122,7 @@ DELETE FROM Vehicle WHERE cid = 10 AND sid = 30003 AND vin = '4Y1BL651'
     SELECT * FROM Customer WHERE sid = 30003 AND cid = 10
     -- only 1 car should be left 
     SELECT * FROM Vehicle WHERE cid = 10 AND sid = 30003 
+
+-- FAIL : A vehicle must be alphanumeric only 
+INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1B*651','Toyota',53500,'A',2006,10,30003)
+

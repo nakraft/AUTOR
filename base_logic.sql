@@ -145,7 +145,7 @@ CREATE TABLE Customer (
 );
 
 CREATE TABLE Vehicle (
-    vin VARCHAR(10),
+    vin VARCHAR(10) CHECK (REGEXP_LIKE(vin, '^[A-Za-z0-9]{8}$')),,
     manf CHAR(50),
     year NUMBER,
     mileage REAL,
