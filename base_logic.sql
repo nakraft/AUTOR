@@ -134,7 +134,7 @@ CREATE TABLE Customer (
 	first_name VARCHAR(50),
 	last_name VARCHAR(50),
     status NUMBER(1) DEFAULT 0, -- inactive on add. Then active when car added 
-    standing NUMBER(1) DEFAULT 0,
+    standing NUMBER(1) DEFAULT 0, -- TODO 
     address VARCHAR(100),
     email VARCHAR(50),
     username VARCHAR(50),
@@ -471,6 +471,8 @@ CREATE TRIGGER invoice_checks
     BEFORE INSERT ON Invoice 
     FOR EACH ROW 
     DECLARE 
+        start_id NUMBER; 
+        end_id NUMBER;
         saturday_open EXCEPTION;
         PRAGMA exception_init( saturday_open, -20001 );
         saturday_hours EXCEPTION;
@@ -480,6 +482,8 @@ CREATE TRIGGER invoice_checks
         dura NUMBER;
         wrongTime EXCEPTION;
         PRAGMA exception_init( wrongTime, -20003 );
+        hoursWorked NUMBER; 
+        hoursToWork NUMBER;
         overworking EXCEPTION;
         PRAGMA exception_init( overworking, -20004 );
     BEGIN 
@@ -492,6 +496,15 @@ CREATE TRIGGER invoice_checks
         ELSIF (saturday = 'open' OR saturday = 'o') AND ((:new.start_timeslot NOT IN (2,3,4) AND :new.start_timeslot_day = 6) OR (:new.end_timeslot NOT IN (2,3,4) AND :new.end_timeslot_day = 6)) THEN 
             RAISE saturday_hours;
         END IF; 
+        -- get the two timeslot values 
+        SELECT UNIQUE(id) INTO start_id
+        FROM Calendar
+        WHERE timeslot_week = :new.start_timeslot_week 
+        AND timeslot_day = :new.start_timeslot_day AND timeslot = :new.start_timeslot AND eid = :new.eid;
+        SELECT UNIQUE(id) INTO end_id
+        FROM Calendar
+        WHERE timeslot_week = :new.end_timeslot_week 
+        AND timeslot_day = :new.end_timeslot_day AND timeslot = :new.end_timeslot AND eid = :new.eid;
         -- ensures the length of the invoice matches the expectations for the service durations 
         SELECT SUM(d.dur) INTO length_services  
         FROM Invoice_HasService i 
@@ -500,14 +513,26 @@ CREATE TRIGGER invoice_checks
         WHERE d.manf = (SELECT manf FROM Vehicle WHERE vin = :new.vin) AND i.id = :new.id;
         SELECT COUNT(*) INTO dura
         FROM Calendar
-        WHERE eid = :new.eid AND sid = :new.sid AND timeslot_week >= :new.start_timeslot_week 
-            AND timeslot_week <= :new.end_timeslot_week AND timeslot_day >= :new.start_timeslot_day
-            AND timeslot_day <= :new.start_timeslot_day AND timeslot >= :new.start_timeslot
-            AND timeslot <= :new.end_timeslot AND invoice_id IS NULL;
+        WHERE eid = :new.eid AND sid = :new.sid AND id >= start_id AND id <= end_id AND invoice_id IS NULL;
         IF length_services != dura THEN 
             raise wrongTime;
         END IF; 
         -- ensures that if this got scheduled with this mechanic, the mechanic wouldn't be working more than the required time a week 
+        -- you cannot use having here as there is no way to evaluate how many hours to be worked were attributed to a particular week 
+        FOR week_number IN :new.start_timeslot_week..:new.end_timeslot_week LOOP
+            SELECT COUNT(*) INTO hoursWorked
+            FROM Calendar o 
+            WHERE o.eid = :new.eid AND o.sid = :new.sid AND o.timeslot_week = week_number 
+            AND o.invoice_id IS NOT NULL;
+            SELECT COUNT(*) INTO hoursToWork
+            FROM Calendar o 
+            WHERE o.eid = :new.eid AND o.sid = :new.sid AND o.timeslot_week = week_number 
+            AND id >= start_id AND id <= end_id; 
+            IF hoursWorked + hoursToWork > 50 THEN 
+                RAISE overworking;
+            END IF;
+        END LOOP;
+        -- makes sure the invoice has the price of the invoice listed 
         SELECT SUM(c.price) INTO :new.total_amount
         FROM Invoice_HasService i 
         LEFT JOIN Cost_Details c 
