@@ -156,7 +156,7 @@ public class managerQuery {
      */
     public static String[] getRepairServices() {
         // Query all repair services
-        ResultSet result = JDBC.executeQuery("SELECT DISTINCT serviceName FROM Services WHERE repair_category IS NOT NULL");
+        ResultSet result = JDBC.executeQuery("SELECT DISTINCT serviceName FROM Services WHERE repair_category IS NOT NULL ORDER BY serviceName");
         // Create an arraylist of repair services
         ArrayList<String> services = new ArrayList<String>();
         // For each repair service
