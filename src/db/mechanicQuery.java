@@ -156,8 +156,8 @@ public class mechanicQuery {
     public static String[] RequestedTimeOff(String[] responses) {
         ArrayList<String> list = new ArrayList<String>(); 
         // check to see if the mechanic is scheduled to work during the requested time off
-        boolean request = JDBC.executeUpdate(timeOffRequestsQuery(responses[0], responses[1],
-                responses[2]));
+        boolean request = (JDBC.executeUpdate(timeOffRequestsQuery(responses[0], responses[1],
+                responses[2])) > 0 );
         if (!request) {
             list.add(
                     "Unable to allow time off since you are already scheduled for work within that time range.\nPlease request another time range instead.");
@@ -174,20 +174,20 @@ public class mechanicQuery {
         ArrayList<String> list = new ArrayList<String>(); 
         try {
             // Insert into the store table
-            boolean request = JDBC.executeUpdate("INSERT INTO Mechanic_Swap_Request (sid, donor_eid, recieve_eid, donor_timeslot_week, donor_timeslot_day, donor_timeslot_begin, donor_timeslot_end, recieve_timeslot_week, recieve_timeslot_day, recieve_timeslot_begin, recieve_timeslot_end, status) VALUES ("
-            + UI.getCurrentSID() + ", "
-            + UI.getCurrentEID() + ", "
-            + responses[0] + ", "
-            + responses[1] + ", "
-            + responses[2] + ", "
-            + responses[3] + ", "
-            + responses[4] + ", "
-            + responses[5] + ", "
-            + responses[6] + ", "
-            + responses[7] + ", "
-            + responses[8] + ", "
-            + 0 + ")");
-            if(request){
+            int changed_rows = JDBC.executeUpdate("INSERT INTO Mechanic_Swap_Request (sid, donor_eid, recieve_eid, donor_timeslot_week, donor_timeslot_day, donor_timeslot_begin, donor_timeslot_end, recieve_timeslot_week, recieve_timeslot_day, recieve_timeslot_begin, recieve_timeslot_end, status) VALUES ("
+                + UI.getCurrentSID() + ", "
+                + UI.getCurrentEID() + ", "
+                + responses[0] + ", "
+                + responses[1] + ", "
+                + responses[2] + ", "
+                + responses[3] + ", "
+                + responses[4] + ", "
+                + responses[5] + ", "
+                + responses[6] + ", "
+                + responses[7] + ", "
+                + responses[8] + ", "
+                + 0 + ")");
+            if(changed_rows > 0){
                 list.add("Successfully created swap request with employee ID: " + responses[1]);
             }
             else{

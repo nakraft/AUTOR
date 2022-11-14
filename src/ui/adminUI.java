@@ -232,7 +232,7 @@ public class adminUI {
                 // If the command is an update
                 if (command.toLowerCase().startsWith("update")) {
                     // If the update was successful
-                    if (JDBC.executeUpdate(command)) {
+                    if (JDBC.executeUpdate(command) > 0){
                         System.out.println("Update successful");
                     }
                     else {
@@ -241,10 +241,12 @@ public class adminUI {
                 }
                 // Otherwise the command is a query
                 else {
-                    ResultSet results = JDBC.executeQuery(command);
-                    // Print the results
-                    if (results != null) {
-                        JDBC.printResults(results);
+                    if (JDBC.execute(command)) {
+                        try {
+                            JDBC.printResults(JDBC.getLastStatement().getResultSet());
+                        } catch (SQLException e) {
+                            System.out.println("Error printing results");
+                        }
                     }
                     else {
                         System.out.println("Query failed");

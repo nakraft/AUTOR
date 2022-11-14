@@ -27,7 +27,7 @@ public class receptionistQuery {
 
             // Add Customer
             // Insert into the Customer table
-            if(!JDBC.executeUpdate(
+            if(JDBC.executeUpdate(
                 "INSERT INTO Customer (first_name,last_name,address,email,phone,username,password,cid,sid) VALUES (" +
                     "'" + responses[0] + "'" + ',' + 
                     "'" + responses[1] + "'" + ',' + 
@@ -38,12 +38,12 @@ public class receptionistQuery {
                     "'" + responses[1] + "'" + ',' + 
                     "'" + customerID + "'" + ',' +
                     "'" + UI.getCurrentSID() + "'" + ')'
-            )) {
+            ) <= 0) {
                 throw new java.sql.SQLException("Error updating services");
             }
 
             // Add Customer's vehicle
-            if (!JDBC.executeUpdate(
+            if (JDBC.executeUpdate(
                     "INSERT INTO Vehicle (vin,manf,mileage,year,cid,sid) VALUES (" +
                     "'" + responses[6] + "'" + ',' + 
                     "'" + responses[7] + "'" + ',' + 
@@ -51,7 +51,7 @@ public class receptionistQuery {
                     "'" + responses[9] + "'" + ',' + 
                     "'" + customerID + "'" + ',' + 
                     "'" + UI.getCurrentSID() + "'" + ')'
-                )) {
+                ) <= 0) {
                     throw new java.sql.SQLException("Error updating duration details");
                 }
         } catch (java.sql.SQLException e) {

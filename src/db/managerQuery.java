@@ -86,8 +86,8 @@ public class managerQuery {
         // If the role is a mechanic
         if (employee[5].toLowerCase().equals("mechanic")) {
             // Execute update on eid and sid in Mechanic table
-            boolean success = JDBC.executeUpdate("UPDATE Mechanic SET rate=" + employee[7] + " WHERE eid = " + eid + " AND sid = " + UI.getCurrentSID());
-            if (!success) {
+            int changed_rows = JDBC.executeUpdate("UPDATE Mechanic SET rate=" + employee[7] + " WHERE eid = " + eid + " AND sid = " + UI.getCurrentSID());
+            if (changed_rows <= 0) {
                 // Remove the employee from the database
                 JDBC.executeUpdate("DELETE FROM Employee WHERE eid = " + eid);
                 return "ERROR: Could not update mechanic";
@@ -96,8 +96,8 @@ public class managerQuery {
         // Else if the role is a receptionist
         else if (employee[5].toLowerCase().equals("receptionist")) {
             // Execute update on eid and sid in Receptionist table
-            boolean success = JDBC.executeUpdate("UPDATE Receptionist SET salary=" + employee[7] + " WHERE eid = " + eid + " AND sid = " + UI.getCurrentSID());    
-            if (!success) {
+            int changed_rows = JDBC.executeUpdate("UPDATE Receptionist SET salary=" + employee[7] + " WHERE eid = " + eid + " AND sid = " + UI.getCurrentSID());    
+            if (changed_rows <= 0) {
                 // Remove the employee from the Employee table
                 JDBC.executeUpdate("DELETE FROM Employee WHERE eid = " + eid);
                 return "ERROR: Could not update receptionist";
@@ -119,10 +119,10 @@ public class managerQuery {
         // If the manufacturer is not specified
         if (manufacturer == null || manufacturer.equals("")) {
             // Update the price for all manufacturers
-            return JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + scheduleName + "' AND sid = " + UI.getCurrentSID());
+            return (JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + scheduleName + "' AND sid = " + UI.getCurrentSID()) > 0);
         }
         // Else update the price for the specified manufacturer
-        return JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + scheduleName + "' AND sid = " + UI.getCurrentSID() + " AND manf = '" + manufacturer + "'");
+        return (JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + scheduleName + "' AND sid = " + UI.getCurrentSID() + " AND manf = '" + manufacturer + "'") > 0);
     }
 
     /**
@@ -137,12 +137,12 @@ public class managerQuery {
         // If openSaturday is "y" or "yes"
         if ("y".equals(openSaturday) || "yes".equals(openSaturday)) {
             // Update the operational hours to open on Saturday
-            return JDBC.executeUpdate("UPDATE Service_Center SET saturday = 'open' WHERE sid = " + UI.getCurrentSID());
+            return (JDBC.executeUpdate("UPDATE Service_Center SET saturday = 'open' WHERE sid = " + UI.getCurrentSID()) > 0);
         }
         // Else if openSaturday is "n" or "no"
         else if ("n".equals(openSaturday) || "no".equals(openSaturday)) {
             // Update the operational hours to not open on Saturday
-            return JDBC.executeUpdate("UPDATE Service_Center SET saturday = 'close' WHERE sid = " + UI.getCurrentSID());
+            return (JDBC.executeUpdate("UPDATE Service_Center SET saturday = 'close' WHERE sid = " + UI.getCurrentSID()) > 0);
         }
         // Else return false
         return false;
@@ -180,9 +180,9 @@ public class managerQuery {
         // If manufacturer is null or not specified
         if (manufacturer == null || manufacturer.equals("")) {
             // Update the price for all manufacturers
-            return JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + serviceName + "' AND sid = " + UI.getCurrentSID());
+            return (JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + serviceName + "' AND sid = " + UI.getCurrentSID()) > 0);
         }
         // Else update the price for the specified manufacturer
-        return JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + serviceName + "' AND sid = " + UI.getCurrentSID() + " AND manf = '" + manufacturer + "'");
+        return (JDBC.executeUpdate("UPDATE Cost_Details SET price = " + price + " WHERE serviceName = '" + serviceName + "' AND sid = " + UI.getCurrentSID() + " AND manf = '" + manufacturer + "'") >= 0);
     }
 }

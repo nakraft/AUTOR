@@ -14,6 +14,8 @@ public class JDBC {
     static private Connection connection = null;
     // Debug flag
     static private final boolean DEBUG = true;
+    // Last statement
+    static private Statement lastStatement = null;
 
     /**
      * Database setup method
@@ -193,6 +195,7 @@ public class JDBC {
             connection.commit();
             // Enable auto commit
             connection.setAutoCommit(true);
+            lastStatement = statement;
             return result;
         }
         // If the queries can't be executed
@@ -207,10 +210,57 @@ public class JDBC {
             // System.exit(1);
         }
     }
-    
+
+    /**
+     * Execute
+     * Returns true if the first object that the query returns is a ResultSet
+     * object. Use this method if the query could return one or more ResultSet
+     * objects. Retrieve the ResultSet objects returned from the query by
+     * repeatedly calling Statement.getResultSet
+     * 
+     * @param query Query to execute
+     * @return Result set of the query
+     */
+    public static boolean execute(String query) {
+        Statement statement = null;
+        // Create a statement
+        try {
+            statement = connection.createStatement();
+        }
+        // If the statement can't be created
+        catch (java.sql.SQLException e) {
+            somethingWentWrong(e);
+            return false;
+
+            // // Print an error message
+            // System.out.println("Error creating statement");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
+        }
+        try {
+            // Execute the query
+            boolean results =  statement.execute(query);
+            lastStatement = statement;
+            return results;
+        }
+        // If the query can't be executed
+        catch (java.sql.SQLException e) {
+            somethingWentWrong(e);
+            return false;
+
+            // // Print an error message
+            // System.out.println("Error executing query");
+            // e.printStackTrace();
+            // // Quit the program
+            // System.exit(1);
+        }
+    }
 
     /**
      * Execute a query
+     * Returns one ResultSet object.
+     * Use this method if you are using Select SQL statements
      * 
      * @param query the query to execute
      * @return the result set of the query
@@ -252,6 +302,7 @@ public class JDBC {
                 System.out.println(query);
             }
             resultSet = statement.executeQuery(query);
+            lastStatement = statement;
         // If the query can't be executed
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
@@ -269,16 +320,19 @@ public class JDBC {
 
     /**
      * Execute an update
+     * Returns an integer representing the number of rows affected by the SQL
+     * statement. Use this method if you are using INSERT, DELETE, or UPDATE
+     * SQL statements
      * 
      * @param update the update to execute
      */
-    public static boolean executeUpdate(String update) {
+    public static int executeUpdate(String update) {
         // Make sure auto commit is enabled
         try {
             connection.setAutoCommit(true);
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
-            return false;
+            return -1;
 
             // // Print an error message
             // System.out.println("Error setting auto commit");
@@ -293,7 +347,7 @@ public class JDBC {
             statement = connection.createStatement();
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
-            return false;
+            return -1;
 
             // // Print an error message
             // System.out.println("Error creating statement");
@@ -303,15 +357,16 @@ public class JDBC {
         }
 
         // Execute the update
+        int rows = -1;
         try {
             if (DEBUG) {
                 System.out.println(update);
             }
-            statement.executeUpdate(update);
+            rows = statement.executeUpdate(update);
         // If the update can't be executed
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
-            return false;
+            return -1;
 
             // // Print an error message
             // System.out.println("Error executing update");
@@ -320,7 +375,7 @@ public class JDBC {
             // System.exit(1);
         }
         // Return true if the update was successful
-        return true;
+        return rows;
     }
 
     /**
@@ -373,5 +428,12 @@ public class JDBC {
          */
         UI.input.nextLine();
         // Then return like nothing happened :)
+    }
+
+    /**
+     * Get last statement
+     */
+    public static Statement getLastStatement() {
+        return lastStatement;
     }
 }

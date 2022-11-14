@@ -230,13 +230,12 @@ public class customerQuery {
             // invoice has service query
 
             String querystr = "INSERT ALL ";
-            int i=0;
             for(String ele:cart) {
             querystr += "INTO Invoice_HasService ( id, serviceName, serviceNumber ) VALUES ( "+invoiceID+",'"+ele+"'," + serviceMapping.get(ele) + ") ";
             }
             querystr += " SELECT * FROM DUAL";
-            boolean response = JDBC.executeUpdate(querystr);
-            if(response == false) {
+            int response = JDBC.executeUpdate(querystr);
+            if(response <= 0) {
                 return -1;
             }
             String query2 = "INSERT INTO Invoice(id,sid,eid,cid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin, total_amount)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", "+ UI.getCurrentEID() +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", '" + Vin + "', "+cost+")";
@@ -322,9 +321,9 @@ public class customerQuery {
         try {
             ResultSet result = JDBC.executeQuery(query1);
             if (!result.next()) {
-            return false;
-            }   
-            return JDBC.executeUpdate(query);
+                return false;
+            }  
+            return (JDBC.executeUpdate(query) > 0);
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
             return false;
@@ -353,7 +352,7 @@ public class customerQuery {
         String query = "UPDATE Invoice SET amount_paid=total_amount, status=1 where id='"+invoice_id+"'";
         
         try {
-            if (!JDBC.executeUpdate(query)) {
+            if (JDBC.executeUpdate(query) <= 0) {
                 throw new java.sql.SQLException("Error updating duration details");
             }
             return true;

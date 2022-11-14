@@ -32,22 +32,22 @@ public class adminQuery {
                 ")"
             );
             // If the query inserts a row
-            if (!JDBC.executeUpdate(
+            if (JDBC.executeUpdate(
                 "UPDATE Employee SET " +
                     "first_name = '" + responses[2] + "', " +
                     "last_name = '" + responses[3] + "', " +
                     "username = '" + responses[4] + "', " +
                     "password = '" + responses[5] + "' " +
                     "WHERE eid = " + responses[7]
-            )) {
+            ) > 0) {
                 throw new java.sql.SQLException("Error updating duration details");
             }
             // If the query inserts a row
-            if (!JDBC.executeUpdate(
+            if (JDBC.executeUpdate(
                 "UPDATE Mechanic SET " +
                     "rate = " + responses[6] +
                     "WHERE eid = " + responses[7]
-            )) {
+            ) > 0) {
                 throw new java.sql.SQLException("Error updating duration details");
             }
         } catch (java.sql.SQLException e) {
@@ -100,33 +100,33 @@ public class adminQuery {
             String nextId = result.getString("next");
             nextId = String.valueOf(Integer.parseInt(nextId) + 1);
             // Insert into the store table
-            if(!JDBC.executeUpdate(
+            if(JDBC.executeUpdate(
                 "INSERT INTO Services (serviceName,serviceNumber,repair_category) VALUES (" +
                     "'" + responses[1] + "'" + ',' + 
                     "'" + nextId + "'" + ',' + 
                     "'" + responses[0] + "'" + ')'
-            )) {
+            ) > 0) {
                 throw new java.sql.SQLException("Error updating services");
             }
-            if (!JDBC.executeUpdate(
-                    "INSERT INTO Duration_Details (manf,dur,serviceName,serviceNumber) VALUES (" +
-                    "'" + responses[3] + "'" + ',' + 
-                    "'" + responses[2] + "'" + ',' + 
-                    "'" + responses[1] + "'" + ',' + 
-                    "'" + nextId + "'" + ')'
-                )) {
-                    throw new java.sql.SQLException("Error updating duration details");
-                }
-            if (!JDBC.executeUpdate(
-                    "INSERT INTO Cost_Details (manf,price,sid,serviceName, serviceNumber) VALUES (" +
-                    "'" + responses[3] + "'" + ',' + 
-                    "'" + responses[4] + "'" + ',' + 
-                    "'" + responses[5] + "'" + ',' + 
-                    "'" + responses[1] + "'" + ',' + 
-                    "'" + nextId + "'" + ')'
-                )) {
-                    throw new java.sql.SQLException("Error updating duration details");
-                }
+            if (JDBC.executeUpdate(
+                "INSERT INTO Duration_Details (manf,dur,serviceName,serviceNumber) VALUES (" +
+                "'" + responses[3] + "'" + ',' + 
+                "'" + responses[2] + "'" + ',' + 
+                "'" + responses[1] + "'" + ',' + 
+                "'" + nextId + "'" + ')'
+            ) > 0) {
+                throw new java.sql.SQLException("Error updating duration details");
+            }
+            if (JDBC.executeUpdate(
+                "INSERT INTO Cost_Details (manf,price,sid,serviceName, serviceNumber) VALUES (" +
+                "'" + responses[3] + "'" + ',' + 
+                "'" + responses[4] + "'" + ',' + 
+                "'" + responses[5] + "'" + ',' + 
+                "'" + responses[1] + "'" + ',' + 
+                "'" + nextId + "'" + ')'
+            ) > 0) {
+                throw new java.sql.SQLException("Error updating duration details");
+            }
         } catch (java.sql.SQLException e) {
             /*
             // Print an error message
