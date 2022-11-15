@@ -366,7 +366,7 @@ public class customerQuery {
     public static String[] getInvoice(String invoice_id) {
         String[] invoice = new String[10];
         try {
-            String query = "SELECT i.cid AS cid,i.vin AS vin,i.status AS status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,i.total_amount AS total_amount,i.start_timeslot_day AS start_timeslot_day,i.start_timeslot_week AS start_timeslot_week,TRIM(v.manf) AS manf FROM Invoice i CROSS JOIN Employee e CROSS JOIN Vehicle v WHERE i.eid = e.eid and i.vin = v.vin and i.id = " + invoice_id;
+            String query = "SELECT i.cid AS cid,i.vin AS vin,i.status AS status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,i.total_amount AS total_amount,i.start_timeslot_day AS start_timeslot_day,i.start_timeslot_week AS start_timeslot_week,TRIM(v.manf) AS manf FROM Invoice i CROSS JOIN Employee e CROSS JOIN Vehicle v WHERE i.eid = e.eid and i.vin = v.vin and i.cid = "+ UI.getCurrentEID() +" and i.id = " + invoice_id;
             ResultSet res = JDBC.executeQuery(query);
             while (res.next()) {
                 invoice[0] = invoice_id;
