@@ -64,7 +64,8 @@ public class adminUI {
             "Enter the manager's salary", // 6
             "Enter the manager's employee ID", // 7
             "Enter the minimum mechanic wage", // 8
-            "Enter the maximum mechanic wage" // 9
+            "Enter the maximum mechanic wage", // 9
+            "Enter the mechanic hourly rate" // 10
         }, // Prompts
         new String[] {
             "Add Store", // remain, addStore

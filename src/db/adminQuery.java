@@ -22,13 +22,15 @@ public class adminQuery {
                     "address, " +
                     "manager_id, " +
                     "mechanic_minimum_rate, " +
-                    "mechanic_maximum_rate" +
+                    "mechanic_maximum_rate," +
+                    "mechanic_hourly_rate" +
                 ") VALUES (" +
                     responses[0] + "," +
                     "'" + responses[1] + "'," +
                     responses[7] + "," +
                     responses[8] + "," +
-                    responses[9] +
+                    responses[9] + "," +
+                    responses[10] +
                 ")"
             );
             // If the query inserts a row
@@ -39,17 +41,17 @@ public class adminQuery {
                     "username = '" + responses[4] + "', " +
                     "password = '" + responses[5] + "' " +
                     "WHERE eid = " + responses[7]
-            ) > 0) {
-                throw new java.sql.SQLException("Error updating duration details");
+            ) <= 0) {
+                throw new java.sql.SQLException("Error updating employee");
             }
             // If the query inserts a row
-            if (JDBC.executeUpdate(
-                "UPDATE Mechanic SET " +
-                    "rate = " + responses[6] +
-                    "WHERE eid = " + responses[7]
-            ) > 0) {
-                throw new java.sql.SQLException("Error updating duration details");
-            }
+            // if (JDBC.executeUpdate(
+            //     "UPDATE Mechanic SET " +
+            //         "rate = " + responses[6] +
+            //         "WHERE eid = " + responses[7]
+            // ) > 0) {
+            //     throw new java.sql.SQLException("Error updating duration details");
+            // }
         } catch (java.sql.SQLException e) {
             // // Print an error message
             // System.out.println("Error executing query");
