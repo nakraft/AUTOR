@@ -3,11 +3,11 @@ Welcome to AUTOR. The following provides information about interacting with the 
 
 ### Contributors 
 
-Natalie Kraft                               |   nakraft 
-William Grochocinski                        |   wagrocho 
-Ajith Kumar Vinayakamoorthy Patchaimayil    |   avinaya
-Aditya Srivastava                           |   asrivas7
-Leo Hsiang                                  |   yhsiang
+Natalie Kraft                               |   nakraft       
+William Grochocinski                        |   wagrocho     
+Ajith Kumar Vinayakamoorthy Patchaimayil    |   avinaya      
+Aditya Srivastava                           |   asrivas7     
+Leo Hsiang                                  |   yhsiang    
 
 ### Compilation Instructions 
 
