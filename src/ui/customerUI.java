@@ -745,6 +745,11 @@ public class customerUI {
      * Customer: View Cart and Select Schedule Time
      */
     public static void customerViewCartSelectScheduleTime(String Vin) {
+        if (cart.size() == 0) {
+            customerScheduleService.setFeedback("Cart is empty");
+            customerScheduleService();
+            return;
+        }
         String[] curcart = new String[cart.size()+3];
         String querystr = "";
         int i=0;

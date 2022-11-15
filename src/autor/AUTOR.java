@@ -9,7 +9,7 @@ public class AUTOR {
     // Database String
     static final private String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl01";
     // Database username (NCSU Unity ID)
-    static final private String jdbcUser = "wagrocho";
+    static final private String jdbcUser = "avinaya";
     // Database password
     static final private String jdbcPassword = "abcd1234";
 
