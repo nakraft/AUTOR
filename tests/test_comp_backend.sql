@@ -73,16 +73,16 @@ INSERT INTO Employee(sid, eid, role) VALUES (30004, 888966666, 'mechanic')
     SELECT * FROM Service_Center WHERE sid = 30004     -- now in available mode as 3 mechanics, receptionist and saturday open all there
 
 -- FAIL : With only three mechanics at the service center no one can request time off 
-INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888966666, 1)
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666)
 
 -- PASS : Anouther mechanic can be added and now the day can be taken off 
 INSERT INTO Employee(sid, eid, role) VALUES (30004, 888966655, 'mechanic')
-INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888966666, 1)
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666)
     -- check 
     SELECT * FROM Mechanic_Out
 
 -- FAIL : A mechanic cannot ask for the same time off twice 
-INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888966666, 1)
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666, 1)
 
 -- FAIL : Anouther mechanic cannot ask for the time off now as there is already a person out from it (20005 error)
 INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888999666, 1)
@@ -178,6 +178,7 @@ INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, 
 INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (9, 30001, 241368579, 10001, 3, 6, 4, 3, 6, 5, '4Y1BL658')
 
 -- PASS : A mechanic can work 49 hours a week 
+-- NOTE: we have not added prices for this service_center, so we do not expect them to have prices generated everywhere 
     -- setup 
     SELECT * FROM Calendar WHERE invoice_id IS NOT NULL AND eid = 888966655 AND sid = 30004 -- checks to make sure currently no services scheduled for this guy 
     INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10001,'Peter','Parker',30004,'pparker1','parker')
@@ -263,6 +264,8 @@ INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES
 -- FAIL : a mechanic cannot get booked for a invoice if they are on vacation 
 INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (17, 'A', 113)
 INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (17, 30004, 888966655, 10001, 4, 4, 11, 4, 5, 2, 'CCCCCCCC')
+
+-- FAIL : a mechanic cannot get time off if there is not enough people left in the shop 
 
 
 -- generic testing left... mechanic time off cannot be scheduled over, mechanic swap time can occur, mechanic hours are not exceeded 

@@ -3,22 +3,27 @@ Welcome to AUTOR. The following provides information about interacting with the 
 
 ### Contributors 
 
-Natalie Kraft  |   nakraft 
+Natalie Kraft                               |   nakraft 
+William Grochocinski                        |   wagrocho 
+Ajith Kumar Vinayakamoorthy Patchaimayil    |   avinaya
+Aditya Srivastava                           |   asrivas7
+Leo Hsiang                                  |   yhsiang
 
 ### Compilation Instructions 
 
-<!-- Fill this in with specific instructions  -->
-```
-Ensure credentials are accessible by the user, can be found in JDBC.java
-Run the program  
-Enter admin menu to reset database 
-Select 5 or 6 to populate the data to your requirements (see below for explaination)
-```
+- After downloading the program, open the project base in VS Code. 
+- Ensure you have the appropriate extentions downloaded to be able to run the source code. This includes the Extension Pack for Java. 
+- Connect to NCSU VPN or eduroam. 
+- Ensure credentials (can be found in JDBC.java) are accessible by the user. 
+- Navigate to the AUTOR.java page. 
+- Above the main method in the AUTOR.java code, click the ```run``` button to begin the program. A shell will open with the CLI to be interacted with. 
+- Enter admin menu to reset database. 
+- Select 5 or 6 to populate the data to your requirements (see below for explaination). 
 
 __Populating Data__ 
 To populate the database with the initial store setup, the ```populating.sql``` will be ran. This flow can be conducted in the admin platform within the CLI by selecting `5`. 
 
-To further populate the database with the entirity of the sample data, the ```populating_full.sql``` will be ran sunsequently to the first scheme. This flow can be conducted in the admin platform within the CLI by selecting `6`. This ensures the user has the ability to interact with a different database setup for testing purposes.  
+To further populate the database with the entirity of the sample data, the ```populating_full.sql``` will be ran sunsequently to the first scheme. This flow can be conducted in the admin platform within the CLI by selecting `6`. This ensures the user has the ability to interact with a different database setup for testing purposes.
 
 __Navigation__ 
 Every task can be completed through the frontend and backend of the CLI. 
@@ -33,7 +38,8 @@ __Schedule__
 - The available timeslots on Saturday are only {2, 3, 4} for 9:00, 10:00, 11:00. As the store (if open) hours end at 1:00 PM with a 12:00 - 1:00 lunch, only three slots are allowed for this date and the number matches the typical value expected for this time during any other day of the week.
 - Only one month of data is generated in advance upon start up. 
 
-__Other__
+__Mechanics__
+- Only one mechanic can be assigned for a particular Service Job 
 - It is assumed that once a mechanic takes time off they cannot cancel that time off and work that period again. 
 - It is assumed that mechanics can only swap schedules for a timeperiod that occurs on the same day.  <!-- This is a bad assumption, fix it  -->
 
