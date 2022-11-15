@@ -267,3 +267,70 @@ INSERT ALL
   INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin, status)  VALUES (7, 30002, 125689347, 10001, 3, 5, 5, 3, 5, 7, '18S5R2D8', 1)
 SELECT * 
   FROM dual;
+
+/* 
+Utilized in testing for mechanic swap, uncomment and pick up at the *** RUN AFTER POPULATING FULL *** Maker in the mechanic swap file
+*/
+-- INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10021,'Peter','Parker',30002,'pparker1','parker');
+
+-- INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10022,'Diana','Prince',30002,'dprince1','prince');
+
+-- INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(10023,'Billy','Batson',30002,'bbatson1','batson');
+
+-- INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('AAAAAAAA','Toyota',53000,'C',2007,10021,30002);
+
+-- INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('CCCCCCCC','Nissan',111000,'C',2015,10022, 30002);
+
+-- INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('EEEEEEEE','Honda',117000,'C',1999,10023,30002);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (10, 'C', 115);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (10, 'Power Lock Repair', 106);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (10, 'Muffler Repair', 104);
+
+-- INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (10, 30002, 125689347, 10021, 3, 1, 1, 3, 2, 5, 'AAAAAAAA');
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (11, 'C', 115);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (11, 'Power Lock Repair', 106);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (11, 'Muffler Repair', 104);
+
+-- INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (11, 30002, 125689347, 10022, 3, 2, 6, 3, 3, 10, 'CCCCCCCC');
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (12, 'C', 115);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (12, 'Belt Replacement', 101);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (12, 'Muffler Repair', 104);
+
+-- INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (12, 30002, 125689347, 10023, 3, 3, 11, 3, 4, 11, 'EEEEEEEE');
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (13, 'C', 115); 
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (13, 'Power Lock Repair', 106);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (13, 'Muffler Repair', 104);
+
+-- INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (13, 30002, 125689347, 10021, 4, 1, 3, 4, 2, 7, 'AAAAAAAA');
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (14, 'C', 115);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (14, 'Power Lock Repair', 106);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (14, 'Muffler Repair', 104);
+
+-- INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (14, 30002, 125689347, 10022, 4, 2, 8, 4, 4, 1, 'CCCCCCCC');
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (15, 'C', 115);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (15, 'Power Lock Repair', 106);
+
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (15, 'Muffler Repair', 104);
+
+-- INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (15, 30002, 125689347, 10023, 4, 4, 2, 4, 5, 6, 'EEEEEEEE');
+       
+-- INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (17, 'Power Lock Repair', 106);
+
+-- INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (17, 30002, 423186759, 10023, 3, 5, 11, 4, 1, 1, 'EEEEEEEE');
