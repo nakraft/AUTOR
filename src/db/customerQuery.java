@@ -87,6 +87,47 @@ public class customerQuery {
         }
     }
 
+    public static String[][] getServiceHistory(String Vin) {
+        // Create a query
+        String query = "SELECT I.id, I.vin, I.total_amount, CONCAT(CONCAT(E.first_name, ' '), E.last_name) AS mechanic_name, CONCAT(CONCAT(I.start_timeslot_day, ', '), I.start_timeslot_week) AS start_time, CONCAT(CONCAT(I.end_timeslot_day, ', '), I.end_timeslot_week) AS end_time from Invoice  I, Employee  E where E.eid = I.eid AND I.vin='"+Vin+"'";
+         // in (SELECT vin from Vehicle where cid="+UI.getCurrentEID() + " AND sid="+UI.getCurrentSID() +" )";
+        // Run the query
+        try {
+            ResultSet result = JDBC.executeQuery(query);
+            // Create an array list to hold the result
+            ArrayList<String[]> serviceHistory = new ArrayList<String[]>();
+            // Return the list of vehicles as a 2d array
+            while (result.next()) {
+                // Create an array to hold the result
+                String[] history = new String[6];
+                // id
+                history[0] = result.getString("id");
+                // vin
+                history[1] = result.getString("vin");
+                // total amount
+                history[2] = result.getString("total_amount");
+                // mechanic name
+                history[3] = result.getString("mechanic_name");
+                // start time
+                history[4] = result.getString("start_time");
+                // end time
+                history[5] = result.getString("end_time");
+                // Add array to the list
+                serviceHistory.add(history);
+            }
+            // If there is a result, return it as an array
+            if (serviceHistory.size() > 0) {
+                // Convert the array list to an array
+                return serviceHistory.toArray(new String[serviceHistory.size()][]);
+            }
+            return null;
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+    }
+
+
     /* 
      * Get eligible maintenance 
     */
@@ -207,7 +248,7 @@ public class customerQuery {
         String invoiceID = "1";
         try{
             // generate id for invoice
-            ResultSet result = JDBC.executeQuery("SELECT MAX(id) AS id FROM Invoice");
+            ResultSet result = JDBC.executeQuery("SELECT MAX(id) AS id FROM Invoice_HasService");
             while(result.next()) {
                 invoiceID = result.getString("id");
                 invoiceID = String.valueOf(Integer.parseInt(invoiceID) + 1);

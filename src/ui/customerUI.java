@@ -108,6 +108,15 @@ public class customerUI {
         } // Options
     );
 
+    private static menu customerServiceHistory = new menu(
+        "Customer:  Service History", // Header
+        null, // Lines
+        null, // Prompts
+        new String[] {
+            "Go Back" // customerViewScheduleService
+        }   // Options
+    );
+
     // Customer: Schedule Service  
     private static menu customerScheduleService = new menu(
         "Customer: Schedule Service", // Header
@@ -423,20 +432,41 @@ public class customerUI {
      * Customer: View Service History
      */ 
     public static void customerViewServiceHistory() {
-        while (true) {
+        test:while (true) {
             // Display menu
             switch( customerViewServiceHistory.display() ) {
                 case 1: // View Service History
-                    // TODO: Query database for service history
-                    // TODO: Output service history
-                    
-                    break;
+                    customerServiceHistory(customerViewServiceHistory.getPromptResponses()[0]);
+                    break test;
                 case 2: // Go Back
                     customerViewScheduleService();
                     break;
             }
         }
     }
+
+    public static void customerServiceHistory(String Vin) {
+
+        String[][] serviceHistory = customerQuery.getServiceHistory(Vin);
+        String[] lines;
+        if (serviceHistory != null) {
+        lines = new String[serviceHistory.length+1];}
+        else {
+            lines = new String[1];
+            lines[0] = "No Service History Present";
+        }   
+        if (serviceHistory != null) {
+        lines[0] = "Service ID        Vehicle\tTotal Amount\tMechanic\t\tStart Day\tEnd Day";
+        for (int i = 0; i < serviceHistory.length; i++) {
+            lines[i+1] = serviceHistory[i][0] +"\t\t" + serviceHistory[i][1]+'\t' + serviceHistory[i][2]+"\t\t" + serviceHistory[i][3]+"\t\t"+ serviceHistory[i][4]+"\t\t" + serviceHistory[i][5];
+        }
+    }
+        // Set menu lines to the new String array
+        customerServiceHistory.setLines(lines);
+        // Display Services
+        customerServiceHistory.display();
+    }
+
 
     /**
      * Customer: Schedule Service
@@ -460,24 +490,6 @@ public class customerUI {
             }
         }
     }
-
-    /**
-     * Customer: Add Scheduled Maintenance
-     */
-    // public static void customerScheduledMaintenance(String Vin) {
-    //     while (true) {
-    //         // Display menu
-    //         switch( customerScheduledMaintenance.display() ) {
-    //             case 1: // Accept scheduled maintenance
-    //                 displayScheduledMaintenance(Vin);
-    //                 // TODO: Add scheduled maintenance to cart
-    //                 break;
-    //             case 2: // Go Back
-    //                 customerScheduleService();
-    //                 break;
-    //         }
-    //     }
-    // }
 
     public static void displayScheduledMaintenance(String Vin) {
         //4Y1BL658
