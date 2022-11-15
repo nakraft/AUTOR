@@ -27,7 +27,7 @@ INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, 
    SELECT * FROM Customer WHERE sid = 30003 AND cid = 10501
 
 -- PASS: Can insert a service center 
-INSERT INTO Service_Center(sid, address, telephone, manager_id) VALUES (30004, 'testing address', 8888888888, 888999333)
+INSERT INTO Service_Center(sid, address, telephone, manager_id, mechanic_minimum_rate, mechanic_maximum_rate) VALUES (30004, 'testing address', 8888888888, 888999333, 25, 45)
     -- check 
     SELECT * FROM Service_Center WHERE sid = 30004
 
@@ -72,6 +72,15 @@ INSERT INTO Employee(sid, eid, role) VALUES (30004, 888966666, 'mechanic')
     -- check 
     SELECT * FROM Service_Center WHERE sid = 30004     -- now in available mode as 3 mechanics, receptionist and saturday open all there
 
+-- PASS : a salary can be added to the mechanic (it must be within the allowable measures for the store)
+UPDATE Mechanic SET rate = 30 WHERE sid = 30004 AND eid = 888999666
+    -- check 
+    SELECT * FROM Mechanic WHERE sid = 30004
+
+-- FAIL : a salary can not be added outside allowable ranges 
+UPDATE Mechanic SET rate = 20 WHERE sid = 30004 AND eid = 888999666
+UPDATE Mechanic SET rate = 46 WHERE sid = 30004 AND eid = 888999666
+
 -- FAIL : With only three mechanics at the service center no one can request time off 
 INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666)
 
@@ -82,15 +91,15 @@ INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES
     SELECT * FROM Mechanic_Out
 
 -- FAIL : A mechanic cannot ask for the same time off twice 
-INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666, 1)
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666)
 
 -- FAIL : Anouther mechanic cannot ask for the time off now as there is already a person out from it (20005 error)
-INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 1, 30004, 888999666, 1)
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888999666)
 
 -- FAIL : Schedule someone to work... a mechanic cannot take this time off either -- NOTE THIS ONLY WORKS AS INVOICE_ID ALREADY IS 1 
 UPDATE Calendar SET invoice_id = 1 WHERE eid = 888999666 AND sid = 30004 and id = 2
-INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid, id) VALUES (1, 1, 2, 30004, 888999666, 2)
-UPDATE Calendar SET invoice_id = 0 WHERE eid = 888999666 AND sid = 30004 and id = 2
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 2, 30004, 888999666)
+UPDATE Calendar SET invoice_id = NULL WHERE eid = 888999666 AND sid = 30004 and id = 2
 
 -- FAIL : a service must be in one of the 6 repair subcategories (error 20001 thrown)
 INSERT INTO Services(serviceName, serviceNumber, repair_category) VALUES('Evaporator Repair', 113, 'Heating Services')
@@ -264,8 +273,3 @@ INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES
 -- FAIL : a mechanic cannot get booked for a invoice if they are on vacation 
 INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (17, 'A', 113)
 INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (17, 30004, 888966655, 10001, 4, 4, 11, 4, 5, 2, 'CCCCCCCC')
-
--- FAIL : a mechanic cannot get time off if there is not enough people left in the shop 
-
-
--- generic testing left... mechanic time off cannot be scheduled over, mechanic swap time can occur, mechanic hours are not exceeded 

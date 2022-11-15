@@ -107,16 +107,6 @@ CREATE TABLE Services (
     	ON DELETE CASCADE
 );
 
--- CREATE TABLE Maintenance (
--- 	serviceName VARCHAR(50),
---     serviceNumber NUMBER(10),
---     repairType VARCHAR(50),
---     schedule VARCHAR(1) CHECK (schedule IN ('A', 'B', 'C') ),
--- 	PRIMARY KEY (serviceName, serviceNumber),
--- 	FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
--- 	    ON DELETE CASCADE
--- );
-
 CREATE TABLE Maintenance_Schedule (
 	mname VARCHAR(50),
     mnumber NUMBER(10),
@@ -204,10 +194,7 @@ CREATE TABLE Calendar (
         ON DELETE CASCADE, 
     FOREIGN KEY (eid, sid) REFERENCES Mechanic
         ON DELETE CASCADE
-    -- CONSTRAINT nonulleid CHECK (eid IS NOT NULL)
 );
-
--- SET CONSTRAINTS SYS_C00464762 DEFERRED;
 
 CREATE TABLE Mechanic_Out (
     timeslot_day NUMBER(1) CHECK (timeslot_day >= 1 AND timeslot_day <= 6),
@@ -227,12 +214,16 @@ CREATE TABLE Mechanic_Swap_Request (
     sid NUMBER(10),
     donor_eid NUMBER, 
     recieve_eid NUMBER, 
-    donor_timeslot_day NUMBER CHECK (donor_timeslot_day >= 1 AND donor_timeslot_day <= 6),
-    donor_timeslot_week NUMBER CHECK (donor_timeslot_week IN (1,2,3,4)),
+    donor_timeslot_begin_week NUMBER CHECK (donor_timeslot_begin_week IN (1,2,3,4)),
+    donor_timeslot_end_week NUMBER CHECK (donor_timeslot_end_week IN (1,2,3,4)),
+    donor_timeslot_begin_day NUMBER CHECK (donor_timeslot_begin_day >= 1 AND donor_timeslot_begin_day <= 6),
+    donor_timeslot_end_day NUMBER CHECK (donor_timeslot_end_day >= 1 AND donor_timeslot_end_day <= 6),
     donor_timeslot_begin NUMBER CHECK (donor_timeslot_begin >= 1 AND donor_timeslot_begin <= 11), 
     donor_timeslot_end NUMBER CHECK (donor_timeslot_end >= 1 AND donor_timeslot_end <= 11), 
-    recieve_timeslot_day NUMBER CHECK (recieve_timeslot_day >= 1 AND recieve_timeslot_day <= 6),
-    recieve_timeslot_week NUMBER CHECK (recieve_timeslot_week IN (1,2,3,4)),
+    recieve_timeslot_begin_week NUMBER CHECK (recieve_timeslot_begin_week IN (1,2,3,4)),
+    recieve_timeslot_end_week NUMBER CHECK (recieve_timeslot_end_week IN (1,2,3,4)),
+    recieve_timeslot_begin_day NUMBER CHECK (recieve_timeslot_begin_day >= 1 AND recieve_timeslot_begin_day <= 6),
+    recieve_timeslot_end_day NUMBER CHECK (recieve_timeslot_end_day >= 1 AND recieve_timeslot_end_day <= 6),
     recieve_timeslot_begin NUMBER CHECK (recieve_timeslot_begin >= 1 AND recieve_timeslot_begin <= 11), 
     recieve_timeslot_end NUMBER CHECK (recieve_timeslot_end >= 1 AND recieve_timeslot_end <= 11), 
     status NUMBER DEFAULT 0 CHECK (status IN (0, 1, 2)),
@@ -321,18 +312,6 @@ CREATE TRIGGER maintence_isa_schedule
             WHERE s.serviceName = :new.schedule;
             INSERT INTO Maintenance_Schedule (mname, mnumber, sname, snumber) 
             VALUES (:new.serviceName, :new.serviceNumber, :new.schedule, schedNumber1);
-            -- IF :new.schedule = 'A' THEN 
-            --     SELECT DISTINCT s.serviceNumber INTO schedNumber2
-            --     FROM Schedule s
-            --     WHERE s.serviceName = 'B';
-            --     INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES(:new.serviceName, schedNumber2, 'B', :new.repair_category);
-            -- END IF; 
-            -- IF :new.schedule = 'B' THEN 
-            --     SELECT DISTINCT s.serviceNumber INTO schedNumber3
-            --     FROM Schedule s
-            --     WHERE s.serviceName = 'C';
-            --     INSERT INTO Services(serviceName, serviceNumber, schedule, repair_category) VALUES(:new.serviceName, schedNumber3, 'B', :new.repair_category);
-            -- END IF; 
         END IF; 
     END;
 /
@@ -408,7 +387,7 @@ CREATE TRIGGER mechanic_requests_time_off
         IF (saturday = 'close' OR saturday = 'c') AND :new.timeslot_day = 6 THEN 
             RAISE saturday_open; 
             DBMS_OUTPUT.put_line ('The store is not open saturday, timeslot day invalid'); 
-        ELSIF (saturday = 'open' OR saturday = 'o') AND :new.timeslot NOT IN (2,3,4) THEN 
+        ELSIF (saturday = 'open' OR saturday = 'o') AND (:new.timeslot NOT IN (2,3,4) AND :new.timeslot_day = 6) THEN
             RAISE saturday_hours;
             DBMS_OUTPUT.put_line ('The store is open saturday, but these timeslots are invalid'); 
         END IF;
@@ -501,11 +480,11 @@ CREATE TRIGGER invoice_checks
         SELECT UNIQUE(id) INTO start_id
         FROM Calendar
         WHERE timeslot_week = :new.start_timeslot_week 
-        AND timeslot_day = :new.start_timeslot_day AND timeslot = :new.start_timeslot AND eid = :new.eid;
+        AND timeslot_day = :new.start_timeslot_day AND timeslot = :new.start_timeslot AND eid = :new.eid AND sid = :new.sid;
         SELECT UNIQUE(id) INTO end_id
         FROM Calendar
         WHERE timeslot_week = :new.end_timeslot_week 
-        AND timeslot_day = :new.end_timeslot_day AND timeslot = :new.end_timeslot AND eid = :new.eid;
+        AND timeslot_day = :new.end_timeslot_day AND timeslot = :new.end_timeslot AND eid = :new.eid AND sid = :new.sid;
         -- ensures the length of the invoice matches the expectations for the service durations 
         SELECT SUM(d.dur) INTO length_services  
         FROM Invoice_HasService i 
@@ -567,11 +546,11 @@ CREATE TRIGGER invoice_propogate
         SELECT UNIQUE(id) INTO start_id
         FROM Calendar
         WHERE timeslot_week = :new.start_timeslot_week 
-            AND timeslot_day = :new.start_timeslot_day AND timeslot = :new.start_timeslot AND eid = :new.eid;
+            AND timeslot_day = :new.start_timeslot_day AND timeslot = :new.start_timeslot AND eid = :new.eid AND sid = :new.sid;
         SELECT UNIQUE(id) INTO end_id
         FROM Calendar
         WHERE timeslot_week = :new.end_timeslot_week 
-            AND timeslot_day = :new.end_timeslot_day AND timeslot = :new.end_timeslot AND eid = :new.eid;
+            AND timeslot_day = :new.end_timeslot_day AND timeslot = :new.end_timeslot AND eid = :new.eid AND sid = :new.sid;
         UPDATE Calendar 
         SET invoice_id = :new.id
         WHERE id >= start_id AND id <= end_id AND sid = :new.sid AND eid = :new.eid;
@@ -639,8 +618,14 @@ CREATE TRIGGER request_swap
     BEFORE INSERT ON Mechanic_Swap_Request
     FOR EACH ROW 
     DECLARE 
+        hoursWorked NUMBER; 
+        hoursToWork NUMBER; 
         donor_exists NUMBER; 
         recieve_exists NUMBER;
+        start_donor_id NUMBER; 
+        end_donor_id NUMBER;
+        start_recieve_id NUMBER; 
+        end_recieve_id NUMBER;
         invalid_eid EXCEPTION;
         PRAGMA exception_init( invalid_eid, -20001 );
         donor_free NUMBER; 
@@ -649,42 +634,98 @@ CREATE TRIGGER request_swap
         PRAGMA exception_init( busy_error, -20002 );
         too_many_hours EXCEPTION;
         PRAGMA exception_init( too_many_hours, -20003 );
+        vacaDays NUMBER; 
+        vacation EXCEPTION;
+        PRAGMA exception_init( vacation, -20004 );
         donor_hours NUMBER; 
         recieve_hours NUMBER;
     BEGIN
         -- make sure the people and the times match the invoices to switch
-        SELECT COUNT(*) INTO donor_exists FROM Invoice WHERE start_timeslot_week = :new.donor_timeslot_week AND start_timeslot_day = :new.donor_timeslot_day AND 
-        start_timeslot = :new.donor_timeslot_begin and end_timeslot = :new.donor_timeslot_end AND eid = :new.donor_eid AND sid = :new.sid; 
-        SELECT COUNT(*) INTO recieve_exists FROM Invoice WHERE start_timeslot_week = :new.recieve_timeslot_week AND start_timeslot_day = :new.recieve_timeslot_day AND 
-        start_timeslot = :new.recieve_timeslot_begin and end_timeslot = :new.recieve_timeslot_end AND eid = :new.recieve_eid AND sid = :new.sid; 
-        IF donor_exists = 0 OR recieve_exists = 0 THEN 
+        SELECT UNIQUE(id) INTO donor_exists FROM Invoice WHERE start_timeslot_week = :new.donor_timeslot_begin_week AND -- switch back to COUNT(*) if issues 
+        end_timeslot_week = :new.donor_timeslot_end_week AND start_timeslot_day = :new.donor_timeslot_begin_day AND
+        end_timeslot_day = :new.donor_timeslot_end_day AND start_timeslot = :new.donor_timeslot_begin and
+        end_timeslot = :new.donor_timeslot_end AND eid = :new.donor_eid AND sid = :new.sid; 
+        SELECT UNIQUE(id) INTO recieve_exists FROM Invoice WHERE start_timeslot_week = :new.recieve_timeslot_begin_week AND
+        end_timeslot_week = :new.recieve_timeslot_end_week AND start_timeslot_day = :new.recieve_timeslot_begin_day AND
+        end_timeslot_day = :new.recieve_timeslot_end_day AND start_timeslot = :new.recieve_timeslot_begin and
+        end_timeslot = :new.recieve_timeslot_end AND eid = :new.recieve_eid AND sid = :new.sid; 
+        IF donor_exists IS NULL OR recieve_exists IS NULL THEN  -- switch back to = 0 if issues 
             raise invalid_eid;
         END IF;
         -- make sure there does not exist an invoice with that id and the eid of the other person in either of those slots (double booked)
-        SELECT COUNT(*) INTO donor_free FROM Invoice WHERE start_timeslot_week = :new.recieve_timeslot_week AND start_timeslot_day = :new.recieve_timeslot_day 
-        AND eid = :new.donor_eid AND sid = :new.sid AND 
-        ((start_timeslot <= :new.recieve_timeslot_begin AND end_timeslot >= :new.recieve_timeslot_begin) OR 
-        (start_timeslot <= :new.recieve_timeslot_end AND end_timeslot >= :new.recieve_timeslot_end));
-        SELECT COUNT(*) INTO recieve_free FROM Invoice WHERE start_timeslot_week = :new.donor_timeslot_week AND start_timeslot_day = :new.donor_timeslot_day 
-        AND eid = :new.recieve_eid AND sid = :new.sid AND 
-        ((start_timeslot <= :new.donor_timeslot_begin AND end_timeslot >= :new.donor_timeslot_begin) OR 
-        (start_timeslot <= :new.donor_timeslot_end AND end_timeslot >= :new.donor_timeslot_end));
+            -- donor availability 
+        SELECT UNIQUE(id) INTO start_donor_id
+        FROM Calendar
+        WHERE timeslot_week = :new.donor_timeslot_begin_week AND timeslot_day = :new.donor_timeslot_begin_day 
+        AND timeslot = :new.donor_timeslot_begin AND eid = :new.donor_eid AND sid = :new.sid;
+        SELECT UNIQUE(id) INTO end_donor_id
+        FROM Calendar
+        WHERE timeslot_week = :new.donor_timeslot_end_week AND timeslot_day = :new.donor_timeslot_end_day 
+        AND timeslot = :new.donor_timeslot_end AND eid = :new.donor_eid AND sid = :new.sid;
+            -- counts the slots filled at the other persons time for each person
+        SELECT COUNT(*) INTO donor_free 
+        FROM Calendar 
+        WHERE eid = :new.recieve_eid AND sid = :new.sid AND invoice_id IS NOT NULL 
+        AND id >= start_donor_id AND id <= end_donor_id; 
+            -- reciever availability 
+        SELECT UNIQUE(id) INTO start_recieve_id
+        FROM Calendar
+        WHERE timeslot_week = :new.recieve_timeslot_begin_week AND timeslot_day = :new.recieve_timeslot_begin_day 
+        AND timeslot = :new.recieve_timeslot_begin AND eid = :new.recieve_eid AND sid = :new.sid;
+        SELECT UNIQUE(id) INTO end_recieve_id
+        FROM Calendar
+        WHERE timeslot_week = :new.recieve_timeslot_end_week AND timeslot_day = :new.recieve_timeslot_end_day 
+        AND timeslot = :new.recieve_timeslot_end AND eid = :new.recieve_eid AND sid = :new.sid;
+            -- counts the slots filled at the other persons time for each person
+        SELECT COUNT(*) INTO recieve_free 
+        FROM Calendar 
+        WHERE eid = :new.donor_eid AND sid = :new.sid AND invoice_id IS NOT NULL
+        AND id >= start_recieve_id AND id <= end_recieve_id;
         IF donor_free != 0 OR recieve_free != 0 THEN 
             raise busy_error;
         END IF;
-        -- make sure that this rebooking does not cause either person to become overbooked 
-        SELECT COUNT(*) INTO donor_hours
-        FROM Calendar
-        WHERE eid = :new.donor_eid AND sid = :new.sid AND timeslot_week = :new.recieve_timeslot_week AND invoice_id IS NOT NULL;
-        SELECT COUNT(*) INTO recieve_hours
-        FROM Calendar
-        WHERE eid = :new.recieve_eid AND timeslot_week = :new.donor_timeslot_week AND invoice_id IS NOT NULL;
-        IF (:new.donor_timeslot_week = :new.recieve_timeslot_week AND ((donor_hours - (:new.donor_timeslot_end - :new.donor_timeslot_begin + 1) + (:new.recieve_timeslot_end - :new.recieve_timeslot_begin + 1)) > 50 OR 
-                (recieve_hours + (:new.donor_timeslot_end - :new.donor_timeslot_begin + 1) - (:new.recieve_timeslot_end - :new.recieve_timeslot_begin + 1)) > 50)) OR 
-            (:new.donor_timeslot_week != :new.recieve_timeslot_week AND ((donor_hours + (:new.recieve_timeslot_end - :new.recieve_timeslot_begin + 1)) > 50 OR 
-                (recieve_hours + (:new.donor_timeslot_end - :new.donor_timeslot_begin + 1)) > 50)) THEN 
-            raise too_many_hours;
+        -- make sure that neither person is planning on being on vacation at the swap time 
+        -- we can check this by making sure that the length of the timeperiod between the start and end period in the calendar is the length it should be
+        SELECT COUNT(*) INTO vacaDays
+        FROM Calendar 
+        WHERE id >= start_donor_id AND id <= end_donor_id AND sid = :new.sid AND eid = :new.recieve_eid; 
+        IF vacaDays != (end_donor_id - start_donor_id + 1) THEN 
+            raise vacation; 
         END IF; 
+        SELECT COUNT(*) INTO vacaDays
+        FROM Calendar 
+        WHERE id >= start_recieve_id AND id <= end_recieve_id AND sid = :new.sid AND eid = :new.donor_eid; 
+        IF vacaDays != (end_recieve_id - start_recieve_id + 1) THEN 
+            raise vacation; 
+        END IF; 
+        -- -- make sure that this rebooking does not cause the donor to become overbooked 
+        -- FOR week_number IN :new.recieve_timeslot_begin_week..:new.recieve_timeslot_end_week LOOP
+        --     SELECT COUNT(*) INTO hoursWorked
+        --     FROM Calendar o 
+        --     WHERE o.eid = :new.donor_eid AND o.sid = :new.sid AND o.timeslot_week = week_number 
+        --     AND o.invoice_id IS NOT NULL AND o.invoice_id != donor_exists;
+        --     SELECT COUNT(*) INTO hoursToWork
+        --     FROM Calendar o 
+        --     WHERE o.eid = :new.donor_eid AND o.sid = :new.sid AND o.timeslot_week = week_number 
+        --     AND id >= start_recieve_id AND id <= end_recieve_id; 
+        --     IF hoursWorked + hoursToWork > 50 THEN 
+        --         RAISE overworking;
+        --     END IF;
+        -- END LOOP;
+        -- -- make sure that this rebooking does not cause the reciever to become overbooked 
+        -- FOR week_number IN :new.donor_timeslot_begin_week..:new.donor_timeslot_end_week LOOP
+        --     SELECT COUNT(*) INTO hoursWorked
+        --     FROM Calendar o 
+        --     WHERE o.eid = :new.recieve_eid AND o.sid = :new.sid AND o.timeslot_week = week_number 
+        --     AND o.invoice_id IS NOT NULL AND o.invoice_id != recieve_exists;
+        --     SELECT COUNT(*) INTO hoursToWork
+        --     FROM Calendar o 
+        --     WHERE o.eid = :new.recieve_eid AND o.sid = :new.sid AND o.timeslot_week = week_number 
+        --     AND id >= start_donor_id AND id <= end_donor_id; 
+        --     IF hoursWorked + hoursToWork > 50 THEN 
+        --         RAISE overworking;
+        --     END IF;
+        -- END LOOP;
     END;
 /
 
