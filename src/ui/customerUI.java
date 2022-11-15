@@ -801,18 +801,22 @@ public class customerUI {
                 // else, checkout cart
                 else {
                     Integer result = customerQuery.customerCartCheckout(Vin,timeSlots.get(response-1),cost,duration, cart, serviceMapping);
-                    if(result != -1) {
-                        cart.clear();
-                        customerLanding.setFeedback("Succesfully Generated Invoice with ID "+ result);
-                        customerLanding();
+                    if(result == -1) {
+                        customerLanding.setFeedback("Failed to generate Invoice");
+                        customerLanding(); 
                     }
                     else if (result == -2) {
                         customerLanding.setFeedback("Failed to generate Invoice: Time slot not available for the selected service.");
                         customerLanding();
                     }
+                    else if (result == -3) {
+                        customerLanding.setFeedback("Failed to generate Invoice: The selected mechanic will exceed working 50 hours/week limit");
+                        customerLanding();
+                    }
                     else {
-                        customerLanding.setFeedback("Failed to generate Invoice");
-                        customerLanding(); 
+                        cart.clear();
+                        customerLanding.setFeedback("Succesfully Generated Invoice with ID "+ result);
+                        customerLanding();
                     }
                 }
             }

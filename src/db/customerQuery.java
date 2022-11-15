@@ -279,39 +279,55 @@ public class customerQuery {
             if(response <= 0) {
                 return -1;
             }
-            String query3 = "SELECT UNIQUE(id) INTO start_id FROM Calendar" +
+            //get the two timeslot values 
+            int start_id = 0, end_id = 0;
+            String query3 = "SELECT id FROM Calendar" +
             " WHERE timeslot_week = " + timeSlot[1] +
             " AND timeslot_day = " + timeSlot[0] +
             " AND timeslot = " + timeSlot[2]  +
-            " AND eid = " + timeSlot[3];
+            " AND eid = " + timeSlot[3] +
+            " AND sid = " + UI.getCurrentSID();
             ResultSet result1 = JDBC.executeQuery(query3);
-            int start_id = result1.getInt("start_id");
-            String query4 = "SELECT UNIQUE(id) INTO end_id FROM Calendar" +
-            " WHERE timeslot_week = " + timeSlot[1] +
-            " AND timeslot_day = " + timeSlot[0] +
-            " AND timeslot = " + timeSlot[2]  +
-            " AND eid = " + timeSlot[3];
+            if(result1.next()) {
+                start_id = result1.getInt("id");
+            }
+            String query4 = "SELECT id FROM Calendar" +
+            " WHERE timeslot_week = " + end_timeslot_week +
+            " AND timeslot_day = " + end_timeslot_day +
+            " AND timeslot = " + end_timeslot  +
+            " AND eid = " + timeSlot[3] +
+            " AND sid = " + UI.getCurrentSID();
             ResultSet result2 = JDBC.executeQuery(query4);
-            int end_id = result2.getInt("end_id");
-            for(int week_number = Integer.parseInt(timeSlot[1]); week_number <= Integer.parseInt(timeSlot[0]); week_number++){
-                String query5 = "SELECT COUNT(*) INTO hoursWorked FROM Calendar o WHERE o.eid = " + timeSlot[3] + " AND o.sid = " + UI.getCurrentSID() + " AND o.timeslot_week = " + week_number + " AND o.invoice_id IS NOT NULL";
+            if(result2.next()) {
+                end_id = result2.getInt("id");
+            }
+            // ensures that if this got scheduled with this mechanic, the mechanic wouldn't be working more than the required time a week 
+            // you cannot use having here as there is no way to evaluate how many hours to be worked were attributed to a particular week 
+            for(int week_number = Integer.parseInt(timeSlot[1]); week_number <= Integer.parseInt(end_timeslot_week); week_number++){
+                int hoursworked = 0, hoursToWork = 0;
+                String query5 = "SELECT COUNT(*) as hoursWorked FROM Calendar o WHERE o.eid = " + timeSlot[3] + " AND o.sid = " + UI.getCurrentSID() + " AND o.timeslot_week = " + week_number + " AND o.invoice_id IS NOT NULL";
                 ResultSet result3 = JDBC.executeQuery(query5);
-                int hoursworked = result3.getInt("hoursWorked");
-                String query6 = "SELECT COUNT(*) INTO hoursToWork FROM Calendar o WHERE o.eid = " + timeSlot[3] + " AND o.sid = " + UI.getCurrentSID() + " AND o.timeslot_week = " + week_number + " AND id >= " + start_id + " AND id <= " + end_id;
+                if(result3.next()) {
+                    hoursworked = result3.getInt("hoursWorked");
+                }
+                String query6 = "SELECT COUNT(*) as hoursToWork FROM Calendar o WHERE o.eid = " + timeSlot[3] + " AND o.sid = " + UI.getCurrentSID() + " AND o.timeslot_week = " + week_number + " AND id >= " + start_id + " AND id <= " + end_id;
                 ResultSet result4 = JDBC.executeQuery(query6);
-                int hoursToWork = result4.getInt("hoursToWork");
+                if(result4.next()) {
+                    hoursToWork = result4.getInt("hoursToWork");
+                }
                 if(hoursworked + hoursToWork > 50){
-                    return -1;
+                    return -3;
                 }
             }
             String query2 = "INSERT INTO Invoice(id,sid,eid,cid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin, total_amount)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", "+ UI.getCurrentEID() +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", '" + Vin + "', "+cost+")";
             JDBC.executeUpdate(query2);
-            return Integer.parseInt(invoiceID);
+             return Integer.parseInt(invoiceID);
             
         }
         catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
             return -1;
+            
         }
     }
 
