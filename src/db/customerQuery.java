@@ -118,7 +118,7 @@ public class customerQuery {
     // get services for the category
 
     public static ArrayList<String[]> getServicesForCategory(String category) {
-        String query = "SELECT DISTINCT serviceName, serviceNumber FROM Services WHERE repair_category='"+category +"' MINUS select serviceName, serviceNumber FROM MAINTENANCE";
+        String query = "SELECT DISTINCT serviceName, serviceNumber FROM Services WHERE repair_category='"+category +"' AND schedule is NULL";
         try {
             ResultSet result = JDBC.executeQuery(query);
         ArrayList<String[]> services = new ArrayList<String[]>();
@@ -265,18 +265,19 @@ public class customerQuery {
                 invoice[6] = (res.getString("status") == "0") ? "Unpaid" : "Paid"; // invoice status
                 invoice[7] = res.getString("name"); // mechanics name
                 invoice[9] = res.getString("total_amount"); // total cost
-                String query2 = "SELECT * FROM Invoice_HasService WHERE id = " + invoice_id;
+                String query2 = "Select cd.serviceNumber as snum,cd.price as price,s.repair_category as rcat,s.schedule as sch from Invoice_HasService ihs CROSS JOIN Cost_Details cd CROSS JOIN Services s where ihs.serviceName=s.serviceName AND ihs.serviceNumber=s.serviceNumber AND ihs.serviceName=cd.serviceName AND ihs.serviceNumber=cd.serviceNumber AND ihs.id=" + invoice_id +" AND cd.sid="+ UI.current_sid +" AND cd.manf='"+res.getString("manf")+"'";
                 ResultSet res2 = JDBC.executeQuery(query2);
-                while (res2.next()) {
-                    String sname = res2.getString("serviceName");
-                    String snumber = res2.getString("serviceNumber");     
-                    String manf = res.getString("manf");               
-                    invoice[4] += ("\n"+snumber);       
-                    String query3 = "SELECT price FROM Cost_Details WHERE serviceName = '" + sname + "' AND serviceNumber = " + snumber+ " AND manf = '" + manf + "' AND sid = " + UI.getCurrentSID();
-                    ResultSet res3 = JDBC.executeQuery(query3);
-                    while (res3.next()) {
-                        invoice[8] += ("\n"+res3.getString("price"));    
-                    } 
+                while (res2.next()) {          
+                    String stype = "Repair and maintenance service";
+                    invoice[4] += ("\n"+res2.getString("snum"));      
+                    invoice[8] += ("\n"+res2.getString("price")); 
+                    if(res2.getString("rcat") == "null") {
+                        stype = "Maintenance service";
+                    }
+                    else if(res2.getString("sch") == "null") {
+                        stype = "Repair service";
+                    }
+                    invoice[5] += ("\n"+stype); 
                 }
             }
             return invoice;
