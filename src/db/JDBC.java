@@ -159,13 +159,13 @@ public class JDBC {
     }
 
     /**
-     * Execute several queries at once
+     * Execute several updates at once
      * Used to remain atomic :)
      * 
      * @param queries Queries to execute
      * @return Result set of the last query
      */
-    public static int[] executeQueries(String[] queries) {
+    public static int[] executeUpdatesAtomic(String[] queries) {
         Statement statement = null;
         // Create a statement
         try {
@@ -200,6 +200,12 @@ public class JDBC {
         }
         // If the queries can't be executed
         catch (java.sql.SQLException e) {
+            try {
+                connection.setAutoCommit(true);
+            } catch ( SQLException sql ) {
+                somethingWentWrong(sql);
+            }
+
             somethingWentWrong(e);
             return null;
 
@@ -240,6 +246,9 @@ public class JDBC {
         }
         try {
             // Execute the query
+            if (DEBUG) {
+                System.out.println(query);
+            }
             boolean results =  statement.execute(query);
             lastStatement = statement;
             return results;

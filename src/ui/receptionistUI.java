@@ -1,8 +1,6 @@
 package ui;
 
 // Import DB classes
-import db.JDBC;
-import db.query;
 import db.receptionistQuery;
 
 /**

@@ -16,9 +16,13 @@ public class receptionistQuery {
      * @param String[] Customer information (first_name,last_name,address,email,phone,username,vin,manf,mileage,year)
      * @return boolean true if successful, false if not
      */
-    public static boolean addCustomer(String[] responses) {        
+    public static boolean addCustomer(String[] responses) { 
+        // If first name or last name is empty
+        if (responses[0].equals("") || responses[1].equals("")) {
+            // Return false
+            return false;
+        }
         try {
-
             // Get the max customer ID number
             ResultSet result = JDBC.executeQuery("SELECT MAX(cid) AS cid FROM Customer");
             result.next();
