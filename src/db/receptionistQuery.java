@@ -80,13 +80,20 @@ public class receptionistQuery {
     public static String[] getCustomersWithPendingInvoices() {        
         try {
             ArrayList<String> customers = new ArrayList<>();
-            ResultSet result = JDBC.executeQuery("SELECT C.cid AS cid,CONCAT(C.first_name,CONCAT(' ',C.last_name)) AS name,I.id AS id,I.date_generated AS date_generated,I.total_amount AS total_amount FROM Vehicle V CROSS JOIN Customer C CROSS JOIN Invoice I WHERE C.cid=V.cid AND C.sid=V.sid AND V.vin=I.vin AND 0<(I.total_amount-I.amount_paid)");
+            ResultSet result = JDBC.executeQuery(
+                "SELECT Customer.cid, Customer.first_name, Customer.last_name, Invoice.id, Invoice.date_generated, Invoice.total_amount " +
+                "FROM Customer, Invoice " +
+                "WHERE Customer.cid = Invoice.cid AND Invoice.status = 0 AND Customer.sid = " + UI.getCurrentSID()
+            );
             while(result.next()) {
-                customers.add(result.getString("cid") +
-                result.getString("name") +
-                result.getString("id") +
-                result.getString("date_generated") +
-                result.getString("total_amount"));
+                customers.add(
+                    result.getString("cid") + "," +
+                    result.getString("first_name") + "," +
+                    result.getString("last_name") + "," +
+                    result.getString("id") + "," +
+                    result.getString("date_generated") + "," +
+                    result.getString("total_amount")
+                );
             }
             return customers.toArray(new String[customers.size()]);
         } catch (java.sql.SQLException e) {

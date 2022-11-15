@@ -20,7 +20,7 @@ public class managerQueryTest {
     // Database String
     static final private String jdbcURL = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl01";
     // Database username (NCSU Unity ID)
-    static final private String jdbcUser = "wagrocho";
+    static final private String jdbcUser = "asrivas7";
     // Database password
     static final private String jdbcPassword = "abcd1234";
     // Manager username
@@ -39,6 +39,8 @@ public class managerQueryTest {
         JDBC.resetDatabaseFull();
         // Sign in as manager
         assertTrue(UI.signIn(manager, password));
+        // Set JDBC WAIT_FOR_USER flag to false
+        JDBC.WAIT_FOR_USER = false;
     }
 
     /**

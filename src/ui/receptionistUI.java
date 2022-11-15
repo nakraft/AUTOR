@@ -105,7 +105,31 @@ public class receptionistUI {
     public static void receptionistFindCustomersWithPendingInvoices() {
         while (true) {
             String[] customers = receptionistQuery.getCustomersWithPendingInvoices();
-            receptionistFindCustomersWithPendingInvoices.setLines(customers);
+            String[][] details = new String[customers.length][4];
+            for (int i = 0; i < customers.length; i++) {
+                details[i] = customers[i].split(",");
+            }
+            String[] lines;
+            if (customers.length == 0) {
+                lines = new String[] {"No customers with pending invoices"};
+            } else {
+                lines = new String[customers.length * 4];
+                for (int i = 0; i < customers.length; i++) {
+                    // First Last (cid)
+                    lines[i * 4] = details[i][1] + " " + details[i][2] + " (" + details[i][0] + ")";
+                    // Address: address
+                    lines[i * 4 + 1] = "\tInvoice ID: " + details[i][3];
+                    // Email: email
+                    lines[i * 4 + 2] = "\tDate Generated: " + details[i][4];
+                    // Phone: phone
+                    lines[i * 4 + 3] = "\tTotal Amount: " + details[i][5];
+                    // Add a newline to the end of total if not the last customer
+                    if (i != customers.length - 1) {
+                        lines[i * 4 + 3] += "\n";
+                    }
+                }
+            }
+            receptionistFindCustomersWithPendingInvoices.setLines(lines);
             switch (receptionistFindCustomersWithPendingInvoices.display()) {
                 case 1: // Go Back
                     receptionistLanding();

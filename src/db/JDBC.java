@@ -13,7 +13,9 @@ public class JDBC {
     // Database connection
     static private Connection connection = null;
     // Debug flag
-    static private final boolean DEBUG = true;
+    static private final boolean DEBUG = false;
+    // Wait for user flag
+    static public boolean WAIT_FOR_USER = true;
     // Last statement
     static private Statement lastStatement = null;
 
@@ -434,7 +436,11 @@ public class JDBC {
         /**
          * Wait for the user to press enter
          */
-        UI.input.nextLine();
+        // If "Wait for user" is enabled, wait for the user to press enter
+        if (WAIT_FOR_USER) {
+            System.out.println("Press enter to continue...");
+            UI.input.nextLine();
+        }
         // Then return like nothing happened :)
     }
 

@@ -3,8 +3,6 @@ package db;
 // Import SQL libraries
 import java.sql.*;
 
-import ui.UI;
-
 /**
  * Queries for admins
  */
