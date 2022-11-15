@@ -770,7 +770,6 @@ public class customerUI {
         // TODO: update menu options with available times
         while (true) {
             // Display menu
-
             // set options with time slots
             ArrayList<String[]> timeSlots = customerQuery.getTimeSlots(Vin,duration);
             if (timeSlots == null || timeSlots.size() == 0) {
@@ -778,12 +777,16 @@ public class customerUI {
                 customerLanding.setFeedback("Failed to generate Invoice: Time slot not available for the selected service.");
                 customerLanding();
             }
-            String[] temp = new String[timeSlots.size()+1];
+            ArrayList<String> temp = new ArrayList<>();
             for (int i = 0; i < timeSlots.size(); i++) {
-                temp[i] = "Day - " + timeSlots.get(i)[0] + ", Week - " + timeSlots.get(i)[1] + ", Timeslot - " + timeSlots.get(i)[2] + " Mechanic - " + timeSlots.get(i)[3] + " id - " + timeSlots.get(i)[4];
+                if(customerQuery.mechanic_overwork(timeSlots.get(i), duration)){
+                    temp.add("Day - " + timeSlots.get(i)[0] + ", Week - " + timeSlots.get(i)[1] + ", Timeslot - " + timeSlots.get(i)[2] + " Mechanic - " + timeSlots.get(i)[3] + " id - " + timeSlots.get(i)[4]);
+                }
             }
-            temp[timeSlots.size()] = "Go Back";
-            customerScheduleServicesInCart.setOptions(temp);
+            String[] res = new String[temp.size() + 1];
+            temp.toArray(res);
+            res[temp.size()] = "Go Back";
+            customerScheduleServicesInCart.setOptions(res);
             // for(String ele:temp) {
             //     System.out.println(ele);  
             // }
@@ -795,7 +798,7 @@ public class customerUI {
                 customerScheduleServicesInCart.display();
                 // if option is the last option, go back
                 int response = customerScheduleServicesInCart.getMenuResponse();
-                if ( response == temp.length) {
+                if ( response == res.length) {
                     customerViewCartSelectScheduleTime(Vin);
                 }
                 // else, checkout cart

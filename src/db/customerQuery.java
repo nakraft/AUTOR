@@ -242,6 +242,63 @@ public class customerQuery {
             return null;
         }
     }
+    public static boolean mechanic_overwork(String[] timeSlot, String duration){
+            String end_timeslot_week="",end_timeslot_day="",end_timeslot="";
+        try {
+            String query1 = "SELECT timeslot_week,timeslot_day,timeslot,eid FROM Calendar WHERE id = " + String.valueOf(Integer.parseInt(timeSlot[4]) +  Integer.parseInt(duration) - 1) + " and eid = " + timeSlot[3] +" AND sid = " + UI.current_sid;
+            ResultSet result = JDBC.executeQuery(query1);
+            while(result.next()) {
+                end_timeslot_week = result.getString("timeslot_week");
+                end_timeslot_day = result.getString("timeslot_day");
+                end_timeslot = result.getString("timeslot");
+            }
+            //get the two timeslot values 
+            int start_id = 0, end_id = 0;
+            String query3 = "SELECT id FROM Calendar" +
+            " WHERE timeslot_week = " + timeSlot[1] +
+            " AND timeslot_day = " + timeSlot[0] +
+            " AND timeslot = " + timeSlot[2]  +
+            " AND eid = " + timeSlot[3] +
+            " AND sid = " + UI.getCurrentSID();
+            ResultSet result1 = JDBC.executeQuery(query3);
+            if(result1.next()) {
+                start_id = result1.getInt("id");
+            }
+            String query4 = "SELECT id FROM Calendar" +
+            " WHERE timeslot_week = " + end_timeslot_week +
+            " AND timeslot_day = " + end_timeslot_day +
+            " AND timeslot = " + end_timeslot  +
+            " AND eid = " + timeSlot[3] +
+            " AND sid = " + UI.getCurrentSID();
+            ResultSet result2 = JDBC.executeQuery(query4);
+            if(result2.next()) {
+                end_id = result2.getInt("id");
+            }
+            // ensures that if this got scheduled with this mechanic, the mechanic wouldn't be working more than the required time a week 
+            // you cannot use having here as there is no way to evaluate how many hours to be worked were attributed to a particular week 
+            for(int week_number = Integer.parseInt(timeSlot[1]); week_number <= Integer.parseInt(end_timeslot_week); week_number++){
+                int hoursworked = 0, hoursToWork = 0;
+                String query5 = "SELECT COUNT(*) as hoursWorked FROM Calendar o WHERE o.eid = " + timeSlot[3] + " AND o.sid = " + UI.getCurrentSID() + " AND o.timeslot_week = " + week_number + " AND o.invoice_id IS NOT NULL";
+                ResultSet result3 = JDBC.executeQuery(query5);
+                if(result3.next()) {
+                    hoursworked = result3.getInt("hoursWorked");
+                }
+                String query6 = "SELECT COUNT(*) as hoursToWork FROM Calendar o WHERE o.eid = " + timeSlot[3] + " AND o.sid = " + UI.getCurrentSID() + " AND o.timeslot_week = " + week_number + " AND id >= " + start_id + " AND id <= " + end_id;
+                ResultSet result4 = JDBC.executeQuery(query6);
+                if(result4.next()) {
+                    hoursToWork = result4.getInt("hoursToWork");
+                }
+                if(hoursworked + hoursToWork > 50){
+                    return false;
+                }
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+            return true;
+    }
 
     public static Integer customerCartCheckout(String Vin, String[] timeSlot, String cost, String duration, HashSet<String> cart, HashMap<String, String> serviceMapping ) {
         // insert into invoice has service
