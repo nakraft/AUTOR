@@ -402,8 +402,13 @@ public class customerQuery {
             if (result.next()) {
             return false;
             }   
-            return JDBC.executeQuery(query).next();
+            boolean response = JDBC.executeQuery(query).next();
+            return response;
         } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+        catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
             return false;
         }
