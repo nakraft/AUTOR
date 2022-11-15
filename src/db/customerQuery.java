@@ -312,10 +312,10 @@ public class customerQuery {
                     String stype = "Repair and maintenance service";
                     invoice[4] += ("\n"+res2.getString("snum"));      
                     invoice[8] += ("\n"+res2.getString("price")); 
-                    if(res2.getString("rcat") == "null") {
+                    if(res2.getString("rcat") == null) {
                         stype = "Maintenance service";
                     }
-                    else if(res2.getString("sch") == "null") {
+                    else if(res2.getString("sch") == null) {
                         stype = "Repair service";
                     }
                     invoice[5] += ("\n"+stype); 
