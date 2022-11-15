@@ -13,11 +13,19 @@ public class JDBC {
     // Database connection
     static private Connection connection = null;
     // Debug flag
-    static private final boolean DEBUG = false;
+    static private boolean DEBUG = true;
     // Wait for user flag
-    static public boolean WAIT_FOR_USER = true;
+    static private boolean AUTOMATED_TEST_MODE = false;
     // Last statement
     static private Statement lastStatement = null;
+
+    /**
+     * Enable Test Mode
+     */
+    static public void enableTestMode() {
+        AUTOMATED_TEST_MODE = true;
+        DEBUG = true;
+    }
 
     /**
      * Database setup method
@@ -424,25 +432,22 @@ public class JDBC {
      * Call instead of System.exit(1)
      */
     private static void somethingWentWrong(Exception e) {
-        // Print an error message
-        System.out.println("\nSomething went wrong with your request :(");
-        System.out.println("Here are the details:");
-        // Standard error message
-        System.out.println(e.getMessage());
-        // If debugging, print the whole stack trace
-        if (DEBUG) {
-            e.printStackTrace();
-        }
-        /**
-         * Wait for the user to press enter
-         */
-        // If "Wait for user" is enabled, wait for the user to press enter
-        if (WAIT_FOR_USER) {
+        if (!AUTOMATED_TEST_MODE) {
+            // Print an error message
+            System.out.println("\nSomething went wrong with your request :(");
+            System.out.println("Here are the details:");
+            // Standard error message
+            System.out.println(e.getMessage());
+            // If debugging, print the whole stack trace
+            if (DEBUG) {
+                e.printStackTrace();
+            }
+            // Wait for user to press enter
             System.out.println("Press enter to continue...");
             UI.input.nextLine();
         }
-        // Then return like nothing happened :)
     }
+    
 
     /**
      * Get last statement

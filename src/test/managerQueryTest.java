@@ -39,8 +39,8 @@ public class managerQueryTest {
         JDBC.resetDatabaseFull();
         // Sign in as manager
         assertTrue(UI.signIn(manager, password));
-        // Set JDBC WAIT_FOR_USER flag to false
-        JDBC.WAIT_FOR_USER = false;
+        // Enable test mode
+        JDBC.enableTestMode();
     }
 
     /**

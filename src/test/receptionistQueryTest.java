@@ -55,8 +55,8 @@ public class receptionistQueryTest {
         });
         // Sign in as the receptionist
         assertTrue(UI.signIn("jsmith", "smith"));
-        // Set JDBC WAIT_FOR_USER flag to false
-        JDBC.WAIT_FOR_USER = false;
+        // Enable test mode
+        JDBC.enableTestMode();
     }
 
     /**
