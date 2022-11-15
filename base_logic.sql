@@ -101,7 +101,7 @@ CREATE TABLE Schedule (
 CREATE TABLE Services (
 	serviceName VARCHAR(50),
     serviceNumber NUMBER(10),
-    repair_category VARCHAR(50),
+    repair_category VARCHAR(50) CHECK (repair_category IN ('Engine Services', 'Exhaust Services', 'Electrical Services', 'Transmission Services', 'Tire Services', 'Heating and A/C Services')),
     schedule VARCHAR(1) CHECK (schedule IN ('A', 'B', 'C')),
 	PRIMARY KEY (serviceName, serviceNumber),
     FOREIGN KEY (serviceName, serviceNumber) REFERENCES Work_Event
