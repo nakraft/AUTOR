@@ -858,9 +858,12 @@ public class customerUI {
             // Display menu
             switch( customerViewInvoiceDetails.display() ) {
                 case 1: // View Invoice
-                    // TODO: query database for types of service in invoice
                     String invoice_id = customerViewInvoiceDetails.getPromptResponse(0);
                     String[] invoice = customerQuery.getInvoice(invoice_id);
+                    if(invoice == null) {
+                        customerViewInvoiceDetails.setFeedback("Failed to get Invoice with ID "+ invoice_id);
+                        break;
+                    }
                     String[] invoice_details = new String[10];
                     invoice_details[0] = "Invoice ID - "+invoice[0];
                     invoice_details[1] = "Customer ID - "+invoice[1];

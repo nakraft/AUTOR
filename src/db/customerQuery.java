@@ -378,8 +378,9 @@ public class customerQuery {
                     }
                     invoice[5] += ("\n"+stype); 
                 }
+                return invoice;
             }
-            return invoice;
+            return null;
         }
         catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
