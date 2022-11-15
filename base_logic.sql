@@ -150,7 +150,7 @@ CREATE TABLE Vehicle (
 );
 
 CREATE TABLE Invoice_HasService (
-	id NUMBER(10) UNIQUE,
+	id NUMBER(10),
 	serviceName VARCHAR(50),
     serviceNumber NUMBER(10),
     PRIMARY KEY (id, serviceName, serviceNumber),
