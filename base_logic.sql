@@ -10,7 +10,8 @@ CREATE TABLE Service_Center (
     receptionist_id NUMBER(10),
     available VARCHAR(9) DEFAULT 'pending' CHECK (available IN ('available', 'pending')), 
 	PRIMARY KEY (sid), 
-	CHECK (mechanic_maximum_rate >= mechanic_minimum_rate)
+	CHECK (mechanic_maximum_rate >= mechanic_minimum_rate), 
+    CHECK (mechanic_hourly_rate IS NULL OR (mechanic_hourly_rate IS NOT NULL AND mechanic_maximum_rate >= mechanic_hourly_rate AND mechanic_minimum_rate <= mechanic_hourly_rate))
 );
 
 CREATE TABLE Employee (
