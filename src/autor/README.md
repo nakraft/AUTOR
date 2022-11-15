@@ -29,7 +29,6 @@ __Navigation__
 Every task can be completed through the frontend and backend of the CLI. 
 To access the backend through SQL queries, visit the admin menu and select `7`. These queries directly interact with the database and show a log of errors. 
 
-
 ### Overall Assumptions 
 In order to maintain accuracy of application flow, some assumptions about the user input have been made. The following list of assumptions have been noted to ensure that we are aware of some of the limitations to our implementation. 
 
@@ -41,7 +40,6 @@ __Schedule__
 __Mechanics__
 - Only one mechanic can be assigned for a particular Service Job 
 - It is assumed that once a mechanic takes time off they cannot cancel that time off and work that period again. 
-- It is assumed that mechanics can only swap schedules for a timeperiod that occurs on the same day.  <!-- This is a bad assumption, fix it  -->
 
 ### Corrections in Sample Data 
 Based on our implementation, two of the entries of the sample data is inaccurate: 

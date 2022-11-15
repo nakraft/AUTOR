@@ -87,8 +87,9 @@ INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES
 -- PASS : Anouther mechanic can be added and now the day can be taken off 
 INSERT INTO Employee(sid, eid, role) VALUES (30004, 888966655, 'mechanic')
 INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666)
-    -- check 
+    -- check Calendar day 1 for this mechanic should be empty
     SELECT * FROM Mechanic_Out
+    SELECT * FROM Calendar WHERE sid = 30004 AND eid = 888966666 AND timeslot_week = 1 AND timeslot_day = 1
 
 -- FAIL : A mechanic cannot ask for the same time off twice 
 INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888966666)
@@ -97,9 +98,11 @@ INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES
 INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 1, 30004, 888999666)
 
 -- FAIL : Schedule someone to work... a mechanic cannot take this time off either -- NOTE THIS ONLY WORKS AS INVOICE_ID ALREADY IS 1 
-UPDATE Calendar SET invoice_id = 1 WHERE eid = 888999666 AND sid = 30004 and id = 2
+    -- setup steps 
+    UPDATE Calendar SET invoice_id = 1 WHERE eid = 888999666 AND sid = 30004 and id = 2
 INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 1, 2, 30004, 888999666)
-UPDATE Calendar SET invoice_id = NULL WHERE eid = 888999666 AND sid = 30004 and id = 2
+    -- revert steps 
+    UPDATE Calendar SET invoice_id = NULL WHERE eid = 888999666 AND sid = 30004 and id = 2
 
 -- FAIL : a service must be in one of the 6 repair subcategories (error 20001 thrown)
 INSERT INTO Services(serviceName, serviceNumber, repair_category) VALUES('Evaporator Repair', 113, 'Heating Services')
@@ -172,9 +175,10 @@ INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, 
     SELECT * FROM Invoice WHERE id = 8 -- amount paid should be 0, total amount should be 95
 
 -- FAIL : A service cannot be scheduled when the employee is not free (error 20003) (even if only part of their time overlaps)
-INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(11, 'Virginia','New',30003,'vnew','new')
-INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1BL651','Toyota',53500,'A',2006,11,30003)
-INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (9, 'Tire Balancing', 109)
+    -- setup 
+    INSERT INTO Customer(cid,first_name,last_name,sid,username,password) VALUES(11, 'Virginia','New',30003,'vnew','new')
+    INSERT INTO Vehicle(vin,manf,mileage,schedule,year,cid,sid) VALUES('4Y1BL651','Toyota',53500,'A',2006,11,30003)
+    INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (9, 'Tire Balancing', 109)
 INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (9, 30003, 123405678, 11, 1, 3, 10, 1, 3, 11, '4Y1BL651')
   
 -- FAIL : A service cannot be scheduled when the duration of the service is not the same length as the duration requested (error 20003)
