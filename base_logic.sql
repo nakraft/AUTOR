@@ -133,8 +133,9 @@ CREATE TABLE Customer (
 	phone NUMBER(10),
 	first_name VARCHAR(50),
 	last_name VARCHAR(50),
-    status NUMBER(1) DEFAULT 0, -- inactive on add. Then active when car added 
-    standing NUMBER(1) DEFAULT 0, -- TODO 
+    status NUMBER(1) DEFAULT 0, -- inactive on add. Then active when car added. 
+    balance NUMBER(10) DEFAULT 0, -- tracks the balance of the customer, a partial field needed for standing to be implemented
+    standing NUMBER(1) DEFAULT 1, -- starts in good standing. Then updated with updated to invoice. 
     address VARCHAR(100),
     email VARCHAR(50),
     username VARCHAR(50),
@@ -539,6 +540,16 @@ CREATE TRIGGER invoice_checks
         ON i.serviceName = c.serviceName AND i.serviceNumber = c.serviceNumber
         WHERE i.id = :new.id AND c.manf = (SELECT v.manf FROM Vehicle v WHERE v.vin = :new.vin) 
         AND c.sid = :new.sid;
+        -- makes sure that if the balance is 0 if the status is good 
+        IF :new.status = 1 THEN 
+            :new.amount_paid := :new.total_amount;
+        END IF;
+        -- make it clear that the Customer is not in good standing after the service is inserted
+        IF :new.total_amount != :new.amount_paid THEN 
+            UPDATE Customer 
+            SET standing = 0, balance = balance + :new.total_amount - :new.amount_paid 
+            WHERE sid = :new.sid AND cid = :new.cid;
+        END IF; 
     END;
 /
 
@@ -599,6 +610,27 @@ CREATE TRIGGER decide_status_invoice
              UPDATE Invoice 
              SET status = 1
              WHERE total_amount = amount_paid;
+         END IF;
+     END;
+ /
+
+ CREATE TRIGGER update_customer_balance 
+    AFTER UPDATE ON Invoice 
+    FOR EACH ROW 
+    BEGIN
+        UPDATE Customer 
+        SET balance = balance - (:new.amount_paid - :old.amount_paid)
+        WHERE cid = :new.cid AND sid = :new.sid; 
+    END;
+ /
+
+ CREATE TRIGGER determine_customer_standing
+     AFTER UPDATE ON Customer
+     BEGIN
+         IF UPDATING('balance') THEN
+             UPDATE Customer
+             SET standing = 1
+             WHERE balance = 0;
          END IF;
      END;
  /

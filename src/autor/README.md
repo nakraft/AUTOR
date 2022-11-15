@@ -34,6 +34,7 @@ __Schedule__
 - Only one month of data is generated in advance upon start up. 
 
 __Other__
+- It is assumed that once a mechanic takes time off they cannot cancel that time off and work that period again. 
 - It is assumed that mechanics can only swap schedules for a timeperiod that occurs on the same day.  <!-- This is a bad assumption, fix it  -->
 
 ### Corrections in Sample Data 

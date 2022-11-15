@@ -1,3 +1,31 @@
+-- PASS: After populating full, the invoices that were inserted as "in good standing" 
+    -- should have a total amount = amount paid and the customers should be in good standing too 
+    -- check
+    SELECT * FROM Invoice 
+    SELECT * FROM Customer -- two customers in bad standing
+
+-- PASS: If a customer pays some of their invoice, their balance should be impacted 
+UPDATE Invoice SET amount_paid = 200 WHERE cid = 10501 AND sid = 30003 
+    -- check invoice amount paid should be updated 
+    SELECT * FROM Invoice WHERE sid = 30003 AND cid = 10501
+    -- check that standing is still poor, but balance is only 10 
+    SELECT * FROM Customer WHERE sid = 30003 AND cid = 10501
+
+-- PASS: A customer can pay off their balance completely 
+UPDATE Invoice SET amount_paid = 210 WHERE cid = 10501 AND sid = 30003 
+    -- check invoice amount paid should be updated and status is good 
+    SELECT * FROM Invoice WHERE sid = 30003 AND cid = 10501
+    -- check that standing is now in good standing and balance is 0 
+    SELECT * FROM Customer WHERE sid = 30003 AND cid = 10501
+
+-- PASS: A customer who schedules a new service now goes back into bad standing with a balance 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (100, 'Belt Replacement', 101)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (100, 30003, 347812569, 10501, 4, 1, 1, 4, 1, 1, 'P39VN198')
+   -- check amount_paid is 0 and status is 0 
+   SELECT * FROM Invoice WHERE id = 100
+   -- check standing is now 0 and balance is back up by the amount of the invoice 
+   SELECT * FROM Customer WHERE sid = 30003 AND cid = 10501
+
 -- PASS: Can insert a service center 
 INSERT INTO Service_Center(sid, address, telephone, manager_id) VALUES (30004, 'testing address', 8888888888, 888999333)
     -- check 
@@ -209,7 +237,32 @@ INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, 
 INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (15, 'Muffler Repair', 104)
 INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (15, 30004, 888966655, 10001, 1, 5, 5, 1, 5, 6, 'EEEEEEEE')
     -- check (should be at 50 hours)
-        SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND invoice_id IS NOT NULL AND eid = 888966655 AND timeslot_week = 1
+    SELECT COUNT(*) FROM Calendar WHERE sid = 30004 AND invoice_id IS NOT NULL AND eid = 888966655 AND timeslot_week = 1
 
--- generic testing left... scheduling services (creating invoice), payment of invoice (and lack thereof) changes customer standing
--- mechanic time off cannot be scheduled over, mechanic swap time can occur, mechanic hours are not exceeded 
+-- PASS : A customer tries to pay part of their invoice 
+UPDATE Invoice SET amount_paid = 10 WHERE sid = 30003 AND cid = 10501 AND id = 1
+    -- check (should be 10 dollars paid)
+    SELECT * FROM Invoice WHERE sid = 30003 AND cid = 10501 AND id = 1
+
+-- PASS : A customer tries to pay the rest of their invoice 
+UPDATE Invoice SET amount_paid = amount_paid + 200 WHERE sid = 30003 AND cid = 10501 AND id = 1
+    -- check (should be paid in full with a good status)
+    SELECT * FROM Invoice WHERE sid = 30003 AND cid = 10501 AND id = 1 AND status = 1
+    -- check (A customer should have a standing of 1 when their account is in good standing)
+
+-- FAIL : A mechanic cannot request time off when they are already working ( should throw 20005 error)
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (1, 3, 6, 30004, 888966655)
+
+-- PASS : A mechanic can request to take time off 
+INSERT INTO Mechanic_Out(timeslot_week, timeslot_day, timeslot, sid, eid) VALUES (4, 5, 1, 30004, 888966655)
+    -- check the timeslot 1 should be absent from this query 
+    SELECT * FROM Calendar WHERE sid = 30004 AND eid = 888966655 AND invoice_id IS NULL AND timeslot_week = 4 AND timeslot_day = 5
+    -- check the person should be scheduled for this time off
+    SELECT * FROM Mechanic_Out WHERE eid = 888966655
+
+-- FAIL : a mechanic cannot get booked for a invoice if they are on vacation 
+INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (17, 'A', 113)
+INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (17, 30004, 888966655, 10001, 4, 4, 11, 4, 5, 2, 'CCCCCCCC')
+
+
+-- generic testing left... mechanic time off cannot be scheduled over, mechanic swap time can occur, mechanic hours are not exceeded 
