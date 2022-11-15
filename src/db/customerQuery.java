@@ -376,7 +376,7 @@ public class customerQuery {
                 invoice[4] = ""; // service ids
                 invoice[5] = ""; // service types
                 invoice[8] = ""; // cost for each service
-                invoice[6] = (res.getString("status") == "0") ? "Unpaid" : "Paid"; // invoice status
+                invoice[6] = (res.getString("status").equals("0")) ? "Unpaid" : "Paid"; // invoice status
                 invoice[7] = res.getString("name"); // mechanics name
                 invoice[9] = res.getString("total_amount"); // total cost
                 String query2 = "Select cd.serviceNumber as snum,cd.price as price,s.repair_category as rcat,s.schedule as sch from Invoice_HasService ihs CROSS JOIN Cost_Details cd CROSS JOIN Services s where ihs.serviceName=s.serviceName AND ihs.serviceNumber=s.serviceNumber AND ihs.serviceName=cd.serviceName AND ihs.serviceNumber=cd.serviceNumber AND ihs.id=" + invoice_id +" AND cd.sid="+ UI.current_sid +" AND cd.manf='"+res.getString("manf")+"'";
