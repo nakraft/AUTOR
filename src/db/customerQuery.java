@@ -87,6 +87,20 @@ public class customerQuery {
         }
     }
 
+    public static boolean validateVehicle(String Vin) {
+        String query = "select * from Vehicle where vin='"+Vin+"' AND cid='"+UI.getCurrentEID()+"'";
+        try {
+            ResultSet result = JDBC.executeQuery(query);
+            if (result.next()) {
+                return true;
+            }
+            return false;
+        }
+        catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return false;
+        }
+    }
     public static String[][] getServiceHistory(String Vin) {
         // Create a query
         String query = "SELECT I.id, I.vin, I.total_amount, CONCAT(CONCAT(E.first_name, ' '), E.last_name) AS mechanic_name, CONCAT(CONCAT(I.start_timeslot_day, ', '), I.start_timeslot_week) AS start_time, CONCAT(CONCAT(I.end_timeslot_day, ', '), I.end_timeslot_week) AS end_time from Invoice  I, Employee  E where E.eid = I.eid AND I.vin='"+Vin+"'";
@@ -134,6 +148,7 @@ public class customerQuery {
     public static String[] getEligibleMaintenance(String Vin) {
         // Get the next schedule name
         String query = "SELECT SCHEDULE AS CURRENT_SCHEUDLE, CASE WHEN SCHEDULE= 'A' THEN 'B' WHEN SCHEDULE= 'B' THEN 'C' ELSE 'A' END AS NEXT_SCHEDULE FROM VEHICLE WHERE VIN='" + Vin + "'";
+        //String query = "SELECT Schedule FROM Vehicle WHERE VIN='" + Vin + "'";
         String nextSchedule = null;
         String nextScheduleNumber = null;
         try {

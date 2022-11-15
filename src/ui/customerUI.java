@@ -419,6 +419,7 @@ public class customerUI {
                     customerViewServiceHistory();
                     break;
                 case 2: // Schedule Service
+                    cart.clear();
                     customerScheduleService();
                     break;
                 case 3: // Go Back
@@ -474,7 +475,14 @@ public class customerUI {
     public static void customerScheduleService() {
         while (true) {
             // Display menu
-            switch( customerScheduleService.display() ) {
+            int case_option = customerScheduleService.display();
+            String Vin = customerScheduleService.getPromptResponses()[0];
+            boolean vehicle_exists = customerQuery.validateVehicle(Vin);
+            if (! vehicle_exists) {
+                customerViewScheduleService.setFeedback("Invalid Vehicle for the Customer");
+                case_option = 4;
+            }
+            switch( case_option ) {
                 case 1: // Add Scheduled Maintenance
                     displayScheduledMaintenance(customerScheduleService.getPromptResponses()[0]);
                     break;
