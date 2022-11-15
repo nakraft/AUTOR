@@ -128,15 +128,25 @@ UPDATE Mechanic_Swap_Request SET status = 1 WHERE id = 1
 
 -- PASS : Upon selecting yes and updating the swap value to 1, ensure that the correct measures are taken to move the values in the Calendar and Invoice 
        -- pre-check. Determine which invoice id both people have 
-       SELECT d.timeslot_week, d.timeslot_day, d.timeslot, d.eid, d.invoice_id, r.timeslot_week, r.timeslot_day, r.timeslot, r.eid, r.invoice_id FROM Calendar d INNER JOIN Calendar r ON r.timeslot_week = d.timeslot_week AND r.timeslot_day = d.timeslot_day AND r.timeslot = d.timeslot WHERE d.sid = 30002 AND r.sid = 30002 AND r.eid = 125689347 AND d.eid = 423186759 AND ((r.timeslot_week = 3 AND r.timeslot_day = 5 AND r.timeslot >= 5 AND r.timeslot <= 7) OR (r.timeslot_week = 2 AND r.timeslot_day = 4 AND r.timeslot >= 2 AND r.timeslot <= 5))
+       SELECT d.timeslot_week, d.timeslot_day, d.timeslot, d.eid, d.invoice_id, r.timeslot_week, r.timeslot_day, r.timeslot, r.eid, r.invoice_id FROM Calendar d INNER JOIN Calendar r ON r.timeslot_week = d.timeslot_week AND r.timeslot_day = d.timeslot_day AND r.timeslot = d.timeslot WHERE d.sid = 30002 AND r.sid = 30002 AND r.eid = 125689347 AND d.eid = 423186759 AND ((r.timeslot_week = 2 AND r.timeslot_day = 1 AND r.timeslot >= 3 AND r.timeslot <= 5) OR (r.timeslot_week = 2 AND r.timeslot_day = 4 AND r.timeslot >= 2 AND r.timeslot <= 5))
+       SELECT * FROM Invoice WHERE sid = 30002
+INSERT INTO Mechanic_Swap_Request(sid, donor_eid, recieve_eid, donor_timeslot_begin_week, donor_timeslot_end_week, donor_timeslot_begin_day, donor_timeslot_end_day, donor_timeslot_begin, donor_timeslot_end, recieve_timeslot_begin_week, recieve_timeslot_end_week, recieve_timeslot_begin_day, recieve_timeslot_end_day, recieve_timeslot_begin, recieve_timeslot_end) VALUES (30002, 423186759, 125689347, 2, 2, 4, 4, 2, 5, 2, 2, 1, 1, 3, 5)
+-- to update the status to 2 (reject)
+UPDATE Mechanic_Swap_Request SET status = 2 WHERE id = 1
+       -- check nothing should occur
+       SELECT d.timeslot_week, d.timeslot_day, d.timeslot, d.eid, d.invoice_id, r.timeslot_week, r.timeslot_day, r.timeslot, r.eid, r.invoice_id FROM Calendar d INNER JOIN Calendar r ON r.timeslot_week = d.timeslot_week AND r.timeslot_day = d.timeslot_day AND r.timeslot = d.timeslot WHERE d.sid = 30002 AND r.sid = 30002 AND r.eid = 125689347 AND d.eid = 423186759 AND ((r.timeslot_week = 2 AND r.timeslot_day = 1 AND r.timeslot >= 3 AND r.timeslot <= 5) OR (r.timeslot_week = 2 AND r.timeslot_day = 4 AND r.timeslot >= 2 AND r.timeslot <= 5))
+       SELECT * FROM Invoice WHERE sid = 30002
+       SELECT * FROM Mechanic_Swap_Request
 -- to update the status to 1 (accept)
 UPDATE Mechanic_Swap_Request SET status = 1 WHERE id = 1
        -- check : the eids should be swapped in invoice and in calendar 
        SELECT * FROM Invoice WHERE sid = 30002
-       SELECT d.timeslot_week, d.timeslot_day, d.timeslot, d.eid, d.invoice_id, r.timeslot_week, r.timeslot_day, r.timeslot, r.eid, r.invoice_id FROM Calendar d INNER JOIN Calendar r ON r.timeslot_week = d.timeslot_week AND r.timeslot_day = d.timeslot_day AND r.timeslot = d.timeslot WHERE d.sid = 30002 AND r.sid = 30002 AND r.eid = 125689347 AND d.eid = 423186759 AND ((r.timeslot_week = 3 AND r.timeslot_day = 5 AND r.timeslot >= 5 AND r.timeslot <= 7) OR (r.timeslot_week = 2 AND r.timeslot_day = 4 AND r.timeslot >= 2 AND r.timeslot <= 5))
+       SELECT d.timeslot_week, d.timeslot_day, d.timeslot, d.eid, d.invoice_id, r.timeslot_week, r.timeslot_day, r.timeslot, r.eid, r.invoice_id FROM Calendar d INNER JOIN Calendar r ON r.timeslot_week = d.timeslot_week AND r.timeslot_day = d.timeslot_day AND r.timeslot = d.timeslot WHERE d.sid = 30002 AND r.sid = 30002 AND r.eid = 125689347 AND d.eid = 423186759 AND ((r.timeslot_week = 2 AND r.timeslot_day = 1 AND r.timeslot >= 3 AND r.timeslot <= 5) OR (r.timeslot_week = 2 AND r.timeslot_day = 4 AND r.timeslot >= 2 AND r.timeslot <= 5))
 
-/* Tables to utilize when querying results front end */
+/* 
+END TESTS 
+Tables to utilize when querying results front end 
+*/
 -- to view by requesting Mechanic 
 SELECT s.id, m.first_name, m.last_name, s.recieve_timeslot_week, s.recieve_timeslot_day, s.recieve_timeslot_begin, s.recieve_timeslot_end, s.donor_timeslot_week, s.donor_timeslot_day,s.donor_timeslot_begin, s.donor_timeslot_end FROM Employee m, Mechanic_Swap_Request s WHERE s.sid = 30002 AND s.recieve_eid = 125689347 AND s.donor_eid = m.eid AND s.status = 0
  -- recieve id should be the current mechanics ID 
-

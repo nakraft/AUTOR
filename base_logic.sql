@@ -730,67 +730,70 @@ CREATE TRIGGER request_swap
     END;
 /
 
--- CREATE TRIGGER update_swap
---     AFTER UPDATE ON Mechanic_Swap_Request
---     FOR EACH ROW 
---     DECLARE 
---         invoiceDonor NUMBER; 
---         invoiceRecieve NUMBER; 
---         start_donor_id NUMBER; 
---         end_donor_id NUMBER; 
---         start_recieve_id NUMBER; 
---         end_recieve_id NUMBER; 
---     BEGIN
---         IF :new.status = 1 THEN -- condition accepted swap places and close (if 0/2 no action needed)
---             -- gets the ids of the invoice to use 
---             SELECT id INTO invoiceDonor
---             FROM Invoice 
---             WHERE sid = :new.sid AND eid = :new.donor_eid AND start_timeslot_week = :new.donor_timeslot_begin_week AND end_timeslot_week = :new.donor_timeslot_end_week
---             AND start_timeslot_day = :new.donor_timeslot_begin_day AND end_timeslot_day = :new.donor_timeslot_end_day AND start_timeslot = :new.donor_timeslot_begin 
---             AND end_timeslot = :new.donor_timeslot_end;
---             SELECT id INTO invoiceRecieve
---             FROM Invoice 
---             WHERE sid = :new.sid AND eid = :new.recieve_eid AND start_timeslot_week = :new.recieve_timeslot_begin_week AND end_timeslot_week = :new.recieve_timeslot_end_week
---             AND start_timeslot_day = :new.recieve_timeslot_begin_day AND end_timeslot_day = :new.recieve_timeslot_end_day AND start_timeslot = :new.recieve_timeslot_begin 
---             AND end_timeslot = :new.recieve_timeslot_end;
---             -- gets the calendar ids to replace with 
---             SELECT UNIQUE(id) INTO start_donor_id
---             FROM Calendar
---             WHERE timeslot_week = :new.donor_timeslot_begin_week AND timeslot_day = :new.donor_timeslot_begin_day 
---             AND timeslot = :new.donor_timeslot_begin AND eid = :new.donor_eid AND sid = :new.sid;
---             SELECT UNIQUE(id) INTO end_donor_id
---             FROM Calendar
---             WHERE timeslot_week = :new.donor_timeslot_end_week AND timeslot_day = :new.donor_timeslot_end_day 
---             AND timeslot = :new.donor_timeslot_end AND eid = :new.donor_eid AND sid = :new.sid;
---             SELECT UNIQUE(id) INTO start_recieve_id
---             FROM Calendar
---             WHERE timeslot_week = :new.recieve_timeslot_begin_week AND timeslot_day = :new.recieve_timeslot_begin_day 
---             AND timeslot = :new.recieve_timeslot_begin AND eid = :new.recieve_eid AND sid = :new.sid;
---             SELECT UNIQUE(id) INTO end_recieve_id
---             FROM Calendar
---             WHERE timeslot_week = :new.recieve_timeslot_end_week AND timeslot_day = :new.recieve_timeslot_end_day 
---             AND timeslot = :new.recieve_timeslot_end AND eid = :new.recieve_eid AND sid = :new.sid;
---             -- update the calendar for the particular swap 
---             UPDATE Calendar 
---             SET invoice_id = CASE WHEN invoice_id IS NULL THEN invoiceRecieve ELSE NULL END
---             WHERE sid = :new.sid AND eid IN (:new.donor_eid, :new.recieve_eid) AND id >= start_donor_id AND id <= end_donor_id;
---             UPDATE Calendar 
---             SET invoice_id = CASE WHEN invoice_id IS NULL THEN invoiceDonor ELSE NULL END
---             WHERE sid = :new.sid AND eid IN (:new.donor_eid, :new.recieve_eid) AND id >= start_recieve_id AND id <= end_recieve_id;
---             -- update the invoice for the particular eids 
---             UPDATE Invoice
---             SET eid = :new.donor_eid 
---             WHERE sid = :new.sid AND eid = :new.recieve_eid AND start_timeslot_week = :new.recieve_timeslot_begin_week AND end_timeslot_week = :new.recieve_timeslot_end_week
---             AND start_timeslot_day = :new.recieve_timeslot_begin_day AND end_timeslot_day = :new.recieve_timeslot_end_day 
---             AND start_timeslot = :new.recieve_timeslot_begin AND end_timeslot = :new.recieve_timeslot_end; 
---             UPDATE Invoice
---             SET eid = :new.recieve_eid 
---             WHERE sid = :new.sid AND eid = :new.donor_eid AND start_timeslot_week = :new.donor_timeslot_begin_week AND end_timeslot_week = :new.donor_timeslot_end_week
---             AND start_timeslot_day = :new.donor_timeslot_begin_day AND end_timeslot_day = :new.donor_timeslot_end_day 
---             AND start_timeslot = :new.donor_timeslot_begin AND end_timeslot = :new.donor_timeslot_end; 
---         END IF; 
---     END;
--- /
+CREATE TRIGGER update_swap
+    AFTER UPDATE ON Mechanic_Swap_Request
+    FOR EACH ROW 
+    DECLARE 
+        invoiceDonor NUMBER; 
+        invoiceRecieve NUMBER; 
+        start_donor_id NUMBER; 
+        end_donor_id NUMBER; 
+        start_recieve_id NUMBER; 
+        end_recieve_id NUMBER; 
+    BEGIN
+        IF :new.status = 1 THEN -- condition accepted swap places and close (if 0/2 no action needed)
+            -- gets the ids of the invoice to use 
+            SELECT id INTO invoiceDonor
+            FROM Invoice 
+            WHERE sid = :new.sid AND eid = :new.donor_eid AND start_timeslot_week = :new.donor_timeslot_begin_week 
+            AND end_timeslot_week = :new.donor_timeslot_end_week AND start_timeslot_day = :new.donor_timeslot_begin_day 
+            AND end_timeslot_day = :new.donor_timeslot_end_day AND start_timeslot = :new.donor_timeslot_begin 
+            AND end_timeslot = :new.donor_timeslot_end;
+            SELECT id INTO invoiceRecieve
+            FROM Invoice 
+            WHERE sid = :new.sid AND eid = :new.recieve_eid AND start_timeslot_week = :new.recieve_timeslot_begin_week 
+            AND end_timeslot_week = :new.recieve_timeslot_end_week AND start_timeslot_day = :new.recieve_timeslot_begin_day 
+            AND end_timeslot_day = :new.recieve_timeslot_end_day AND start_timeslot = :new.recieve_timeslot_begin 
+            AND end_timeslot = :new.recieve_timeslot_end;
+            -- gets the calendar ids to replace with 
+            SELECT UNIQUE(id) INTO start_donor_id
+            FROM Calendar
+            WHERE timeslot_week = :new.donor_timeslot_begin_week AND timeslot_day = :new.donor_timeslot_begin_day 
+            AND timeslot = :new.donor_timeslot_begin AND eid = :new.donor_eid AND sid = :new.sid;
+            SELECT UNIQUE(id) INTO end_donor_id
+            FROM Calendar
+            WHERE timeslot_week = :new.donor_timeslot_end_week AND timeslot_day = :new.donor_timeslot_end_day 
+            AND timeslot = :new.donor_timeslot_end AND eid = :new.donor_eid AND sid = :new.sid;
+            SELECT UNIQUE(id) INTO start_recieve_id
+            FROM Calendar
+            WHERE timeslot_week = :new.recieve_timeslot_begin_week AND timeslot_day = :new.recieve_timeslot_begin_day 
+            AND timeslot = :new.recieve_timeslot_begin AND eid = :new.recieve_eid AND sid = :new.sid;
+            SELECT UNIQUE(id) INTO end_recieve_id
+            FROM Calendar
+            WHERE timeslot_week = :new.recieve_timeslot_end_week AND timeslot_day = :new.recieve_timeslot_end_day 
+            AND timeslot = :new.recieve_timeslot_end AND eid = :new.recieve_eid AND sid = :new.sid;
+            -- update the calendar for the particular swap 
+            UPDATE Calendar 
+            SET invoice_id = CASE WHEN invoice_id IS NULL THEN invoiceDonor ELSE NULL END
+            WHERE sid = :new.sid AND eid IN (:new.donor_eid, :new.recieve_eid) AND id >= start_donor_id AND id <= end_donor_id;
+            UPDATE Calendar 
+            SET invoice_id = CASE WHEN invoice_id IS NULL THEN invoiceRecieve ELSE NULL END
+            WHERE sid = :new.sid AND eid IN (:new.donor_eid, :new.recieve_eid) AND id >= start_recieve_id AND id <= end_recieve_id;
+            -- update the invoice for the particular eids 
+            UPDATE Invoice
+            SET eid = :new.donor_eid 
+            WHERE sid = :new.sid AND eid = :new.recieve_eid AND start_timeslot_week = :new.recieve_timeslot_begin_week 
+            AND end_timeslot_week = :new.recieve_timeslot_end_week
+            AND start_timeslot_day = :new.recieve_timeslot_begin_day AND end_timeslot_day = :new.recieve_timeslot_end_day 
+            AND start_timeslot = :new.recieve_timeslot_begin AND end_timeslot = :new.recieve_timeslot_end; 
+            UPDATE Invoice
+            SET eid = :new.recieve_eid 
+            WHERE sid = :new.sid AND eid = :new.donor_eid AND start_timeslot_week = :new.donor_timeslot_begin_week AND end_timeslot_week = :new.donor_timeslot_end_week
+            AND start_timeslot_day = :new.donor_timeslot_begin_day AND end_timeslot_day = :new.donor_timeslot_end_day 
+            AND start_timeslot = :new.donor_timeslot_begin AND end_timeslot = :new.donor_timeslot_end; 
+        END IF; 
+    END;
+/
 
 CREATE TRIGGER vehicle_makes_customer_active
     AFTER INSERT ON Vehicle
