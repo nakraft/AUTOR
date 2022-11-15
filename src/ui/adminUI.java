@@ -230,24 +230,27 @@ public class adminUI {
                 adminLanding();
             }
             else {
-                // If the command is an update
-                if (command.toLowerCase().startsWith("update")) {
-                    // If the update was successful
-                    if (JDBC.executeUpdate(command) > 0){
-                        System.out.println("Update successful");
+                // If the command is insert, delete, or update
+                if (command.trim().toLowerCase().matches("(?i)^(insert|delete|update).*")) {
+                    // Execute the command
+                    int rows = JDBC.executeUpdate(command);
+                    // If the command was successful
+                    if ( rows > 0) {
+                        System.out.println("Query successful, " + rows + " rows affected");
                     }
+                    // If the command failed
                     else {
-                        System.out.println("Update failed");
+                        System.out.println("Query failed");
                     }
                 }
-                // Otherwise the command is a query
+                // Otherwise the command is a select statement
                 else {
-                    if (JDBC.execute(command)) {
-                        try {
-                            JDBC.printResults(JDBC.getLastStatement().getResultSet());
-                        } catch (SQLException e) {
-                            System.out.println("Error printing results");
-                        }
+                    // Execute the command
+                    ResultSet rs = JDBC.executeQuery(command);
+                    // If the command was successful
+                    if (rs != null) {
+                        // Print the results
+                        JDBC.printResults(rs);
                     }
                     else {
                         System.out.println("Query failed");

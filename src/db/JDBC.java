@@ -249,9 +249,8 @@ public class JDBC {
             if (DEBUG) {
                 System.out.println(query);
             }
-            boolean results =  statement.execute(query);
-            lastStatement = statement;
-            return results;
+            statement.execute(query);
+            return true;
         }
         // If the query can't be executed
         catch (java.sql.SQLException e) {

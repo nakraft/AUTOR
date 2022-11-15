@@ -77,6 +77,10 @@ public class receptionistQueryTest {
         // Query the car's VIN to make sure it has been added
         assertTrue(JDBC.execute("SELECT vin FROM vehicle WHERE vin = '9DJ4SK5P'"));
 
-        //
+        // Change the vin on the customer to be empty
+        customer[6] = "";
+        // Add the customer (should be unsuccessful)
+        assertFalse(receptionistQuery.addCustomer(customer));
+        // Query the car's VIN to make sure it has not been added
     }
 }
