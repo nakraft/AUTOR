@@ -59,12 +59,16 @@ public class mechanicUI {
         null, // Lines
         new String[] {
             "Enter the Mechanic EID of the mechanic you want to swap with",
-            "Enter the Week ID to swap",
-            "Enter the Day ID to swap",
+            "Enter the Begin Week ID to swap",
+            "Enter the End Week ID to swap",
+            "Enter the Begin Day ID to swap",
+            "Enter the End Day ID to swap",
             "Enter the Start Time ID",
             "Enter the End Time ID",
-            "Enter the Week ID to swap with",
-            "Enter the Day ID to swap with",
+            "Enter the Begin Week ID to swap with",
+            "Enter the End Week ID to swap with",
+            "Enter the Begin Day ID to swap with",
+            "Enter the End Day ID to swap with",
             "Enter the Start Time ID with",
             "Enter the End Time ID with"
         }, // Prompts
@@ -223,19 +227,29 @@ public class mechanicUI {
             // Display menu
             String[] request_output = mechanicQuery.ManageSwapRequests();
             String[] output1 = null;
-            mechanicManageSwapRequests.setLines(request_output);
+            String[] output2 = new String[1];
+            if(request_output == null){
+                output2[0] = "No Swap Request to be found";
+                mechanicManageSwapRequests.setLines(output2);
+                mechanicAcceptRejectSwap();
+            }
+            else{
+                mechanicManageSwapRequests.setLines(request_output);
+            }
             switch (mechanicManageSwapRequests.display()) {
                 case 1: // Accept Swap Request
                     // TODO: Accept swap request
                     // TODO: Display status of request
                     String[] output = mechanicQuery.AcceptRejectSwap(mechanicManageSwapRequests.getPromptResponse(0), 1);
                     mechanicManageSwapRequests.setLines(output);
+                    mechanicManageSwapRequests.setFeedback("Accept swap request successfully");
                     break;
                 case 2: // Reject Swap Request
                     // TODO: Reject swap request
                     // TODO: Display status of request
                     output1 = mechanicQuery.AcceptRejectSwap(mechanicManageSwapRequests.getPromptResponse(0), 0);
                     mechanicManageSwapRequests.setLines(output1);
+                    mechanicManageSwapRequests.setFeedback("Reject swap request successfully");
                     break;
                 case 3: // Go Back
                     mechanicAcceptRejectSwap();

@@ -399,7 +399,8 @@ CREATE TRIGGER mechanic_requests_time_off
         FROM Calendar 
         WHERE timeslot_week = :new.timeslot_week AND timeslot_day = :new.timeslot_day AND timeslot = :new.timeslot AND sid = :new.sid AND eid = :new.eid AND invoice_id IS NOT NULL;
         IF mechanics_present < 4 OR service_on != 0 THEN 
-            RAISE not_approved;
+            RAISE 
+            ;
             DBMS_OUTPUT.put_line ('The mechanic is not allowed to take off at this time.'); 
         ELSE 
             DELETE FROM Calendar 
