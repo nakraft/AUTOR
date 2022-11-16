@@ -39,7 +39,7 @@ public class receptionistQueryTest {
         // Load the remote database
         JDBC.loadDatabase(jdbcURL, jdbcUser, jdbcPassword);
         // Reset the database
-        JDBC.resetDatabaseFull();
+        JDBC.populateTablesFull();
         // Sign in as manager
         assertTrue(UI.signIn(manager, password));
         // Add a receptionist

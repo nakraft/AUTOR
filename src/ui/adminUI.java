@@ -39,8 +39,9 @@ public class adminUI {
         null, // Lines
         null, // Prompts
         new String[] {
-            "Reset Database (Standard)", // JDBC.resetDatabase()
-            "Reset Database (Full Population)", // JDBC.resetDatabaseFull()
+            "Reset Database, Setup Tables", // JDBC.setupTables()
+            "Reset Database, Setup Tables, Load Partial Data", // JDBC.populateTablesPartial()
+            "Reset Database, Setup Tables, Load Full Data", // JDBC.populateTablesFull()
             "SQL Terminal", // adminRunSQLCommands
             "Pre-Generated SQL Commands", // adminPreGeneratedSQLCommands
             "Go Back" // adminLanding
@@ -154,21 +155,25 @@ public class adminUI {
         while (true) {
             // Display menu
             switch (adminMoreOptions.display()) {
-                case 1: // Reset Database (Standard)
-                    JDBC.resetDatabase();
-                    adminMoreOptions.setFeedback("Database reset");
+                case 1: // Reset Databaase (No Data)
+                    JDBC.setupTables();
+                    adminMoreOptions.setFeedback("Database reset, no data loaded");
                     break;
-                case 2: // Reset Database (Full Population)
-                    JDBC.resetDatabaseFull();
-                    adminMoreOptions.setFeedback("Database reset");
+                case 2: // Reset Database (Partial Data)
+                    JDBC.populateTablesPartial();
+                    adminMoreOptions.setFeedback("Database reset, partial data loaded");
                     break;
-                case 3: // SQL Terminal
+                case 3: // Reset Database (Full Data)
+                    JDBC.populateTablesFull();
+                    adminMoreOptions.setFeedback("Database reset, full data loaded");
+                    break;
+                case 4: // SQL Terminal
                     adminRunSQLCommands();
                     break;
-                case 4: // Pre-Generated SQL Commands
+                case 5: // Pre-Generated SQL Commands
                     adminPreGeneratedSQLCommands();
                     break;
-                case 5: // Go Back
+                case 6: // Go Back
                     adminLanding();
                     break;
             }

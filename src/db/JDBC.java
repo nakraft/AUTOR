@@ -82,12 +82,13 @@ public class JDBC {
             // System.exit(1);
         }
     }
-    
+
     /**
      * Drop all tables
-     * Then load the tables from the SQL files (set_up.sql, populating.sql)
+     * 
+     * @return true if successful, otherwise false
      */
-    public static void resetDatabase() {
+    public static boolean dropAllTables() {
         // Drop all tables
         ResultSet tables = executeQuery("select 'drop table \"'||table_name||'\" cascade constraints' from user_tables");
         // Drop each sequence the user has added to the table (that the system doesn't own)
@@ -102,7 +103,8 @@ public class JDBC {
             }
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
-            return;
+            return false;
+
             // // Print an error message
             // System.out.println(e.getMessage());
             // e.printStackTrace();
@@ -114,7 +116,7 @@ public class JDBC {
             tables.close();
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
-            return;
+            return false;
             
             // // Print an error message
             // System.out.println("Error closing result set");
@@ -133,7 +135,7 @@ public class JDBC {
             }
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
-            return;
+            return false;
 
             // // Print an error message
             // System.out.println(e.getMessage());
@@ -146,7 +148,7 @@ public class JDBC {
             Sequences.close();
         } catch (java.sql.SQLException e) {
             somethingWentWrong(e);
-            return;
+            return false;
 
             // // Print an error message
             // System.out.println("Error closing result set");
@@ -154,20 +156,37 @@ public class JDBC {
             // // Quit the program
             // System.exit(1);
         }
-        
-        // Load the tables from the SQL files
-        query.runSQL("base_logic.sql");
+        return true;
+    }
+    
+    /**
+     * Drop all tables
+     * Then load the tables from the SQL files (set_up.sql, populating.sql)
+     * 
+     * @return true if successful, otherwise false
+     */
+    public static boolean setupTables() {
+        dropAllTables();
+        query.runSQL("setup.sql");
+        return true;
+    }
+
+    /**
+     * Populate tables (Full)
+     */
+    public static void populateTablesFull() {
+        setupTables();
+        // Then load in the full population file
         query.runSQL("populating.sql");
     }
 
     /**
-     * Reset Database (Full Population)
+     * Populate tables (Partial)
      */
-    public static void resetDatabaseFull() {
-        // Reset the database
-        resetDatabase();
-        // Then load in the full population file
-        query.runSQL("populating_full.sql");
+    public static void populateTablesPartial() {
+        setupTables();
+        // Then load in the partial population file
+        query.runSQL("populating_partial.sql");
     }
 
     /**

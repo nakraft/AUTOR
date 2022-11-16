@@ -27,7 +27,7 @@ public class jdbcTest {
         // Load the remote database
         JDBC.loadDatabase(jdbcURL, jdbcUser, jdbcPassword);
         // Reset the database
-        JDBC.resetDatabaseFull();
+        JDBC.populateTablesFull();
         // Enable test mode
         JDBC.enableTestMode();
     }
