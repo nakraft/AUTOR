@@ -5,6 +5,7 @@ import java.sql.*;
 
 // Import array list
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -101,38 +102,65 @@ public class customerQuery {
             return false;
         }
     }
-    public static String[][] getServiceHistory(String Vin) {
+    public static String[] getServiceHistory(String Vin) {
         // Create a query
-        String query = "SELECT I.id, I.vin, I.total_amount, CONCAT(CONCAT(E.first_name, ' '), E.last_name) AS mechanic_name, CONCAT(CONCAT(I.start_timeslot_day, ', '), I.start_timeslot_week) AS start_time, CONCAT(CONCAT(I.end_timeslot_day, ', '), I.end_timeslot_week) AS end_time from Invoice  I, Employee  E where E.eid = I.eid AND I.vin='"+Vin+"'";
+        String query = "SELECT I.id, I.vin, I.total_amount, CONCAT(CONCAT(E.first_name, ' '), E.last_name) AS mechanic_name, CONCAT(CONCAT(I.start_timeslot_day, ', '), I.start_timeslot_week) AS start_time, CONCAT(CONCAT(I.end_timeslot_day, ', '), I.end_timeslot_week) AS end_time, TRIM(V.manf) AS manf from Invoice  I, Employee  E, Vehicle V where E.eid = I.eid AND I.vin = V.vin and I.vin='"+Vin+"'";
          // in (SELECT vin from Vehicle where cid="+UI.getCurrentEID() + " AND sid="+UI.getCurrentSID() +" )";
         // Run the query
         try {
             ResultSet result = JDBC.executeQuery(query);
             // Create an array list to hold the result
-            ArrayList<String[]> serviceHistory = new ArrayList<String[]>();
+            ArrayList<String> serviceHistory = new ArrayList<String>();
             // Return the list of vehicles as a 2d array
             while (result.next()) {
                 // Create an array to hold the result
-                String[] history = new String[6];
-                // id
-                history[0] = result.getString("id");
+                String[] history = new String[8];
+                String invoice_id = result.getString("id");
                 // vin
-                history[1] = result.getString("vin");
-                // total amount
-                history[2] = result.getString("total_amount");
+                history[0] = "VIN Number - " + result.getString("vin");
                 // mechanic name
-                history[3] = result.getString("mechanic_name");
+                history[1] = "Mechanic Name - " + result.getString("mechanic_name");
                 // start time
-                history[4] = result.getString("start_time");
+                history[2] = "Service Start Time - " + result.getString("start_time");
                 // end time
-                history[5] = result.getString("end_time");
+                history[3] = "Service End Time - " + result.getString("end_time");
+                // service id
+                history[4] = "Service IDs - ";
+                // service type
+                history[5] = "Service Types - ";
+                // service cost
+                history[6] = "Service Costs - ";
+                // line break
+                history[7] = "------------------------------";
+                String query2 = "Select cd.serviceNumber as snum,cd.price as price,s.repair_category as rcat,s.schedule as sch from Invoice_HasService ihs CROSS JOIN Cost_Details cd CROSS JOIN Services s where ihs.serviceName=s.serviceName AND ihs.serviceNumber=s.serviceNumber AND ihs.serviceName=cd.serviceName AND ihs.serviceNumber=cd.serviceNumber AND ihs.id=" + invoice_id +" AND cd.sid="+ UI.current_sid +" AND cd.manf='"+result.getString("manf")+"'";
+                ResultSet res2 = JDBC.executeQuery(query2);
+                String query3 = "Select cd.serviceNumber as snum,cd.price as price,s.repair_category as rcat,s.schedule as sch from Invoice_HasService ihs CROSS JOIN Cost_Details cd CROSS JOIN Services s where ihs.serviceName=s.schedule AND ihs.serviceNumber=s.serviceNumber AND ihs.serviceName=cd.serviceName AND ihs.serviceNumber=cd.serviceNumber AND ihs.id=" + invoice_id +" AND cd.sid="+ UI.current_sid +" AND cd.manf='"+result.getString("manf")+"'";
+                ResultSet res3 = JDBC.executeQuery(query3);
+                while (res2.next()) {          
+                    String stype = "Repair and maintenance service";
+                    history[4] += ("\n"+res2.getString("snum"));      
+                    history[6] += ("\n"+res2.getString("price")); 
+                    if(res2.getString("rcat") == null) {
+                        stype = "Maintenance service";
+                    }
+                    else if(res2.getString("sch") == null) {
+                        stype = "Repair service";
+                    }
+                    history[5] += ("\n"+stype);
+                }
+                while (res3.next()) {          
+                    history[4] += ("\n"+res3.getString("snum"));      
+                    history[6] += ("\n"+res3.getString("price")); 
+                    history[5] += ("\nMaintenance schedule"); 
+                    break; // don't loop for all services within schedule. remove if individual service names needed.
+                }
                 // Add array to the list
-                serviceHistory.add(history);
+                serviceHistory.addAll(Arrays.asList(history));
             }
             // If there is a result, return it as an array
             if (serviceHistory.size() > 0) {
                 // Convert the array list to an array
-                return serviceHistory.toArray(new String[serviceHistory.size()][]);
+                return serviceHistory.toArray(new String[serviceHistory.size()]);
             }
             return null;
         } catch (SQLException e) {

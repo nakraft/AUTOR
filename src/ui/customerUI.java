@@ -448,20 +448,15 @@ public class customerUI {
 
     public static void customerServiceHistory(String Vin) {
 
-        String[][] serviceHistory = customerQuery.getServiceHistory(Vin);
+        String[] serviceHistory = customerQuery.getServiceHistory(Vin);
         String[] lines;
         if (serviceHistory != null) {
-        lines = new String[serviceHistory.length+1];}
+            lines = serviceHistory;
+        }
         else {
             lines = new String[1];
             lines[0] = "No Service History Present";
-        }   
-        if (serviceHistory != null) {
-        lines[0] = "Service ID        Vehicle\tTotal Amount\tMechanic\t\tStart Day\tEnd Day";
-        for (int i = 0; i < serviceHistory.length; i++) {
-            lines[i+1] = serviceHistory[i][0] +"\t\t" + serviceHistory[i][1]+'\t' + serviceHistory[i][2]+"\t\t" + serviceHistory[i][3]+"\t\t"+ serviceHistory[i][4]+"\t\t" + serviceHistory[i][5];
         }
-    }
         // Set menu lines to the new String array
         customerServiceHistory.setLines(lines);
         // Display Services
