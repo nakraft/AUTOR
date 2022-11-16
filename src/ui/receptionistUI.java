@@ -89,6 +89,9 @@ public class receptionistUI {
                     if(!receptionistQuery.addCustomer(receptionistAddNewCustomerProfile.getPromptResponses())) {
                         receptionistLanding.setFeedback("Failed to add customer profile");
                     }
+                    else {
+                        receptionistLanding.setFeedback("Successfully added customer profile");
+                    }
                     receptionistLanding();
                     return;
                 case 2: // Go Back

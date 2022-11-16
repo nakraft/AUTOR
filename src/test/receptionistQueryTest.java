@@ -102,7 +102,6 @@ public class receptionistQueryTest {
             assertEquals(1, result.getInt("id"));
             assertEquals(30003, result.getInt("sid"));
             assertEquals(123405678, result.getInt("eid"));
-            assertEquals(10501, result.getInt("cid"));
             assertEquals(1, result.getInt("start_timeslot_week"));
             assertEquals(2, result.getInt("start_timeslot_day"));
             assertEquals(1, result.getInt("start_timeslot"));
@@ -114,7 +113,6 @@ public class receptionistQueryTest {
             assertEquals(2, result.getInt("id"));
             assertEquals(30003, result.getInt("sid"));
             assertEquals(123450678, result.getInt("eid"));
-            assertEquals(10010, result.getInt("cid"));
             assertEquals(1, result.getInt("start_timeslot_week"));
             assertEquals(2, result.getInt("start_timeslot_day"));
             assertEquals(1, result.getInt("start_timeslot"));

@@ -82,8 +82,8 @@ public class receptionistQuery {
             ArrayList<String> customers = new ArrayList<>();
             ResultSet result = JDBC.executeQuery(
                 "SELECT Customer.cid, Customer.first_name, Customer.last_name, Invoice.id, Invoice.date_generated, Invoice.total_amount " +
-                "FROM Customer, Invoice " +
-                "WHERE Customer.cid = Invoice.cid AND Invoice.status = 0 AND Customer.sid = " + UI.getCurrentSID()
+                "FROM Customer, Invoice, Vehicle " +
+                "WHERE Vehicle.vin = Invoice.vin AND Vehicle.cid = Customer.cid AND Invoice.status = 0 AND Customer.sid = " + UI.getCurrentSID()
             );
             while(result.next()) {
                 customers.add(
