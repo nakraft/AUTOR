@@ -12,7 +12,7 @@ Leo Hsiang                                  |   yhsiang
 ### Run Instructions 
 
 - Connect to NCSU VPN or eduroam. 
-- Open the folder continaing AUTOR.java.
+- Open the folder containing `execution.jar`.
 - Shift + right click in the folder, then hit `Open in Terminal` or equivalent.
 - Enter `java -jar execution.jar` into the terminal and press enter. The terminal will load at this time
 - Enter `3` and press the `Enter` key to enter the admin page.
