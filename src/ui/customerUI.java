@@ -891,6 +891,7 @@ public class customerUI {
                     customerViewInvoiceDetails.setLines(invoice_details);
                     break;
                 case 2: // Go Back
+                    customerViewInvoiceDetails.setLines(null);
                     customerInvoices();
                     break;
             }
