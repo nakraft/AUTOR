@@ -83,7 +83,7 @@ CREATE TABLE Cost_Details (
 
 CREATE TABLE Duration_Details (
 	manf VARCHAR(50),
-	dur INTEGER,
+	dur INTEGER CHECK (dur > 0),
     serviceName VARCHAR(50),
 	serviceNumber NUMBER(10),
 	PRIMARY KEY (manf, serviceName, serviceNumber),

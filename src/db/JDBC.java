@@ -211,6 +211,7 @@ public class JDBC {
         // If the queries can't be executed
         catch (java.sql.SQLException e) {
             try {
+                connection.rollback();
                 connection.setAutoCommit(true);
             } catch ( SQLException sql ) {
                 somethingWentWrong(sql);
@@ -445,6 +446,10 @@ public class JDBC {
             // Wait for user to press enter
             System.out.println("Press enter to continue...");
             UI.input.nextLine();
+        }
+        else {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
     

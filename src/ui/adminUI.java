@@ -80,10 +80,7 @@ public class adminUI {
         new String[] {
             "Enter existing service category",
             "Enter service name",
-            "Enter service duration",
-            "Enter manufacturer",
-            "Enter the price" ,
-            "Enter service center ID"
+            "Enter service duration"
         }, // Prompts
         new String[] {
             "Add Service", // remain, addService
@@ -179,7 +176,6 @@ public class adminUI {
                     else {
                         adminAddNewStore.setFeedback("Store not added");
                     }
-                    adminAddNewStore();
                     break;
                 case 2: // Go Back
                     // Return to the admin landing page

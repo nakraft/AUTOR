@@ -2,6 +2,7 @@ package db;
 
 // Import SQL libraries
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Queries for admins
@@ -59,7 +60,6 @@ public class adminQuery {
             // e.printStackTrace();
             // // Quit the program
             // System.exit(1);
-            System.out.println("I am returning false now :)");
             return false;
         }
         // If there aren't any errors
@@ -93,7 +93,7 @@ public class adminQuery {
         return false;
     }
 
-        /**
+    /**
      * Add a new service
      */
     public static boolean addService(String[] responses) {
@@ -103,34 +103,54 @@ public class adminQuery {
             result.next();
             String nextId = result.getString("next");
             nextId = String.valueOf(Integer.parseInt(nextId) + 1);
+            ArrayList<String> queryList = new ArrayList<String>();
             // Insert into the store table
-            if(JDBC.executeUpdate(
-                "INSERT INTO Services (serviceName,serviceNumber,repair_category) VALUES (" +
+            queryList.add("INSERT INTO Services (serviceName,serviceNumber,repair_category) VALUES (" +
                     "'" + responses[1] + "'" + ',' + 
                     "'" + nextId + "'" + ',' + 
                     "'" + responses[0] + "'" + ')'
-            ) > 0) {
-                throw new java.sql.SQLException("Error updating services");
+            );
+            // Now that it is in services, we need to query service_center for
+            // lists of all the service center IDs
+            ResultSet sid = JDBC.executeQuery("SELECT DISTINCT sid FROM Service_Center");
+            // For each service center, insert into tables
+            String[] manf = {"Honda", "Nissan", "Toyota", "Lexus", "Infiniti"};
+            while (sid.next()) {
+                // Insert into Cost_Details
+                for (int manf_index = 0; manf_index < 5; manf_index++) {
+                    queryList.add(
+                        "INSERT INTO Cost_Details (sid,serviceNumber,serviceName,manf,price) VALUES (" +
+                            sid.getString("sid") + ',' +
+                            nextId + ',' +
+                            "'" + responses[1] + "'" + ',' +
+                            "'" + manf[manf_index] + "'," +
+                            "''" +
+                        ")"
+                    );
+                }
             }
-            if (JDBC.executeUpdate(
-                "INSERT INTO Duration_Details (manf,dur,serviceName,serviceNumber) VALUES (" +
-                "'" + responses[3] + "'" + ',' + 
-                "'" + responses[2] + "'" + ',' + 
-                "'" + responses[1] + "'" + ',' + 
-                "'" + nextId + "'" + ')'
-            ) > 0) {
-                throw new java.sql.SQLException("Error updating duration details");
+            // Insert into Duration_Details
+            for (int manf_index = 0; manf_index < 5; manf_index++) {
+                queryList.add(
+                    "INSERT INTO Duration_Details (serviceNumber,serviceName,manf,dur) VALUES (" +
+                        nextId + ',' +
+                        "'" + responses[1] + "'" + ',' +
+                        "'" + manf[manf_index] + "'," +
+                        responses[2] +
+                    ")"
+                );
             }
-            if (JDBC.executeUpdate(
-                "INSERT INTO Cost_Details (manf,price,sid,serviceName, serviceNumber) VALUES (" +
-                "'" + responses[3] + "'" + ',' + 
-                "'" + responses[4] + "'" + ',' + 
-                "'" + responses[5] + "'" + ',' + 
-                "'" + responses[1] + "'" + ',' + 
-                "'" + nextId + "'" + ')'
-            ) > 0) {
-                throw new java.sql.SQLException("Error updating duration details");
+            // Print out all the queries real fast (debugging stuff)
+            for (String query : queryList) {
+                System.out.println(query);
             }
+            // Execute all the queries
+            int[] feedback = JDBC.executeUpdatesAtomic(queryList.toArray(new String[queryList.size()]));
+            if (feedback == null) {
+                throw new java.sql.SQLException("Error updating cost and duration details");
+            }
+            // Return true at end
+            return true;            
         } catch (java.sql.SQLException e) {
             /*
             // Print an error message
@@ -141,7 +161,5 @@ public class adminQuery {
             */
             return false;
         }
-        // If there aren't any errors
-        return true;
     }    
 }
