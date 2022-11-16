@@ -268,8 +268,8 @@ public class adminUI {
             System.out.print("SQL> ");
             String command = UI.input.nextLine().trim();
             if (command.equals("exit")) {
-                // Return to the admin landing page
-                adminLanding();
+                // Return to the more results page
+                adminMoreOptions();
             }
             else {
                 // If the command is insert, delete, or update
@@ -402,7 +402,12 @@ public class adminUI {
                     }
                     break;
                 case 6: // What is the next eligible maintenance schedule service for the car with VIN 34KLE19D
-                    query = "SELECT Schedule FROM Vehicle WHERE VIN='34KLE19D'";
+                    // A -> B -> C -> A ...
+                    query = "SELECT SCHEDULE AS CURRENT_SCHEDULE, " +
+                            "CASE WHEN SCHEDULE= 'A' THEN 'B' " +
+                            "WHEN SCHEDULE= 'B' THEN 'C' " +
+                            "ELSE 'A' " +
+                            "END AS NEXT_SCHEDULE FROM VEHICLE WHERE VIN='34KLE19D'";
                     rs = JDBC.executeQuery(query);
                     if (rs != null) {
                         // Clear the screen
