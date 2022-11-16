@@ -14,4 +14,4 @@ SELECT UNIQUE(serviceName) FROM Services WHERE schedule IS NOT NULL and repair_c
 SELECT SUM(ABS(c2.PRICE - c1.PRICE)) FROM Cost_Details c1 LEFT OUTER JOIN Cost_Details c2 ON  c1.serviceName = c2.serviceName AND c1.serviceNumber = c2.serviceNumber WHERE c1.manf = c2.manf AND c1.manf='Toyota' AND (c1.serviceName, c1.serviceNumber) IN (('A', 113), ('Belt Replacement', 101)) AND c1.sid='30001' AND c2.sid = '30002';
 
 --6. What is the next eligible maintenance schedule service for the car with VIN 34KLE19D
-SELECT null AS CURRENT_SCHEUDLE, CASE WHEN SCHEDULE= 'A' THEN 'B' WHEN SCHEDULE= 'B' THEN 'C' ELSE 'A' END AS NEXT_SCHEDULE FROM VEHICLE WHERE VIN='34KLE19D';
+SELECT CASE WHEN SCHEDULE = 'A' THEN 'B' WHEN SCHEDULE = 'B' THEN 'C' ELSE 'A' END AS NEXT_SCHEDULE FROM VEHICLE WHERE VIN='34KLE19D';

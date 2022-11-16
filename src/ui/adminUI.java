@@ -403,8 +403,8 @@ public class adminUI {
                     break;
                 case 6: // What is the next eligible maintenance schedule service for the car with VIN 34KLE19D
                     // A -> B -> C -> A ...
-                    query = "SELECT SCHEDULE AS CURRENT_SCHEDULE, " +
-                            "CASE WHEN SCHEDULE= 'A' THEN 'B' " +
+                    query = "SELECT CASE " +
+                            "WHEN SCHEDULE= 'A' THEN 'B' " +
                             "WHEN SCHEDULE= 'B' THEN 'C' " +
                             "ELSE 'A' " +
                             "END AS NEXT_SCHEDULE FROM VEHICLE WHERE VIN='34KLE19D'";
