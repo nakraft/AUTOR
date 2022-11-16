@@ -72,7 +72,7 @@ CREATE TABLE Work_Event (
 
 CREATE TABLE Cost_Details (
 	manf VARCHAR(50),
-	price REAL,
+	price REAL CHECK (price >= 0),
     sid NUMBER(10) NOT NULL,
     serviceName VARCHAR(50),
 	serviceNumber NUMBER(10),

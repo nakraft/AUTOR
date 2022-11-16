@@ -156,9 +156,11 @@ public class adminUI {
             switch (adminMoreOptions.display()) {
                 case 1: // Reset Database (Standard)
                     JDBC.resetDatabase();
+                    adminMoreOptions.setFeedback("Database reset");
                     break;
                 case 2: // Reset Database (Full Population)
                     JDBC.resetDatabaseFull();
+                    adminMoreOptions.setFeedback("Database reset");
                     break;
                 case 3: // SQL Terminal
                     adminRunSQLCommands();
