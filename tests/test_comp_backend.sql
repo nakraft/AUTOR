@@ -1,3 +1,4 @@
+-- NOTE: Many backend tests will be invalid due to the presence of a cid in the invoice table being removed. Keep this in mind while running tests. 
 -- PASS: After populating full, the invoices that were inserted as "in good standing" 
     -- should have a total amount = amount paid and the customers should be in good standing too 
     -- check
@@ -5,16 +6,16 @@
     SELECT * FROM Customer -- two customers in bad standing
 
 -- PASS: If a customer pays some of their invoice, their balance should be impacted 
-UPDATE Invoice SET amount_paid = 200 WHERE cid = 10501 AND sid = 30003 
+UPDATE Invoice SET amount_paid = 200 WHERE vin = (SELECT vin FROM Vehicle WHERE cid = 10501 AND sid = 30003) AND sid = 30003 
     -- check invoice amount paid should be updated 
-    SELECT * FROM Invoice WHERE sid = 30003 AND cid = 10501
+    SELECT * FROM Invoice WHERE sid = 30003 AND vin = (SELECT vin FROM Vehicle WHERE cid = 10501 AND sid = 30003)
     -- check that standing is still poor, but balance is only 10 
     SELECT * FROM Customer WHERE sid = 30003 AND cid = 10501
 
 -- PASS: A customer can pay off their balance completely 
-UPDATE Invoice SET amount_paid = 210 WHERE cid = 10501 AND sid = 30003 
+UPDATE Invoice SET amount_paid = 210 WHERE vin = (SELECT vin FROM Vehicle WHERE cid = 10501 AND sid = 30003) AND sid = 30003 
     -- check invoice amount paid should be updated and status is good 
-    SELECT * FROM Invoice WHERE sid = 30003 AND cid = 10501
+    SELECT * FROM Invoice WHERE sid = 30003 AND vin = (SELECT vin FROM Vehicle WHERE cid = 10501 AND sid = 30003)
     -- check that standing is now in good standing and balance is 0 
     SELECT * FROM Customer WHERE sid = 30003 AND cid = 10501
 
@@ -232,7 +233,7 @@ INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, 
 
 -- PASS: a mechanic can be be scheduled for a timeslot next week 
 INSERT INTO Invoice_HasService( id, serviceName, serviceNumber) VALUES (13, 'C', 115)
-INSERT INTO Invoice(id, sid, eid, cid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (13, 30004, 888966655, 10001, 2, 1, 1, 2, 1, 9, 'AAAAAAAB')
+INSERT INTO Invoice(id, sid, eid, start_timeslot_week, start_timeslot_day, start_timeslot, end_timeslot_week, end_timeslot_day, end_timeslot, vin)  VALUES (13, 30004, 888966655, 2, 1, 1, 2, 1, 9, 'AAAAAAAB')
     -- check 
     SELECT * FROM Calendar WHERE sid = 30004 AND invoice_id = 13
 

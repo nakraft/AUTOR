@@ -171,13 +171,11 @@ CREATE TABLE Invoice (
     date_generated DATE DEFAULT CURRENT_DATE,
 	vin VARCHAR(10),
 	eid NUMBER(9),
-    cid NUMBER(9),
     status NUMBER(1) DEFAULT 0 CHECK (status IN (0, 1)),
 	PRIMARY KEY (id),
 	FOREIGN KEY (sid) REFERENCES Service_Center,
 	FOREIGN KEY (vin) REFERENCES Vehicle,
-    FOREIGN KEY (eid, sid) REFERENCES Mechanic,
-    FOREIGN KEY (cid, sid) REFERENCES Customer
+    FOREIGN KEY (eid, sid) REFERENCES Mechanic
 );
 
 CREATE TABLE Calendar (
@@ -304,8 +302,6 @@ CREATE TRIGGER maintence_isa_schedule
     FOR EACH ROW
     DECLARE 
         schedNumber1 NUMBER(10);
-        schedNumber2 NUMBER(10);
-        schedNumber3 NUMBER(10);
     BEGIN
         IF :new.schedule IS NOT NULL THEN 
             SELECT DISTINCT s.serviceNumber INTO schedNumber1
@@ -550,7 +546,7 @@ CREATE TRIGGER invoice_checks
         IF :new.total_amount != :new.amount_paid THEN 
             UPDATE Customer 
             SET standing = 0, balance = balance + :new.total_amount - :new.amount_paid 
-            WHERE sid = :new.sid AND cid = :new.cid;
+            WHERE sid = :new.sid AND cid = (SELECT cid FROM Vehicle WHERE vin = :new.vin);
         END IF; 
     END;
 /
@@ -604,7 +600,7 @@ CREATE TRIGGER decide_status_invoice
     BEGIN
         UPDATE Customer 
         SET balance = balance - (:new.amount_paid - :old.amount_paid)
-        WHERE cid = :new.cid AND sid = :new.sid; 
+        WHERE cid = (SELECT cid FROM Vehicle WHERE vin = :new.vin) AND sid = :new.sid; 
     END;
  /
 
