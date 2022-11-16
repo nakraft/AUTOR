@@ -286,7 +286,7 @@ public class customerUI {
                     customerInvoices();
                     break;
                 case 4: // Logout
-                    System.exit(0);
+                    UI.homeMenu();
             }
         }
     }
@@ -390,7 +390,22 @@ public class customerUI {
     public static void customerDeleteCar() {
         while (true) {
             // Display menu
-            switch( customerDeleteCar.display() ) {
+            String[][] cars = customerQuery.getVehicles();
+            String[] lines;
+            if (cars != null) {
+                lines = new String[cars.length+1];
+                lines[0] = "Vin\t   Manufacturer\t\tMileage\t\tYear";
+                for (int i = 0; i < cars.length; i++) {
+                    lines[i+1] = cars[i][0] +"\t" + cars[i][1]+"    \t" + cars[i][2]+"\t\t" + cars[i][3];
+                }
+                }
+                else {
+                    lines = new String[1];
+                    lines[0] = "No Vehicle Exists Under the Customer";
+                }
+                customerDeleteCar.setLines(lines);
+            int case_option = customerDeleteCar.display();
+            switch( case_option ) {
                 case 1: // Delete Car
                     if(customerQuery.deleteVehicle(customerDeleteCar.getPromptResponses()[0])) {
                         customerLanding.setFeedback("Vehicle Deleted Successfully");
