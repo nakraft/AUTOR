@@ -25,7 +25,7 @@ CREATE TABLE Employee (
 	email VARCHAR(50),
     start_date VARCHAR(20) DEFAULT '2022-01-01',
 	sid NUMBER(10) NOT NULL,
-	role VARCHAR(20) NOT NULL, 
+	role VARCHAR(20) NOT NULL CHECK (role IN ('mechanic', 'manager', 'receptionist')), 
 	PRIMARY KEY (eid, sid),
     FOREIGN KEY (sid) REFERENCES Service_Center
         ON DELETE CASCADE
@@ -511,7 +511,7 @@ CREATE TRIGGER invoice_checks
         ELSIF serviceCalled = 1 THEN 
             SELECT serviceName INTO serviceCalled 
             FROM Invoice_HasService 
-            WHERE id = :new.id;
+            WHERE id = :new.id AND serviceName IN ('A', 'B', 'C');
             SELECT schedule INTO lastSchedule
             FROM Vehicle 
             WHERE vin = :new.vin;
@@ -581,7 +581,7 @@ CREATE TRIGGER invoice_propogate
         WHERE id = :new.id AND serviceName IN ('A', 'B', 'C');
         IF aa > 0 THEN 
             UPDATE Vehicle 
-            SET schedule = (SELECT serviceName FROM Invoice_HasService WHERE id = :new.id)
+            SET schedule = (SELECT serviceName FROM Invoice_HasService WHERE id = :new.id AND serviceName IN ('A', 'B', 'C'))
             WHERE vin = :new.vin; 
         END IF; 
     END; 
