@@ -29,11 +29,23 @@ public class adminUI {
             "Add New Store", // adminAddNewStore
             "Add New Service", // adminAddNewService
             "Logout", // homeMenu
-            "Reset Database (Standard)", // JDBC.resetDatabase()
-            "Reset Database (Full Population)", // JDBC.resetDatabaseFull()
-            "Run SQL Commands" // adminRunSQLCommands
+            "More Options" // adminMoreOptions
         } // Options
     );
+
+    // Admin: More Options
+    private static menu adminMoreOptions = new menu(
+        "Admin: More Options", // Header
+        null, // Lines
+        null, // Prompts
+        new String[] {
+            "Reset Database (Standard)", // JDBC.resetDatabase()
+            "Reset Database (Full Population)", // JDBC.resetDatabaseFull()
+            "SQL Terminal", // adminRunSQLCommands
+            "Pre-Generated SQL Commands", // adminPreGeneratedSQLCommands
+            "Go Back" // adminLanding
+        } // Options
+    );    
 
     // Admin: System Set Up
     private static menu adminSystemSetUp = new menu(
@@ -88,6 +100,22 @@ public class adminUI {
         } // Options
     );
 
+    // Admin: Pre-Generated SQL Commands
+    private static menu adminPreGeneratedSQLCommands = new menu(
+        "Admin: Pre-Generated SQL Commands", // Header
+        null, // Lines
+        null, // Prompts
+        new String[] {
+            "Which service center has the most number of customers?", // Stay on page
+            "What is the average price of an Evaporator Repair for Hondas across all service centers?", // Stay on page
+            "Which customer(s) have unpaid invoices in Service Center 30003", // Stay on page
+            "List all services that are listed as both maintenance and repair services globally", // Stay on page
+            "What is the difference between the cost of doing a belt replacement + schedule A on a Toyota at center 30001 vs 30002?", // Stay on page"
+            "What is the next eligible maintenance schedule service for the car with VIN 34KLE19D", // Stay on page
+            "Go Back" // adminMoreOptions
+        } // Options
+    );
+
     /**************************************************************************
      * Methods
      *************************************************************************/
@@ -111,20 +139,38 @@ public class adminUI {
                 case 4: // Logout
                     UI.homeMenu();
                     break;
-                case 5: // Reset Database
-                    JDBC.resetDatabase();
-                    adminLanding.setFeedback("Database reset and populated with standard data");
-                    break;
-                case 6: // Reset Database Full
-                    JDBC.resetDatabaseFull();
-                    adminLanding.setFeedback("Database reset and populated with full data");
-                    break;
-                case 7: // Run SQL Commands
-                    adminRunSQLCommands();
+                case 5: // More options
+                    adminMoreOptions();
                     break;
                     
             }
         } 
+    }
+
+    /**
+     * Admin more options
+     */
+    public static void adminMoreOptions() {
+        while (true) {
+            // Display menu
+            switch (adminMoreOptions.display()) {
+                case 1: // Reset Database (Standard)
+                    JDBC.resetDatabase();
+                    break;
+                case 2: // Reset Database (Full Population)
+                    JDBC.resetDatabaseFull();
+                    break;
+                case 3: // SQL Terminal
+                    adminRunSQLCommands();
+                    break;
+                case 4: // Pre-Generated SQL Commands
+                    adminPreGeneratedSQLCommands();
+                    break;
+                case 5: // Go Back
+                    adminLanding();
+                    break;
+            }
+        }
     }
 
     /**
@@ -252,6 +298,128 @@ public class adminUI {
                         System.out.println("Query failed");
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Pregenerated SQL commands
+     * 
+*             "Which service center has the most number of customers?", // Stay on page
+            "What is the average price of an Evaporator Repair for Hondas across all service centers?", // Stay on page
+            "Which customer(s) have unpaid invoices in Service Center 30003", // Stay on page
+            "List all services that are listed as both maintenance and repair services globally", // Stay on page
+            "What is the difference between the cost of doing a belt replacement + schedule A on a Toyota at center 30001 vs 30002?", // Stay on page"
+            "What is the next eligible maintenance schedule service for the car with VIN 34KLE19D", // Stay on page
+
+     */
+    public static void adminPreGeneratedSQLCommands() {
+        while (true) {
+            switch (adminPreGeneratedSQLCommands.display()) {
+                case 1: // Which service center has the most number of customers?
+                    String query = "select SID FROM CUSTOMER GROUP BY SID HAVING count(*)=(SELECT MAX(COUNT(*)) FROM CUSTOMER GROUP BY SID)";
+                    ResultSet rs = JDBC.executeQuery(query);
+                    if (rs != null) {
+                        // Clear the screen
+                        UI.clearScreen();
+                        // Print query
+                        System.out.println(query);
+                        // Then print the results
+                        JDBC.printResults(rs);
+                        // Wait for the user to press enter
+                        UI.input.nextLine();
+                    }
+                    else {
+                        adminPreGeneratedSQLCommands.setFeedback("Query failed");
+                    }
+                    break;
+                case 2: // What is the average price of an Evaporator Repair for Hondas across all service centers?
+                    query = "SELECT ROUND(AVG(price), 2) FROM Cost_Details WHERE Manf='Honda' AND serviceName='Evaporator Repair' AND serviceNumber=(select serviceNumber from Services where serviceName='Evaporator Repair' AND schedule IS NULL)";
+                    rs = JDBC.executeQuery(query);
+                    if (rs != null) {
+                        // Clear the screen
+                        UI.clearScreen();
+                        // Print query
+                        System.out.println(query);
+                        // Then print the results
+                        JDBC.printResults(rs);
+                        // Wait for the user to press enter
+                        UI.input.nextLine();
+                    }
+                    else {
+                        adminPreGeneratedSQLCommands.setFeedback("Query failed");
+                    }
+                    break;
+                case 3: // Which customer(s) have unpaid invoices in Service Center 30003
+                    query = "SELECT * FROM Customer WHERE sid = 30003 AND standing = 0";
+                    rs = JDBC.executeQuery(query);
+                    if (rs != null) {
+                        // Clear the screen
+                        UI.clearScreen();
+                        // Print query
+                        System.out.println(query);
+                        // Then print the results
+                        JDBC.printResults(rs);
+                        // Wait for the user to press enter
+                        UI.input.nextLine();
+                    }
+                    else {
+                        adminPreGeneratedSQLCommands.setFeedback("Query failed");
+                    }
+                    break;
+                case 4: // List all services that are listed as both maintenance and repair services globally
+                    query = "SELECT UNIQUE(serviceName) FROM Services WHERE schedule IS NOT NULL and repair_category IS NOT NULL";
+                    rs = JDBC.executeQuery(query);
+                    if (rs != null) {
+                        // Clear the screen
+                        UI.clearScreen();
+                        // Print query
+                        System.out.println(query);
+                        // Then print the results
+                        JDBC.printResults(rs);
+                        // Wait for the user to press enter
+                        UI.input.nextLine();
+                    }
+                    else {
+                        adminPreGeneratedSQLCommands.setFeedback("Query failed");
+                    }
+                    break;
+                case 5: // What is the difference between the cost of doing a belt replacement + schedule A on a Toyota at center 30001 vs 30002?
+                    query = "SELECT SUM(ABS(c2.PRICE - c1.PRICE)) FROM Cost_Details c1 LEFT OUTER JOIN Cost_Details c2 ON  c1.serviceName = c2.serviceName AND c1.serviceNumber = c2.serviceNumber WHERE c1.manf = c2.manf AND c1.manf='Toyota' AND (c1.serviceName, c1.serviceNumber) IN (('A', 113), ('Belt Replacement', 101)) AND c1.sid='30001' AND c2.sid = '30002'";
+                    rs = JDBC.executeQuery(query);
+                    if (rs != null) {
+                        // Clear the screen
+                        UI.clearScreen();
+                        // Print query
+                        System.out.println(query);
+                        // Then print the results
+                        JDBC.printResults(rs);
+                        // Wait for the user to press enter
+                        UI.input.nextLine();
+                    }
+                    else {
+                        adminPreGeneratedSQLCommands.setFeedback("Query failed");
+                    }
+                    break;
+                case 6: // What is the next eligible maintenance schedule service for the car with VIN 34KLE19D
+                    query = "SELECT Schedule FROM Vehicle WHERE VIN='34KLE19D'";
+                    rs = JDBC.executeQuery(query);
+                    if (rs != null) {
+                        // Clear the screen
+                        UI.clearScreen();
+                        // Print query
+                        System.out.println(query);
+                        // Then print the results
+                        JDBC.printResults(rs);
+                        // Wait for the user to press enter
+                        UI.input.nextLine();
+                    }
+                    else {
+                        adminPreGeneratedSQLCommands.setFeedback("Query failed");
+                    }
+                    break;
+                case 7: // Return to previous menu
+                    return;
             }
         }
     }

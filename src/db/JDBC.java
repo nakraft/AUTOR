@@ -2,6 +2,8 @@ package db;
 // Import SQL libraries
 import java.sql.*;
 
+import java.util.ArrayList;
+
 import ui.UI;
 
 /**
@@ -401,19 +403,25 @@ public class JDBC {
      * Print results
      */
     public static void printResults(ResultSet resultSet) {
+        // Results
+        ArrayList<String[]> results = new ArrayList<String[]>();
+        int columns = 0;
         // Print the results
         try {
             // Get the number of columns
-            int columns = resultSet.getMetaData().getColumnCount();
+            columns = resultSet.getMetaData().getColumnCount();
+            // Create an ArrayList of String arrays
             // Go through each row
             while (resultSet.next()) {
+                // Create a new array
+                String[] row = new String[columns];
                 // Go through each column
                 for (int i = 1; i <= columns; i++) {
-                    // Print the column
-                    System.out.print(resultSet.getString(i) + "\t");
+                    // Populate each row in the column
+                    row[i - 1] = resultSet.getString(i);
                 }
-                // Print a new line
-                System.out.println();
+                // Add the row to the results
+                results.add(row);
             }
         // If the results can't be printed
         } catch (java.sql.SQLException e) {
@@ -425,6 +433,55 @@ public class JDBC {
             // e.printStackTrace();
             // // Quit the program
             // System.exit(1);
+        }
+
+        // If there are no results
+        if (results.size() == 0) {
+            return;
+        }
+
+        // Create an array of the longest size of each elemnt in each column
+        int[] longest = new int[columns];
+        // Initiliaze the array
+        for (int i = 0; i < columns; i++) {
+            if (results.get(0)[i] != null) {
+                longest[i] = results.get(0)[i].length();
+            } else {
+                longest[i] = 0;
+            }
+        }
+        // Go through each row
+        for (String[] row : results) {
+            // Go through each column
+            for (int i = 0; i < row.length; i++) {
+                // If row[i] is null, replace it with "null"
+                if (row[i] == null) {
+                    row[i] = "NULL";
+                }
+                // If the current element is longer than the longest element
+                if (row[i].length() > longest[i]) {
+                    // Set the longest element to the current element
+                    longest[i] = row[i].length();
+                }
+            }
+        }
+        // Add one to each row in longest and a 4 space buffer
+        for (int i = 0; i < longest.length; i++) {
+            longest[i] = longest[i] + 4;
+        }
+        // Print the results
+        for (String[] row : results) {
+            // Go through each column
+            for (int i = 0; i < row.length; i++) {
+                // Print the element
+                System.out.print(row[i]);
+                // Print the correct number of tabs
+                for (int j = 0; j < longest[i] - row[i].length(); j ++) {
+                    System.out.print(" ");
+                }
+            }
+            // Print a new line
+            System.out.println();
         }
     }
 
