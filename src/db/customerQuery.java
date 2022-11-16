@@ -351,7 +351,7 @@ public class customerQuery {
             if(response <= 0) {
                 return -1;
             }
-            String query2 = "INSERT INTO Invoice(id,sid,eid,cid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin, total_amount)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", "+ UI.getCurrentEID() +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", '" + Vin + "', "+cost+")";
+            String query2 = "INSERT INTO Invoice(id,sid,eid,start_timeslot_week,start_timeslot_day,start_timeslot,end_timeslot_week,end_timeslot_day,end_timeslot,vin, total_amount)  VALUES (" + invoiceID + ", " + UI.getCurrentSID() + ", "+ timeSlot[3] +", " + timeSlot[1] + ", " + timeSlot[0] + ", " + timeSlot[2] + ", " + end_timeslot_week + ", " + end_timeslot_day + ", " + end_timeslot + ", '" + Vin + "', "+cost+")";
             JDBC.executeUpdate(query2);
              return Integer.parseInt(invoiceID);
             
@@ -366,7 +366,7 @@ public class customerQuery {
     public static String[] getInvoice(String invoice_id) {
         String[] invoice = new String[10];
         try {
-            String query = "SELECT i.cid AS cid,i.vin AS vin,i.status AS status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,i.total_amount AS total_amount,i.start_timeslot_day AS start_timeslot_day,i.start_timeslot_week AS start_timeslot_week,TRIM(v.manf) AS manf FROM Invoice i CROSS JOIN Employee e CROSS JOIN Vehicle v WHERE i.eid = e.eid and i.vin = v.vin and i.cid = "+ UI.getCurrentEID() +" and i.sid = " + UI.getCurrentSID() +" and i.id = " + invoice_id;
+            String query = "SELECT v.cid AS cid,i.vin AS vin,i.status AS status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,i.total_amount AS total_amount,i.start_timeslot_day AS start_timeslot_day,i.start_timeslot_week AS start_timeslot_week,TRIM(v.manf) AS manf FROM Invoice i CROSS JOIN Employee e CROSS JOIN Vehicle v WHERE i.eid = e.eid and i.vin = v.vin and v.cid = "+ UI.getCurrentEID() +" and i.sid = " + UI.getCurrentSID() +" and i.id = " + invoice_id;
             ResultSet res = JDBC.executeQuery(query);
             while (res.next()) {
                 invoice[0] = invoice_id;
