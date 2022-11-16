@@ -366,7 +366,7 @@ public class customerQuery {
     public static String[] getInvoice(String invoice_id) {
         String[] invoice = new String[10];
         try {
-            String query = "SELECT i.cid AS cid,i.vin AS vin,i.status AS status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,i.total_amount AS total_amount,i.start_timeslot_day AS start_timeslot_day,i.start_timeslot_week AS start_timeslot_week,TRIM(v.manf) AS manf FROM Invoice i CROSS JOIN Employee e CROSS JOIN Vehicle v WHERE i.eid = e.eid and i.vin = v.vin and i.cid = "+ UI.getCurrentEID() +" and i.id = " + invoice_id;
+            String query = "SELECT i.cid AS cid,i.vin AS vin,i.status AS status,CONCAT(CONCAT(e.first_name,' '),e.last_name) AS name,i.total_amount AS total_amount,i.start_timeslot_day AS start_timeslot_day,i.start_timeslot_week AS start_timeslot_week,TRIM(v.manf) AS manf FROM Invoice i CROSS JOIN Employee e CROSS JOIN Vehicle v WHERE i.eid = e.eid and i.vin = v.vin and i.cid = "+ UI.getCurrentEID() +" and i.sid = " + UI.getCurrentSID() +" and i.id = " + invoice_id;
             ResultSet res = JDBC.executeQuery(query);
             while (res.next()) {
                 invoice[0] = invoice_id;
@@ -381,6 +381,8 @@ public class customerQuery {
                 invoice[9] = res.getString("total_amount"); // total cost
                 String query2 = "Select cd.serviceNumber as snum,cd.price as price,s.repair_category as rcat,s.schedule as sch from Invoice_HasService ihs CROSS JOIN Cost_Details cd CROSS JOIN Services s where ihs.serviceName=s.serviceName AND ihs.serviceNumber=s.serviceNumber AND ihs.serviceName=cd.serviceName AND ihs.serviceNumber=cd.serviceNumber AND ihs.id=" + invoice_id +" AND cd.sid="+ UI.current_sid +" AND cd.manf='"+res.getString("manf")+"'";
                 ResultSet res2 = JDBC.executeQuery(query2);
+                String query3 = "Select cd.serviceNumber as snum,cd.price as price,s.repair_category as rcat,s.schedule as sch from Invoice_HasService ihs CROSS JOIN Cost_Details cd CROSS JOIN Services s where ihs.serviceName=s.schedule AND ihs.serviceNumber=s.serviceNumber AND ihs.serviceName=cd.serviceName AND ihs.serviceNumber=cd.serviceNumber AND ihs.id=" + invoice_id +" AND cd.sid="+ UI.current_sid +" AND cd.manf='"+res.getString("manf")+"'";
+                ResultSet res3 = JDBC.executeQuery(query3);
                 while (res2.next()) {          
                     String stype = "Repair and maintenance service";
                     invoice[4] += ("\n"+res2.getString("snum"));      
@@ -391,7 +393,13 @@ public class customerQuery {
                     else if(res2.getString("sch") == null) {
                         stype = "Repair service";
                     }
-                    invoice[5] += ("\n"+stype); 
+                    invoice[5] += ("\n"+stype);
+                }
+                while (res3.next()) {          
+                    invoice[4] += ("\n"+res3.getString("snum"));      
+                    invoice[8] += ("\n"+res3.getString("price")); 
+                    invoice[5] += ("\nMaintenance schedule"); 
+                    break; // don't loop for all services within schedule. remove if individual service names needed.
                 }
                 return invoice;
             }
